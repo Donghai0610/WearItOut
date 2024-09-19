@@ -1,8 +1,9 @@
 package com.g4.backend.model.dto;
 
 import lombok.Data;
-import java.util.Date;
+import org.mapstruct.Mapper;
 
+import java.util.Date;
 @Data
 public class DeliveryDTO {
     private Long id;

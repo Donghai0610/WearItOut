@@ -2,43 +2,43 @@ package com.g4.backend.model.enity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 
 import java.util.Date;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
-@Table(name = "products")
+@Table(name = "delivery")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ProductEntity {
+public class Delivery {
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
-    @Column(name = "size")
-    private Long size;
+    @Column(name = "order_id", nullable = false)
+    private Long orderId;
 
-    @Column(name = "product_name")
-    private String productName;
+    @Column(name = "service_name")
+    private String serviceName;
 
-    @Column(name = "description")
-    private String description;
+    @Column(name = "tracking_number")
+    private Long trackingNumber;
 
-    @Column(name = "price")
-    private Long price;
+    @Column(name = "delivery_status")
+    private Long deliveryStatus;
 
-    @Column(name = "stock_quantity")
-    private Long stockQuantity;
+    @Column(name = "shipped_date")
+    private Date shippedDate;
 
-    @Column(name = "solded")
-    private Long solded;
-
-    @Column(name = "codidtion")
-    private Long codidtion;
-
-    @Column(name = "is_delete")
-    private Long isDelete;
+    @Column(name = "delivered_date")
+    private Date deliveredDate;
 
     @Column(name = "create_at")
     private Date createAt;

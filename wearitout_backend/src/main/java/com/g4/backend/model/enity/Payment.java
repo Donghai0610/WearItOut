@@ -1,26 +1,38 @@
 package com.g4.backend.model.enity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
-@Table(name = "categories_products")
+@Table(name = "payment")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CategoryProductEntity {
+public class Payment {
 
     @Id
-    @Column(name = "product_id", nullable = false)
-    private Long productId;
+    @Column(name = "id")
+    private Long id;
 
-    @Column(name = "category_id", nullable = false)
-    private Long categoryId;
+    @Column(name = "order_id", nullable = false)
+    private Long orderId;
+
+    @Column(name = "payment_gateway")
+    private Long paymentGateway;
+
+    @Column(name = "payment_status")
+    private Long paymentStatus;
+
+    @Column(name = "payment_date")
+    private Date paymentDate;
 
     @Column(name = "create_at")
     private Date createAt;
