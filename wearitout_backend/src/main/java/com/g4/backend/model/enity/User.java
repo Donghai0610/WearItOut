@@ -50,10 +50,10 @@ public class User {
     @Column(name = "balance")
     private String balance;
 
-    @Column(name = "gender", nullable = false)
+    @Column(name = "gender")
     private boolean gender;
 
-    @Column(name = "dob", nullable = false)
+    @Column(name = "dob")
     private LocalDate dob;
 
     @Column(name = "is_active", nullable = false)

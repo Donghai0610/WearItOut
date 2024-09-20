@@ -19,10 +19,6 @@ import java.util.Date;
 @Table(name = "order_items")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OrderItem {
-    @Id
-    @Column(name = "order_item_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int orderItemId;
 
    @EmbeddedId
     private KeyOrderProduct keyOrderProduct;

@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -16,8 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "Order")
-@JsonIgnoreProperties(ignoreUnknown = true)
+@Table(name = "Orders")
 public class Order {
 
     @Id
@@ -32,17 +32,17 @@ public class Order {
     private double totalPrice;
 
     @Column(name = "create_at")
-    private Date createAt;
+    private LocalDate createAt;
 
     @Column(name = "update_at")
-    private Date updateAt;
+    private LocalDate updateAt;
 
     @Column(name = "delete_at")
-    private Date deleteAt;
+    private LocalDate deleteAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "buyer_id", referencedColumnName = "user_id", nullable = false,
-            foreignKey = @ForeignKey(name = "FK_Order_User")
+            foreignKey = @ForeignKey(name = "FK_Order_User_Buyer")
     )
     @JsonBackReference
     private User user;

@@ -41,10 +41,9 @@ public class Category {
     private LocalDate deleteAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false,
-            foreignKey = @ForeignKey(name = "FK_Category_User_Creater")
+    @JoinColumn(name = "create_by",referencedColumnName = "user_id", nullable = false,
+            foreignKey = @ForeignKey(name = "FK_Category_User_CreateBy")
     )
-    @Column(name = "create_by")
     @JsonBackReference
     private User createBy;
 

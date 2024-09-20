@@ -30,6 +30,7 @@ public class CategoryProduct {
     @JoinColumn(name = "category_id", nullable = false,
             foreignKey = @ForeignKey(name = "FK_CategoryProduct_Category")
     )
+    @MapsId("categoryId")
     @JsonBackReference
     private Category category;
 
@@ -37,6 +38,7 @@ public class CategoryProduct {
     @JoinColumn(name = "product_id", nullable = false,
             foreignKey = @ForeignKey(name = "FK_CategoryProduct_Product")
     )
+    @MapsId("productId")
     @JsonBackReference
     private Product product;
 
