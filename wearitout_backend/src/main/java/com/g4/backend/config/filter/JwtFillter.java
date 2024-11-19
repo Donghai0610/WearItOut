@@ -1,7 +1,7 @@
 package com.g4.backend.config.filter;
 
-import com.g4.backend.service.SecurityService;
-import com.g4.backend.service.impl.JWTService;
+import com.g4.backend.service.AuthService;
+import com.g4.backend.service.impl.JWTServiceImpl;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -18,12 +18,12 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 public class JwtFillter extends OncePerRequestFilter {
-    private final JWTService jwtServices;
-    private final SecurityService securityService;
+    private final JWTServiceImpl jwtServicesImpl;
+    private final AuthService authService;
     @Autowired
-    public JwtFillter(JWTService jwtServices, SecurityService securityService) {
-        this.jwtServices = jwtServices;
-        this.securityService = securityService;
+    public JwtFillter(JWTServiceImpl jwtServicesImpl, AuthService authService) {
+        this.jwtServicesImpl = jwtServicesImpl;
+        this.authService = authService;
     }
 
     @Override
@@ -39,7 +39,7 @@ public class JwtFillter extends OncePerRequestFilter {
         String userEmail = null;
 
         try {
-            userEmail = jwtServices.extractUsername(jwtToken); // Extracting username inside try-catch
+            userEmail = jwtServicesImpl.extractUsername(jwtToken); // Extracting username inside try-catch
         } catch (ExpiredJwtException e) {
             // Handle expired token here
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -55,9 +55,9 @@ public class JwtFillter extends OncePerRequestFilter {
         }
 
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = securityService.loadUserByUsername(userEmail);
+            UserDetails userDetails = authService.loadUserByUsername(userEmail);
 
-            if (jwtServices.validateToken(jwtToken, userDetails)) {
+            if (jwtServicesImpl.validateToken(jwtToken, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

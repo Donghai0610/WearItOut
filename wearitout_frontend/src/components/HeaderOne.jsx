@@ -119,7 +119,7 @@ const HeaderOne = () => {
                                     className="nav-menu__link"
 
                                 >
-                                    Home
+                                    Trang Chủ
                                 </Link>
                                 <ul
                                     className={`on-hover-dropdown common-dropdown nav-submenu scroll-sm ${activeIndex === 0 ? "open" : ""

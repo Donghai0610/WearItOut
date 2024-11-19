@@ -4,7 +4,7 @@ import com.g4.backend.model.enity.Role;
 import com.g4.backend.model.enity.User;
 import com.g4.backend.repository.UserRepository;
 import com.g4.backend.repository.UserRoleRepository;
-import com.g4.backend.service.SecurityService;
+import com.g4.backend.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,14 +14,15 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 @Service
-public class SecurityServiceImpl implements SecurityService {
+public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final UserRoleRepository userRoleRepository;
 
     @Autowired
-    public SecurityServiceImpl(UserRepository userRepository, UserRoleRepository userRoleRepository) {
+    public AuthServiceImpl(UserRepository userRepository, UserRoleRepository userRoleRepository) {
         this.userRepository = userRepository;
         this.userRoleRepository = userRoleRepository;
     }
@@ -46,6 +47,11 @@ public class SecurityServiceImpl implements SecurityService {
     @Override
     public List<String> getRoles(User user){
         return  user.getRoleUsers().stream().map(roleUser -> roleUser.getRole().getRoleName()).collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<User> findUserByEmail(String email) {
+        return Optional.empty();
     }
 
     public Collection<? extends GrantedAuthority> getAuthorities(int userId) {

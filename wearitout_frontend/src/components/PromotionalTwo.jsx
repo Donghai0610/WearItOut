@@ -1,5 +1,5 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React from 'react';
+import { Link } from 'react-router-dom';
 
 const PromotionalTwo = () => {
     return (
@@ -15,13 +15,13 @@ const PromotionalTwo = () => {
                             />
                             <div className="flex-between flex-wrap gap-16">
                                 <div className="">
-                                    <span className="text-heading text-sm mb-8">Latest Deal</span>
-                                    <h6 className="mb-0">iPhone 15 Pro Max</h6>
+                                    <span className="text-heading text-sm mb-8">Mới Nhất</span>
+                                    <h6 className="mb-0">Áo Khoác Nữ Thời Trang</h6>
                                     <Link
                                         to="/shop"
                                         className="d-inline-flex align-items-center gap-8 mt-16 text-heading text-md fw-medium border border-top-0 border-end-0 border-start-0 border-gray-900 hover-text-main-two-600 hover-border-main-two-600"
                                     >
-                                        Shop Now
+                                        Mua Ngay
                                         <span className="icon text-md d-flex">
                                             <i className="ph ph-plus" />
                                         </span>
@@ -42,13 +42,13 @@ const PromotionalTwo = () => {
                             />
                             <div className="flex-between flex-wrap gap-16">
                                 <div className="">
-                                    <span className="text-heading text-sm mb-8">Get 60% Off</span>
-                                    <h6 className="mb-0">Instax Mini 11 Camera</h6>
+                                    <span className="text-heading text-sm mb-8">Giảm 50%</span>
+                                    <h6 className="mb-0">Váy Maxi Xinh Xắn</h6>
                                     <Link
                                         to="/shop"
                                         className="d-inline-flex align-items-center gap-8 mt-16 text-heading text-md fw-medium border border-top-0 border-end-0 border-start-0 border-gray-900 hover-text-main-two-600 hover-border-main-two-600"
                                     >
-                                        Shop Now
+                                        Mua Ngay
                                         <span className="icon text-md d-flex">
                                             <i className="ph ph-plus" />
                                         </span>
@@ -69,13 +69,13 @@ const PromotionalTwo = () => {
                             />
                             <div className="flex-between flex-wrap gap-16">
                                 <div className="">
-                                    <span className="text-heading text-sm mb-8">Start From $250</span>
-                                    <h6 className="mb-0">Airpod Headphone</h6>
+                                    <span className="text-heading text-sm mb-8">Chỉ Từ $30</span>
+                                    <h6 className="mb-0">Áo Phông Basic</h6>
                                     <Link
                                         to="/shop"
                                         className="d-inline-flex align-items-center gap-8 mt-16 text-heading text-md fw-medium border border-top-0 border-end-0 border-start-0 border-gray-900 hover-text-main-two-600 hover-border-main-two-600"
                                     >
-                                        Shop Now
+                                        Mua Ngay
                                         <span className="icon text-md d-flex">
                                             <i className="ph ph-plus" />
                                         </span>
@@ -90,8 +90,7 @@ const PromotionalTwo = () => {
                 </div>
             </div>
         </section>
+    );
+};
 
-    )
-}
-
-export default PromotionalTwo
+export default PromotionalTwo;

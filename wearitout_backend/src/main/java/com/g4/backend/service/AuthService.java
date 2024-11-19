@@ -6,9 +6,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.List;
+import java.util.Optional;
 
-public interface SecurityService extends UserDetailsService {
+public interface AuthService extends UserDetailsService {
     public User findUserByUsername(String username);
     UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
     List<String> getRoles(User user);
+    public Optional<User> findUserByEmail(String email);
 }

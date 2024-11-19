@@ -1,8 +1,7 @@
-import React, { memo, useEffect, useState } from 'react'
+import React, { memo, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Slider from 'react-slick';
 import { getCountdown } from '../helper/Countdown';
-
 
 const SampleNextArrow = memo(function SampleNextArrow(props) {
     const { className, onClick } = props;
@@ -56,35 +55,31 @@ const DealsOne = () => {
                 breakpoint: 1599,
                 settings: {
                     slidesToShow: 5,
-
                 },
             },
             {
                 breakpoint: 1399,
                 settings: {
                     slidesToShow: 3,
-
                 },
             },
             {
                 breakpoint: 1199,
                 settings: {
                     slidesToShow: 2,
-
                 },
             },
             {
                 breakpoint: 575,
                 settings: {
                     slidesToShow: 1,
-
                 },
             },
-
         ],
     };
+
     return (
-        <section className="deals-weeek pt-80">
+        <section className="deals-week pt-80">
             <div className="container container-lg">
                 <div className="border border-gray-100 p-24 rounded-16">
                     <div className="section-heading mb-24">
@@ -110,24 +105,24 @@ const DealsOne = () => {
                             <img src="assets/images/thumbs/week-deal-img1.png" alt="" />
                         </div>
                         <div className="deal-week-box__content px-sm-4 d-block w-100 text-center">
-                            <h6 className="mb-20">Apple AirPods Max, Over Ear Headphones</h6>
+                            <h6 className="mb-20">Áo Kiểu Cao Cấp</h6>
                             <div className="countdown mt-20" id="countdown4">
                                 <ul className="countdown-list style-four flex-center flex-wrap">
                                     <li className="countdown-list__item flex-align flex-column text-sm fw-medium text-white rounded-circle bg-neutral-600">
                                         <span className="days" />
-                                        {timeLeft.days} <br /> Days
+                                        {timeLeft.days} <br /> Ngày
                                     </li>
                                     <li className="countdown-list__item flex-align flex-column text-sm fw-medium text-white rounded-circle bg-neutral-600">
                                         <span className="hours" />
-                                        {timeLeft.hours} <br /> Hour
+                                        {timeLeft.hours} <br /> Giờ
                                     </li>
                                     <li className="countdown-list__item flex-align flex-column text-sm fw-medium text-white rounded-circle bg-neutral-600">
                                         <span className="minutes" />
-                                        {timeLeft.minutes} <br /> Min
+                                        {timeLeft.minutes} <br /> Phút
                                     </li>
                                     <li className="countdown-list__item flex-align flex-column text-sm fw-medium text-white rounded-circle bg-neutral-600">
                                         <span className="seconds" />
-                                        {timeLeft.seconds} <br /> Sec
+                                        {timeLeft.seconds} <br /> Giây
                                     </li>
                                 </ul>
                             </div>
@@ -147,7 +142,7 @@ const DealsOne = () => {
                                         className="product-card__thumb flex-center rounded-8 bg-gray-50 position-relative"
                                     >
                                         <span className="product-card__badge bg-main-600 px-8 py-4 text-sm text-white position-absolute inset-inline-start-0 inset-block-start-0">
-                                            Sold
+                                            Mới
                                         </span>
                                         <img
                                             src="assets/images/thumbs/product-two-img1.png"
@@ -169,7 +164,7 @@ const DealsOne = () => {
                                                 className="link text-line-2"
                                                 tabIndex={0}
                                             >
-                                                Taylor Farms Broccoli Florets Vegetables
+                                                Áo Sơ Mi Trắng Nữ
                                             </Link>
                                         </h6>
                                         <div className="flex-align gap-4">
@@ -177,25 +172,7 @@ const DealsOne = () => {
                                                 <i className="ph-fill ph-storefront" />
                                             </span>
                                             <span className="text-gray-500 text-xs">
-                                                By Lucky Supermarket
-                                            </span>
-                                        </div>
-                                        <div className="mt-8">
-                                            <div
-                                                className="progress w-100 bg-color-three rounded-pill h-4"
-                                                role="progressbar"
-                                                aria-label="Basic example"
-                                                aria-valuenow={35}
-                                                aria-valuemin={0}
-                                                aria-valuemax={100}
-                                            >
-                                                <div
-                                                    className="progress-bar bg-tertiary-600 rounded-pill"
-                                                    style={{ width: "35%" }}
-                                                />
-                                            </div>
-                                            <span className="text-gray-900 text-xs fw-medium mt-8">
-                                                Sold: 18/35
+                                                By Fashion Store
                                             </span>
                                         </div>
                                         <div className="product-card__price my-20">
@@ -211,7 +188,7 @@ const DealsOne = () => {
                                             className="product-card__cart btn bg-gray-50 text-heading hover-bg-main-600 hover-text-white py-11 px-24 rounded-8 flex-center gap-8 fw-medium"
                                             tabIndex={0}
                                         >
-                                            Add To Cart <i className="ph ph-shopping-cart" />
+                                            Thêm vào giỏ <i className="ph ph-shopping-cart" />
                                         </Link>
                                     </div>
                                 </div>
@@ -223,7 +200,7 @@ const DealsOne = () => {
                                         className="product-card__thumb flex-center rounded-8 bg-gray-50 position-relative"
                                     >
                                         <span className="product-card__badge bg-danger-600 px-8 py-4 text-sm text-white position-absolute inset-inline-start-0 inset-block-start-0">
-                                            Sale 50%{" "}
+                                            Giảm 50%
                                         </span>
                                         <img
                                             src="assets/images/thumbs/product-two-img2.png"
@@ -245,7 +222,7 @@ const DealsOne = () => {
                                                 className="link text-line-2"
                                                 tabIndex={0}
                                             >
-                                                Taylor Farms Broccoli Florets Vegetables
+                                                Đầm Xòe Công Sở
                                             </Link>
                                         </h6>
                                         <div className="flex-align gap-4">
@@ -253,25 +230,7 @@ const DealsOne = () => {
                                                 <i className="ph-fill ph-storefront" />
                                             </span>
                                             <span className="text-gray-500 text-xs">
-                                                By Lucky Supermarket
-                                            </span>
-                                        </div>
-                                        <div className="mt-8">
-                                            <div
-                                                className="progress w-100 bg-color-three rounded-pill h-4"
-                                                role="progressbar"
-                                                aria-label="Basic example"
-                                                aria-valuenow={35}
-                                                aria-valuemin={0}
-                                                aria-valuemax={100}
-                                            >
-                                                <div
-                                                    className="progress-bar bg-tertiary-600 rounded-pill"
-                                                    style={{ width: "35%" }}
-                                                />
-                                            </div>
-                                            <span className="text-gray-900 text-xs fw-medium mt-8">
-                                                Sold: 18/35
+                                                By Fashion Store
                                             </span>
                                         </div>
                                         <div className="product-card__price my-20">
@@ -287,398 +246,18 @@ const DealsOne = () => {
                                             className="product-card__cart btn bg-gray-50 text-heading hover-bg-main-600 hover-text-white py-11 px-24 rounded-8 flex-center gap-8 fw-medium"
                                             tabIndex={0}
                                         >
-                                            Add To Cart <i className="ph ph-shopping-cart" />
+                                            Thêm vào giỏ <i className="ph ph-shopping-cart" />
                                         </Link>
                                     </div>
                                 </div>
                             </div>
-                            <div>
-                                <div className="product-card h-100 p-16 border border-gray-100 hover-border-main-600 rounded-16 position-relative transition-2">
-                                    <Link
-                                        to="/product-details-two"
-                                        className="product-card__thumb flex-center rounded-8 bg-gray-50 position-relative"
-                                    >
-                                        <span className="product-card__badge bg-warning-600 px-8 py-4 text-sm text-white position-absolute inset-inline-start-0 inset-block-start-0">
-                                            New
-                                        </span>
-                                        <img
-                                            src="assets/images/thumbs/product-two-img3.png"
-                                            alt=""
-                                            className="w-auto max-w-unset"
-                                        />
-                                    </Link>
-                                    <div className="product-card__content mt-16">
-                                        <div className="flex-align gap-6">
-                                            <span className="text-xs fw-medium text-gray-500">4.8</span>
-                                            <span className="text-15 fw-medium text-warning-600 d-flex">
-                                                <i className="ph-fill ph-star" />
-                                            </span>
-                                            <span className="text-xs fw-medium text-gray-500">(17k)</span>
-                                        </div>
-                                        <h6 className="title text-lg fw-semibold mt-12 mb-8">
-                                            <Link
-                                                to="/product-details-two"
-                                                className="link text-line-2"
-                                                tabIndex={0}
-                                            >
-                                                Taylor Farms Broccoli Florets Vegetables
-                                            </Link>
-                                        </h6>
-                                        <div className="flex-align gap-4">
-                                            <span className="text-tertiary-600 text-md d-flex">
-                                                <i className="ph-fill ph-storefront" />
-                                            </span>
-                                            <span className="text-gray-500 text-xs">
-                                                By Lucky Supermarket
-                                            </span>
-                                        </div>
-                                        <div className="mt-8">
-                                            <div
-                                                className="progress w-100 bg-color-three rounded-pill h-4"
-                                                role="progressbar"
-                                                aria-label="Basic example"
-                                                aria-valuenow={35}
-                                                aria-valuemin={0}
-                                                aria-valuemax={100}
-                                            >
-                                                <div
-                                                    className="progress-bar bg-tertiary-600 rounded-pill"
-                                                    style={{ width: "35%" }}
-                                                />
-                                            </div>
-                                            <span className="text-gray-900 text-xs fw-medium mt-8">
-                                                Sold: 18/35
-                                            </span>
-                                        </div>
-                                        <div className="product-card__price my-20">
-                                            <span className="text-gray-400 text-md fw-semibold text-decoration-line-through">
-                                                $28.99
-                                            </span>
-                                            <span className="text-heading text-md fw-semibold ">
-                                                $14.99 <span className="text-gray-500 fw-normal">/Qty</span>{" "}
-                                            </span>
-                                        </div>
-                                        <Link
-                                            to="/cart"
-                                            className="product-card__cart btn bg-gray-50 text-heading hover-bg-main-600 hover-text-white py-11 px-24 rounded-8 flex-center gap-8 fw-medium"
-                                            tabIndex={0}
-                                        >
-                                            Add To Cart <i className="ph ph-shopping-cart" />
-                                        </Link>
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <div className="product-card h-100 p-16 border border-gray-100 hover-border-main-600 rounded-16 position-relative transition-2">
-                                    <Link
-                                        to="/product-details-two"
-                                        className="product-card__thumb flex-center rounded-8 bg-gray-50 position-relative"
-                                    >
-                                        <span className="product-card__badge bg-tertiary-600 px-8 py-4 text-sm text-white position-absolute inset-inline-start-0 inset-block-start-0">
-                                            Best seller
-                                        </span>
-                                        <img
-                                            src="assets/images/thumbs/product-two-img4.png"
-                                            alt=""
-                                            className="w-auto max-w-unset"
-                                        />
-                                    </Link>
-                                    <div className="product-card__content mt-16">
-                                        <div className="flex-align gap-6">
-                                            <span className="text-xs fw-medium text-gray-500">4.8</span>
-                                            <span className="text-15 fw-medium text-warning-600 d-flex">
-                                                <i className="ph-fill ph-star" />
-                                            </span>
-                                            <span className="text-xs fw-medium text-gray-500">(17k)</span>
-                                        </div>
-                                        <h6 className="title text-lg fw-semibold mt-12 mb-8">
-                                            <Link
-                                                to="/product-details-two"
-                                                className="link text-line-2"
-                                                tabIndex={0}
-                                            >
-                                                Taylor Farms Broccoli Florets Vegetables
-                                            </Link>
-                                        </h6>
-                                        <div className="flex-align gap-4">
-                                            <span className="text-tertiary-600 text-md d-flex">
-                                                <i className="ph-fill ph-storefront" />
-                                            </span>
-                                            <span className="text-gray-500 text-xs">
-                                                By Lucky Supermarket
-                                            </span>
-                                        </div>
-                                        <div className="mt-8">
-                                            <div
-                                                className="progress w-100 bg-color-three rounded-pill h-4"
-                                                role="progressbar"
-                                                aria-label="Basic example"
-                                                aria-valuenow={35}
-                                                aria-valuemin={0}
-                                                aria-valuemax={100}
-                                            >
-                                                <div
-                                                    className="progress-bar bg-tertiary-600 rounded-pill"
-                                                    style={{ width: "35%" }}
-                                                />
-                                            </div>
-                                            <span className="text-gray-900 text-xs fw-medium mt-8">
-                                                Sold: 18/35
-                                            </span>
-                                        </div>
-                                        <div className="product-card__price my-20">
-                                            <span className="text-gray-400 text-md fw-semibold text-decoration-line-through">
-                                                $28.99
-                                            </span>
-                                            <span className="text-heading text-md fw-semibold ">
-                                                $14.99 <span className="text-gray-500 fw-normal">/Qty</span>{" "}
-                                            </span>
-                                        </div>
-                                        <Link
-                                            to="/cart"
-                                            className="product-card__cart btn bg-gray-50 text-heading hover-bg-main-600 hover-text-white py-11 px-24 rounded-8 flex-center gap-8 fw-medium"
-                                            tabIndex={0}
-                                        >
-                                            Add To Cart <i className="ph ph-shopping-cart" />
-                                        </Link>
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <div className="product-card h-100 p-16 border border-gray-100 hover-border-main-600 rounded-16 position-relative transition-2">
-                                    <Link
-                                        to="/product-details-two"
-                                        className="product-card__thumb flex-center rounded-8 bg-gray-50 position-relative"
-                                    >
-                                        <span className="product-card__badge bg-main-600 px-8 py-4 text-sm text-white position-absolute inset-inline-start-0 inset-block-start-0">
-                                            Best Seller{" "}
-                                        </span>
-                                        <img
-                                            src="assets/images/thumbs/product-two-img5.png"
-                                            alt=""
-                                            className="w-auto max-w-unset"
-                                        />
-                                    </Link>
-                                    <div className="product-card__content mt-16">
-                                        <div className="flex-align gap-6">
-                                            <span className="text-xs fw-medium text-gray-500">4.8</span>
-                                            <span className="text-15 fw-medium text-warning-600 d-flex">
-                                                <i className="ph-fill ph-star" />
-                                            </span>
-                                            <span className="text-xs fw-medium text-gray-500">(17k)</span>
-                                        </div>
-                                        <h6 className="title text-lg fw-semibold mt-12 mb-8">
-                                            <Link
-                                                to="/product-details-two"
-                                                className="link text-line-2"
-                                                tabIndex={0}
-                                            >
-                                                Taylor Farms Broccoli Florets Vegetables
-                                            </Link>
-                                        </h6>
-                                        <div className="flex-align gap-4">
-                                            <span className="text-tertiary-600 text-md d-flex">
-                                                <i className="ph-fill ph-storefront" />
-                                            </span>
-                                            <span className="text-gray-500 text-xs">
-                                                By Lucky Supermarket
-                                            </span>
-                                        </div>
-                                        <div className="mt-8">
-                                            <div
-                                                className="progress w-100 bg-color-three rounded-pill h-4"
-                                                role="progressbar"
-                                                aria-label="Basic example"
-                                                aria-valuenow={35}
-                                                aria-valuemin={0}
-                                                aria-valuemax={100}
-                                            >
-                                                <div
-                                                    className="progress-bar bg-tertiary-600 rounded-pill"
-                                                    style={{ width: "35%" }}
-                                                />
-                                            </div>
-                                            <span className="text-gray-900 text-xs fw-medium mt-8">
-                                                Sold: 18/35
-                                            </span>
-                                        </div>
-                                        <div className="product-card__price my-20">
-                                            <span className="text-gray-400 text-md fw-semibold text-decoration-line-through">
-                                                $28.99
-                                            </span>
-                                            <span className="text-heading text-md fw-semibold ">
-                                                $14.99 <span className="text-gray-500 fw-normal">/Qty</span>{" "}
-                                            </span>
-                                        </div>
-                                        <Link
-                                            to="/cart"
-                                            className="product-card__cart btn bg-gray-50 text-heading hover-bg-main-600 hover-text-white py-11 px-24 rounded-8 flex-center gap-8 fw-medium"
-                                            tabIndex={0}
-                                        >
-                                            Add To Cart <i className="ph ph-shopping-cart" />
-                                        </Link>
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <div className="product-card h-100 p-16 border border-gray-100 hover-border-main-600 rounded-16 position-relative transition-2">
-                                    <Link
-                                        to="/product-details-two"
-                                        className="product-card__thumb flex-center rounded-8 bg-gray-50 position-relative"
-                                    >
-                                        <span className="product-card__badge bg-tertiary-600 px-8 py-4 text-sm text-white position-absolute inset-inline-start-0 inset-block-start-0">
-                                            Best seller
-                                        </span>
-                                        <img
-                                            src="assets/images/thumbs/product-two-img6.png"
-                                            alt=""
-                                            className="w-auto max-w-unset"
-                                        />
-                                    </Link>
-                                    <div className="product-card__content mt-16">
-                                        <div className="flex-align gap-6">
-                                            <span className="text-xs fw-medium text-gray-500">4.8</span>
-                                            <span className="text-15 fw-medium text-warning-600 d-flex">
-                                                <i className="ph-fill ph-star" />
-                                            </span>
-                                            <span className="text-xs fw-medium text-gray-500">(17k)</span>
-                                        </div>
-                                        <h6 className="title text-lg fw-semibold mt-12 mb-8">
-                                            <Link
-                                                to="/product-details-two"
-                                                className="link text-line-2"
-                                                tabIndex={0}
-                                            >
-                                                Taylor Farms Broccoli Florets Vegetables
-                                            </Link>
-                                        </h6>
-                                        <div className="flex-align gap-4">
-                                            <span className="text-tertiary-600 text-md d-flex">
-                                                <i className="ph-fill ph-storefront" />
-                                            </span>
-                                            <span className="text-gray-500 text-xs">
-                                                By Lucky Supermarket
-                                            </span>
-                                        </div>
-                                        <div className="mt-8">
-                                            <div
-                                                className="progress w-100 bg-color-three rounded-pill h-4"
-                                                role="progressbar"
-                                                aria-label="Basic example"
-                                                aria-valuenow={35}
-                                                aria-valuemin={0}
-                                                aria-valuemax={100}
-                                            >
-                                                <div
-                                                    className="progress-bar bg-tertiary-600 rounded-pill"
-                                                    style={{ width: "35%" }}
-                                                />
-                                            </div>
-                                            <span className="text-gray-900 text-xs fw-medium mt-8">
-                                                Sold: 18/35
-                                            </span>
-                                        </div>
-                                        <div className="product-card__price my-20">
-                                            <span className="text-gray-400 text-md fw-semibold text-decoration-line-through">
-                                                $28.99
-                                            </span>
-                                            <span className="text-heading text-md fw-semibold ">
-                                                $14.99 <span className="text-gray-500 fw-normal">/Qty</span>{" "}
-                                            </span>
-                                        </div>
-                                        <Link
-                                            to="/cart"
-                                            className="product-card__cart btn bg-gray-50 text-heading hover-bg-main-600 hover-text-white py-11 px-24 rounded-8 flex-center gap-8 fw-medium"
-                                            tabIndex={0}
-                                        >
-                                            Add To Cart <i className="ph ph-shopping-cart" />
-                                        </Link>
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <div className="product-card h-100 p-16 border border-gray-100 hover-border-main-600 rounded-16 position-relative transition-2">
-                                    <Link
-                                        to="/product-details-two"
-                                        className="product-card__thumb flex-center rounded-8 bg-gray-50 position-relative"
-                                    >
-                                        <span className="product-card__badge bg-warning-600 px-8 py-4 text-sm text-white position-absolute inset-inline-start-0 inset-block-start-0">
-                                            New
-                                        </span>
-                                        <img
-                                            src="assets/images/thumbs/product-two-img9.png"
-                                            alt=""
-                                            className="w-auto max-w-unset"
-                                        />
-                                    </Link>
-                                    <div className="product-card__content mt-16">
-                                        <div className="flex-align gap-6">
-                                            <span className="text-xs fw-medium text-gray-500">4.8</span>
-                                            <span className="text-15 fw-medium text-warning-600 d-flex">
-                                                <i className="ph-fill ph-star" />
-                                            </span>
-                                            <span className="text-xs fw-medium text-gray-500">(17k)</span>
-                                        </div>
-                                        <h6 className="title text-lg fw-semibold mt-12 mb-8">
-                                            <Link
-                                                to="/product-details-two"
-                                                className="link text-line-2"
-                                                tabIndex={0}
-                                            >
-                                                Taylor Farms Broccoli Florets Vegetables
-                                            </Link>
-                                        </h6>
-                                        <div className="flex-align gap-4">
-                                            <span className="text-tertiary-600 text-md d-flex">
-                                                <i className="ph-fill ph-storefront" />
-                                            </span>
-                                            <span className="text-gray-500 text-xs">
-                                                By Lucky Supermarket
-                                            </span>
-                                        </div>
-                                        <div className="mt-8">
-                                            <div
-                                                className="progress w-100 bg-color-three rounded-pill h-4"
-                                                role="progressbar"
-                                                aria-label="Basic example"
-                                                aria-valuenow={35}
-                                                aria-valuemin={0}
-                                                aria-valuemax={100}
-                                            >
-                                                <div
-                                                    className="progress-bar bg-tertiary-600 rounded-pill"
-                                                    style={{ width: "35%" }}
-                                                />
-                                            </div>
-                                            <span className="text-gray-900 text-xs fw-medium mt-8">
-                                                Sold: 18/35
-                                            </span>
-                                        </div>
-                                        <div className="product-card__price my-20">
-                                            <span className="text-gray-400 text-md fw-semibold text-decoration-line-through">
-                                                $28.99
-                                            </span>
-                                            <span className="text-heading text-md fw-semibold ">
-                                                $14.99 <span className="text-gray-500 fw-normal">/Qty</span>{" "}
-                                            </span>
-                                        </div>
-                                        <Link
-                                            to="/cart"
-                                            className="product-card__cart btn bg-gray-50 text-heading hover-bg-main-600 hover-text-white py-11 px-24 rounded-8 flex-center gap-8 fw-medium"
-                                            tabIndex={0}
-                                        >
-                                            Add To Cart <i className="ph ph-shopping-cart" />
-                                        </Link>
-                                    </div>
-                                </div>
-                            </div>
+                            {/* Thêm các sản phẩm khác tương tự */}
                         </Slider>
                     </div>
                 </div>
             </div>
         </section>
-
-    )
+    );
 }
 
-export default DealsOne
+export default DealsOne;

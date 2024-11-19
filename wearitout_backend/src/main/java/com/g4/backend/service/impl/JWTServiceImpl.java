@@ -2,7 +2,7 @@ package com.g4.backend.service.impl;
 
 
 import com.g4.backend.model.enity.User;
-import com.g4.backend.service.SecurityService;
+import com.g4.backend.service.AuthService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -16,13 +16,13 @@ import java.util.function.Function;
 
 
 @Component
-public class JWTService {
+public class JWTServiceImpl {
     public static final String SERECT = "5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437";
     private HashSet<String> blacklistedTokens = new HashSet<>();
-    private final SecurityService userCustomerServices;
+    private final AuthService userCustomerServices;
 
     @Autowired
-    public JWTService(HashSet<String> blacklistedTokens, SecurityService userCustomerServices) {
+    public JWTServiceImpl(HashSet<String> blacklistedTokens, AuthService userCustomerServices) {
         this.blacklistedTokens = blacklistedTokens;
         this.userCustomerServices = userCustomerServices;
     }

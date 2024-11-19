@@ -38,7 +38,7 @@ const HomePageOne = () => {
       <ColorInit color={false} />
 
       {/* HeaderOne */}
-      <HeaderOne />
+      <HeaderOne  category={false}/>
 
       {/* BannerOne */}
       <BannerOne />

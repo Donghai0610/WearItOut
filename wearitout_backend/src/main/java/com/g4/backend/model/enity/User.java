@@ -1,6 +1,7 @@
 package com.g4.backend.model.enity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.g4.backend.common.RegistrationSource;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -70,6 +71,14 @@ public class User {
 
     @Column(name = "delete_at")
     private LocalDate deleteAt;
+
+
+    @Column(name = "note", length = 512)
+    private String note;
+
+    @Column(name = "source")
+    @Enumerated(EnumType.STRING)
+    private RegistrationSource source;
 
     //Mapper relation auth_token
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
