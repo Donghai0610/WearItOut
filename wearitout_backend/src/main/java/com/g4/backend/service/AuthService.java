@@ -13,4 +13,5 @@ public interface AuthService extends UserDetailsService {
     UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
     List<String> getRoles(User user);
     public Optional<User> findUserByEmail(String email);
+    public User saveUser(User user);
 }

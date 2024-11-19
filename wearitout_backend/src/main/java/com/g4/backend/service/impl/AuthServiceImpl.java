@@ -54,6 +54,11 @@ public class AuthServiceImpl implements AuthService {
         return Optional.empty();
     }
 
+    @Override
+    public User saveUser(User user) {
+        return userRepository.save(user);
+    }
+
     public Collection<? extends GrantedAuthority> getAuthorities(int userId) {
         List<Role> roles = userRoleRepository.findRolesByUserId(userId);
         return roles.stream()

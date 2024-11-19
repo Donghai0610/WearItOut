@@ -1,8 +1,11 @@
 package com.g4.backend.config;
 
 import com.g4.backend.common.RegistrationSource;
+import com.g4.backend.model.dto.reponse.LoginResponeDTO;
 import com.g4.backend.model.enity.User;
 import com.g4.backend.service.AuthService;
+import com.g4.backend.service.UserService;
+import com.g4.backend.service.impl.JWTServiceImpl;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,6 +21,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -25,11 +29,11 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
 
     private final AuthService authService;
     private final UserService userService;
-    private final JwtService jwtService;
+    private final JWTServiceImpl jwtService;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public OAuth2LoginSuccessHandler(AuthService authService, UserService userService, @Lazy BCryptPasswordEncoder bCryptPasswordEncoder, JwtService jwtService) {
+    public OAuth2LoginSuccessHandler(AuthService authService, UserService userService, @Lazy BCryptPasswordEncoder bCryptPasswordEncoder, JWTServiceImpl jwtService) {
         this.authService = authService;
         this.userService = userService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
@@ -54,7 +58,7 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
             String email = attributes.getOrDefault("email", "").toString();
             String name = attributes.getOrDefault("name", "").toString();
 
-            User user = authService.fin(email).orElseGet(() -> {
+            User user = authService.findUserByEmail(email).orElseGet(() -> {
                 // Tạo người dùng mới nếu không tồn tại
                 User newUser = new User();
                 newUser.setEmail(email);
@@ -62,15 +66,15 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
                 newUser.setSource(RegistrationSource.GOOGLE);
                 String encodedPassword = bCryptPasswordEncoder.encode("123");
                 newUser.setPassword(encodedPassword);
-                newUser.setSetting(userService.getDefaultSetting());
+                newUser.setRoleUsers(userService.getRoleDefault().getRoleUsers());
                 authService.saveUser(newUser);
-                Thread thread = new Thread(()->userService.sendAccount(name, email,"123"));
-                thread.start();
+//                Thread thread = new Thread(()->userService.sendAccount(name, email,"123"));
+//                thread.start();
                 return newUser;
             });
 
             // Tạo JWT token
-            String roleName = user.getSetting() != null ? user.getSetting().getName() : "USER";
+           List<String> roleName = authService.getRoles(user);
             String jwt = jwtService.generateToken(user.getUsername());
 
             // Tạo đối tượng LoginResponeDTO để trả về
