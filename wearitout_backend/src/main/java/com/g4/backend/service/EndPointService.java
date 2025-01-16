@@ -29,7 +29,8 @@ public class EndPointService {
             "/api/v1/shop/vn-pay-callback",
             "/api/v1/shop/shop-payment/{shopId}",
             "/api/v1/admin/settings/{typeId}",
-            "/api/v1/product/shops"
+            "/api/v1/product/shops",
+            "/swagger-ui/**"
     };
     public static  final String[] adminShopGetEndPoint = {
             "/api/v1/product/productofshop/**",

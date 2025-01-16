@@ -70,7 +70,7 @@ const TopSellingOne = () => {
                 <div className="border border-gray-100 p-24 rounded-16">
                     <div className="section-heading mb-24">
                         <div className="flex-between flex-wrap gap-8">
-                            <h5 className="mb-0">Top Selling Products</h5>
+                        <h5 className="mb-0">Sản phẩm bán chạy</h5>
                             <div className="flex-align mr-point gap-16">
                                 <Link
                                     to="/shop"

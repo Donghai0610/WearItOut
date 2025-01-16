@@ -58,13 +58,13 @@ const FeaturedOne = () => {
                         <div className="border border-gray-100 p-24 rounded-16">
                             <div className="section-heading mb-24">
                                 <div className="flex-between flex-wrap gap-8">
-                                    <h5 className="mb-0">Featured Products </h5>
+                                    <h5 className="mb-0">Sản phẩm nổi bật </h5>
                                     <div className="flex-align mr-point gap-16">
                                         <Link
                                             to="/shop"
                                             className="text-sm fw-medium text-gray-700 hover-text-main-600 hover-text-decoration-underline"
                                         >
-                                            View All Deals
+                                           Xem tất cả ưu đãi
                                         </Link>
                                     </div>
                                 </div>
@@ -81,7 +81,7 @@ const FeaturedOne = () => {
                                                         tabIndex={0}
                                                     >
                                                         <span className="product-card__badge bg-danger-600 px-8 py-4 text-sm text-white position-absolute inset-inline-start-0 inset-block-start-0">
-                                                            Sale 50%{" "}
+                                                        Giảm giá 50%{" "}
                                                         </span>
                                                         <img
                                                             src="assets/images/thumbs/product-two-img2.png"

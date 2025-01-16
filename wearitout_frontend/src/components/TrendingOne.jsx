@@ -8,7 +8,7 @@ const TrendingOne = () => {
                 <div className="border border-gray-100 p-24 rounded-16">
                     <div className="section-heading mb-24">
                         <div className="flex-between flex-wrap gap-8">
-                            <h5 className="mb-0">Trending Products</h5>
+                            <h5 className="mb-0">Sản phẩm xu hướng</h5>
                             <ul
                                 className="nav common-tab style-two nav-pills"
                                 id="pills-tab"

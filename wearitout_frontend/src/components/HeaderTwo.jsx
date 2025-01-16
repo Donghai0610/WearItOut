@@ -98,7 +98,7 @@ const HeaderTwo = ({ category }) => {
                 </button>
                 <div className="mobile-menu__inner">
                     <Link to="/" className="mobile-menu__logo">
-                        <img src="assets/images/logo/logo.png" alt="Logo" />
+                        <img src="assets/images/logo/logo.png" alt="Logo" width={200}/>
                     </Link>
                     <div className="mobile-menu__menu">
                         {/* Nav Menu Start */}
@@ -107,32 +107,9 @@ const HeaderTwo = ({ category }) => {
                                 className={`on-hover-item nav-menu__item has-submenu ${activeIndex === 0 ? "d-block" : ""
                                     }`}
                             >
-                                <Link to="#" className="nav-menu__link">
+                                <Link to="/home" className="nav-menu__link">
                                     Trang Chủ
                                 </Link>
-                                <ul
-                                    className={`on-hover-dropdown common-dropdown nav-submenu scroll-sm ${activeIndex === 0 ? "open" : ""
-                                        }`}
-                                >
-                                    <li className="common-dropdown__item nav-submenu__item">
-                                        <Link onClick={() => setActiveIndex(null)}
-                                            to="/"
-                                            className="common-dropdown__link nav-submenu__link hover-bg-neutral-100"
-                                        >
-                                            {" "}
-                                            Home One
-                                        </Link>
-                                    </li>
-                                    <li className="common-dropdown__item nav-submenu__item">
-                                        <Link onClick={() => setActiveIndex(null)}
-                                            to="/index-two"
-                                            className="common-dropdown__link nav-submenu__link hover-bg-neutral-100"
-                                        >
-                                            {" "}
-                                            Home Two
-                                        </Link>
-                                    </li>
-                                </ul>
                             </li>
                             <li onClick={() => handleMenuClick(1)}
                                 className={`on-hover-item nav-menu__item has-submenu ${activeIndex === 1 ? "d-block" : ""

@@ -1,11 +1,69 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import { login } from '../services/account.js';
 
 const Account = () => {
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [rememberMe, setRememberMe] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+
+    useEffect(() => {
+        const savedUsername = localStorage.getItem('username');
+        const savedPassword = localStorage.getItem('password');
+        const savedRememberMe = localStorage.getItem('rememberMe') === 'true';
+
+        if (savedRememberMe) {
+            setUsername(savedUsername || '');
+            setPassword(savedPassword || '');
+            setRememberMe(savedRememberMe);
+        }
+    }, []);
+
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        if (rememberMe) {
+            localStorage.setItem('username', username);
+            localStorage.setItem('password', password);
+            localStorage.setItem('rememberMe', rememberMe);
+        } else {
+            localStorage.removeItem('username');
+            localStorage.removeItem('password');
+            localStorage.removeItem('rememberMe');
+        }
+
+        try {
+            const data = await login(username, password);
+            Swal.fire({
+                title: 'Success!',
+                text: 'Login successful',
+                icon: 'success',
+                confirmButtonText: 'OK',
+            });
+            console.log('Login successful', data);
+            // Handle successful login (e.g., save token, redirect)
+        } catch (error) {
+            Swal.fire({
+                title: 'Error!',
+                text: error.message,
+                icon: 'error',
+                confirmButtonText: 'OK',
+            });
+            console.error('Login failed', error);
+            // Handle login failure (e.g., show error message)
+        }
+    };
+
+    const handleGoogleLogin = () => {
+        // Chuyển hướng người dùng đến URL OAuth2
+        window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+    };
+
     return (
         <section className="account py-80">
             <div className="container container-lg">
-                <form action="#">
+                <form onSubmit={handleLogin}>
                     <div className="row gy-4">
                         {/* Login Card Start */}
                         <div className="col-xl-6 pe-xl-5">
@@ -16,13 +74,15 @@ const Account = () => {
                                         htmlFor="username"
                                         className="text-neutral-900 text-lg mb-8 fw-medium"
                                     >
-                                        Username or email address <span className="text-danger">*</span>{" "}
+                                        Username or email address <span className="text-danger">*</span>
                                     </label>
                                     <input
                                         type="text"
                                         className="common-input"
                                         id="username"
                                         placeholder="First Name"
+                                        value={username}
+                                        onChange={(e) => setUsername(e.target.value)}
                                     />
                                 </div>
                                 <div className="mb-24">
@@ -34,15 +94,16 @@ const Account = () => {
                                     </label>
                                     <div className="position-relative">
                                         <input
-                                            type="password"
+                                            type={showPassword ? 'text' : 'password'}
                                             className="common-input"
                                             id="password"
                                             placeholder="Enter Password"
-                                            defaultValue="password"
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
                                         />
                                         <span
-                                            className="toggle-password position-absolute top-50 inset-inline-end-0 me-16 translate-middle-y cursor-pointer ph ph-eye-slash"
-                                            id="#password"
+                                            className={`toggle-password position-absolute top-50 inset-inline-end-0 me-16 translate-middle-y cursor-pointer ph ${showPassword ? 'ph-eye' : 'ph-eye-slash'}`}
+                                            onClick={() => setShowPassword(!showPassword)}
                                         />
                                     </div>
                                 </div>
@@ -55,7 +116,8 @@ const Account = () => {
                                             <input
                                                 className="form-check-input"
                                                 type="checkbox"
-                                                defaultValue=""
+                                                checked={rememberMe}
+                                                onChange={(e) => setRememberMe(e.target.checked)}
                                                 id="remember"
                                             />
                                             <label
@@ -75,6 +137,15 @@ const Account = () => {
                                         Forgot your password?
                                     </Link>
                                 </div>
+                                <div className="mt-48">
+                                    <button
+                                        type="button"
+                                        className="btn btn-secondary py-18 px-40"
+                                        onClick={handleGoogleLogin}
+                                    >
+                                        Login with Google
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         {/* Login Card End */}
@@ -87,7 +158,7 @@ const Account = () => {
                                         htmlFor="usernameTwo"
                                         className="text-neutral-900 text-lg mb-8 fw-medium"
                                     >
-                                        Username <span className="text-danger">*</span>{" "}
+                                        Username <span className="text-danger">*</span>
                                     </label>
                                     <input
                                         type="text"
@@ -102,7 +173,7 @@ const Account = () => {
                                         className="text-neutral-900 text-lg mb-8 fw-medium"
                                     >
                                         Email address
-                                        <span className="text-danger">*</span>{" "}
+                                        <span className="text-danger">*</span>
                                     </label>
                                     <input
                                         type="email"
@@ -121,15 +192,15 @@ const Account = () => {
                                     </label>
                                     <div className="position-relative">
                                         <input
-                                            type="password"
+                                            type={showPassword ? 'text' : 'password'}
                                             className="common-input"
                                             id="enter-password"
                                             placeholder="Enter Password"
                                             defaultValue="password"
                                         />
                                         <span
-                                            className="toggle-password position-absolute top-50 inset-inline-end-0 me-16 translate-middle-y cursor-pointer ph ph-eye-slash"
-                                            id="#enter-password"
+                                            className={`toggle-password position-absolute top-50 inset-inline-end-0 me-16 translate-middle-y cursor-pointer ph ${showPassword ? 'ph-eye' : 'ph-eye-slash'}`}
+                                            onClick={() => setShowPassword(!showPassword)}
                                         />
                                     </div>
                                 </div>
@@ -157,8 +228,7 @@ const Account = () => {
                 </form>
             </div>
         </section>
+    );
+};
 
-    )
-}
-
-export default Account
+export default Account;

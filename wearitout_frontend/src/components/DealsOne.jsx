@@ -90,7 +90,7 @@ const DealsOne = () => {
                                     to="/shop"
                                     className="text-sm fw-medium text-gray-700 hover-text-main-600 hover-text-decoration-underline"
                                 >
-                                    View All Deals
+                                    Xem các sản phẩm khác
                                 </Link>
                             </div>
                         </div>

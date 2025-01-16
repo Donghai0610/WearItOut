@@ -66,6 +66,7 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> {
+                    auth.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll();
                     auth.requestMatchers(HttpMethod.POST, EndPointService.publicPostEndPoint).permitAll();
                     auth.requestMatchers(HttpMethod.GET, EndPointService.adminGetEndPoint).permitAll();
                     auth.requestMatchers(HttpMethod.POST, EndPointService.adminPostEndPoint).hasAuthority("ROLE_ADMIN");
