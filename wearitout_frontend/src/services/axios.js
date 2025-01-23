@@ -1,10 +1,7 @@
-// axios.js
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-    // baseURL: "http://152.42.194.78:8080",
-    // baseURL: "https://152.42.194.78:8443",
-    baseURL: "http://localhost:8080",
+    baseURL: "http://localhost:8080", // URL cơ bản của API
     headers: {
         'Content-Type': 'application/json',
     },
@@ -14,13 +11,18 @@ const axiosInstance = axios.create({
 // Add a request interceptor
 axiosInstance.interceptors.request.use(
     function (config) {
-        // Do something before request is sent
-        const token = localStorage.getItem('token');
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
+        // Kiểm tra nếu API không yêu cầu xác thực
+        const noAuthRequired = config.noAuth || false; // Cờ `noAuth` để tắt xác thực nếu được đặt
+
+        if (!noAuthRequired) {
+            // Nếu không có cờ `noAuth`, kiểm tra và thêm token từ localStorage
+            const token = localStorage.getItem('token');
+            if (token) {
+                config.headers.Authorization = `Bearer ${token}`;
+            }
         }
 
-        // Check if data is an instance of FormData and set the appropriate Content-Type
+        // Kiểm tra nếu data là FormData
         if (config.data instanceof FormData) {
             config.headers['Content-Type'] = 'multipart/form-data';
         }
@@ -28,7 +30,6 @@ axiosInstance.interceptors.request.use(
         return config;
     },
     function (error) {
-        // Do something with request error
         return Promise.reject(error);
     }
 );
@@ -36,13 +37,10 @@ axiosInstance.interceptors.request.use(
 // Add a response interceptor
 axiosInstance.interceptors.response.use(
     function (response) {
-        // Any status code that lie within the range of 2xx cause this function to trigger
-        // Do something with response data
         return response;
     },
     function (error) {
-        // Any status codes that falls outside the range of 2xx cause this function to trigger
-        // Do something with response error
+        // Xử lý lỗi tùy thuộc vào mã lỗi
         if (error.response && error.response.status === 400) {
             // localStorage.clear();
             // window.location.href = "/login";

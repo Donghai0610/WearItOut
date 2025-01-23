@@ -1,5 +1,6 @@
+import axiosInstance from "./axios";
 
-export const login = async (username, password) => {
+ const login = async (username, password) => {
     const response = await fetch('http://localhost:8080/api/v1/auth/login', {
         method: 'POST',
         headers: {
@@ -15,3 +16,32 @@ export const login = async (username, password) => {
         throw new Error(data.message || 'Login failed');
     }
 };
+
+const register = async (username, password, email, phone) => {
+    try {
+        const response = await axiosInstance.post(
+            '/api/v1/user/register', 
+            {
+                username,
+                password,
+                email,
+                phone,
+            },
+            {
+                noAuth: true, // Đặt `noAuth` trong config
+            }
+        );
+        console.log('Registration successful:', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error during registration:', error.response?.data || error.message);
+        throw error;
+    }
+};
+   
+ const  Account_Service ={
+    login,
+    register,
+
+};
+export default Account_Service;

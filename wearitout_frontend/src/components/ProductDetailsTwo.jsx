@@ -71,11 +71,11 @@ const ProductDetailsTwo = () => {
                                     <div className="flex-center mb-24 flex-wrap gap-16 bg-color-one rounded-8 py-16 px-24 position-relative z-1">
                                         <img
                                             src="assets/images/bg/details-offer-bg.png"
-                                            alt=""
+                                            alt="Hình nền ưu đãi"
                                             className="position-absolute inset-block-start-0 inset-inline-start-0 w-100 h-100 z-n1"
                                         />
                                         <div className="flex-align gap-16">
-                                            <span className="text-white text-sm">Special Offer:</span>
+                                            <span className="text-white text-sm">Ưu đãi đặc biệt:</span>
                                         </div>
                                         <div className="countdown" id="countdown11">
                                             <ul className="countdown-list flex-align flex-wrap">
@@ -94,12 +94,11 @@ const ProductDetailsTwo = () => {
                                             </ul>
                                         </div>
                                         <span className="text-white text-xs">
-                                            Remains untill the end of the offer
+                                            Còn lại cho đến khi kết thúc ưu đãi
                                         </span>
                                     </div>
                                     <h5 className="mb-12">
-                                        HP Chromebook With Intel Celeron, 4GB Memory &amp; 64GB eMMC -
-                                        Modern Gray
+                                        Áo Khoác Nam Thời Trang - Màu Xám Hiện Đại
                                     </h5>
                                     <div className="flex-align flex-wrap gap-12">
                                         <div className="flex-align gap-12 flex-wrap">
@@ -121,7 +120,7 @@ const ProductDetailsTwo = () => {
                                                 </span>
                                             </div>
                                             <span className="text-sm fw-medium text-neutral-600">
-                                                4.7 Star Rating
+                                                Đánh giá 4.7 sao
                                             </span>
                                             <span className="text-sm fw-medium text-gray-500">
                                                 (21,671)
@@ -129,18 +128,12 @@ const ProductDetailsTwo = () => {
                                         </div>
                                         <span className="text-sm fw-medium text-gray-500">|</span>
                                         <span className="text-gray-900">
-                                            {" "}
-                                            <span className="text-gray-400">SKU:</span>EB4DRP{" "}
+                                            <span className="text-gray-400">Mã SKU:</span>EB4DRP
                                         </span>
                                     </div>
                                     <span className="mt-32 pt-32 text-gray-700 border-top border-gray-100 d-block" />
                                     <p className="text-gray-700">
-                                        Geared up and ready to roll: Get the responsive performance
-                                        you're looking for with an Intel processor and 64 GB eMMC
-                                        storage. Stay productive with compatible apps like Microsoft
-                                        Office, Google Workspace, and more. The Chrome OS gives you a
-                                        fast, simple, and secure online experience with built-in virus
-                                        protection.
+                                        Sản phẩm được trang bị bộ xử lý Intel và bộ nhớ eMMC 64 GB, mang lại hiệu suất đáp ứng nhanh chóng. Giữ năng suất với các ứng dụng tương thích như Microsoft Office, Google Workspace và nhiều hơn nữa. Hệ điều hành Chrome OS mang đến trải nghiệm trực tuyến nhanh chóng, đơn giản và an toàn với bảo vệ chống virus tích hợp.
                                     </p>
                                     <div className="my-32 flex-align gap-16 flex-wrap">
                                         <div className="flex-align gap-8">
@@ -151,7 +144,7 @@ const ProductDetailsTwo = () => {
                                             <h6 className="mb-0">USD 320.99</h6>
                                         </div>
                                         <div className="flex-align gap-8">
-                                            <span className="text-gray-700">Regular Price</span>
+                                            <span className="text-gray-700">Giá gốc</span>
                                             <h6 className="text-xl text-gray-400 mb-0 fw-medium">
                                                 USD 452.99
                                             </h6>
@@ -162,32 +155,32 @@ const ProductDetailsTwo = () => {
                                             to="#"
                                             className="px-12 py-8 text-sm rounded-8 flex-align gap-8 text-gray-900 border border-gray-200 hover-border-main-600 hover-text-main-600"
                                         >
-                                            Monthyly EMI USD 15.00
+                                            Trả góp hàng tháng USD 15.00
                                             <i className="ph ph-caret-right" />
                                         </Link>
                                         <Link
                                             to="#"
                                             className="px-12 py-8 text-sm rounded-8 flex-align gap-8 text-gray-900 border border-gray-200 hover-border-main-600 hover-text-main-600"
                                         >
-                                            Shipping Charge
+                                            Phí vận chuyển
                                             <i className="ph ph-caret-right" />
                                         </Link>
                                         <Link
                                             to="#"
                                             className="px-12 py-8 text-sm rounded-8 flex-align gap-8 text-gray-900 border border-gray-200 hover-border-main-600 hover-text-main-600"
                                         >
-                                            Security &amp; Privacy
+                                            Bảo mật &amp; Quyền riêng tư
                                             <i className="ph ph-caret-right" />
                                         </Link>
                                     </div>
                                     <span className="mt-32 pt-32 text-gray-700 border-top border-gray-100 d-block" />
                                     <div className="mt-32">
-                                        <h6 className="mb-16">Quick Overview</h6>
+                                        <h6 className="mb-16">Tổng quan nhanh</h6>
                                         <div className="flex-between align-items-start flex-wrap gap-16">
                                             <div>
                                                 <span className="text-gray-900 d-block mb-12">
-                                                    Color:
-                                                    <span className="fw-medium">Mineral Silver</span>
+                                                    Màu sắc:
+                                                    <span className="fw-medium">Bạc Khoáng</span>
                                                 </span>
                                                 <div className="color-list flex-align gap-8">
                                                     <button
@@ -214,27 +207,27 @@ const ProductDetailsTwo = () => {
                                             </div>
                                             <div>
                                                 <span className="text-gray-900 d-block mb-12">
-                                                    Pattern Name:
-                                                    <span className="fw-medium">with offer</span>
+                                                    Tên mẫu:
+                                                    <span className="fw-medium">có ưu đãi</span>
                                                 </span>
                                                 <div className="flex-align gap-8 flex-wrap">
                                                     <Link
                                                         to="#"
                                                         className="px-12 py-8 text-sm rounded-8 text-gray-900 border border-gray-200 hover-border-main-600 hover-text-main-600"
                                                     >
-                                                        with offer{" "}
+                                                        có ưu đãi
                                                     </Link>
                                                     <Link
                                                         to="#"
                                                         className="px-12 py-8 text-sm rounded-8 text-gray-900 border border-gray-200 hover-border-main-600 hover-text-main-600"
                                                     >
-                                                        12th Gen Laptop
+                                                        Laptop thế hệ 12
                                                     </Link>
                                                     <Link
                                                         to="#"
                                                         className="px-12 py-8 text-sm rounded-8 text-gray-900 border border-gray-200 hover-border-main-600 hover-text-main-600"
                                                     >
-                                                        without offer
+                                                        không có ưu đãi
                                                     </Link>
                                                 </div>
                                             </div>
@@ -246,14 +239,14 @@ const ProductDetailsTwo = () => {
                                         className="btn btn-black flex-center gap-8 rounded-8 py-16"
                                     >
                                         <i className="ph ph-whatsapp-logo text-lg" />
-                                        Request More Information
+                                        Yêu cầu thêm thông tin
                                     </Link>
                                     <div className="mt-32">
                                         <span className="fw-medium text-gray-900">
-                                            100% Guarantee Safe Checkout
+                                            Đảm bảo thanh toán an toàn 100%
                                         </span>
                                         <div className="mt-10">
-                                            <img src="assets/images/thumbs/gateway-img.png" alt="" />
+                                            <img src="assets/images/thumbs/gateway-img.png" alt="Hình ảnh cổng thanh toán" />
                                         </div>
                                     </div>
                                 </div>
@@ -469,22 +462,10 @@ const ProductDetailsTwo = () => {
                                     <div className="mb-40">
                                         <h6 className="mb-24">Product Description</h6>
                                         <p>
-                                            Wherever celebrations and good times happen, the LAY'S brand
-                                            will be there just as it has been for more than 75 years. With
-                                            flavors almost as rich as our history, we have a chip or crisp
-                                            flavor guaranteed to bring a smile on your face.{" "}
+                                            Chi tiết.{" "}
                                         </p>
                                         <p>
-                                            Morbi ut sapien vitae odio accumsan gravida. Morbi vitae erat
-                                            auctor, eleifend nunc a, lobortis neque. Praesent aliquam
-                                            dignissim viverra. Maecenas lacus odio, feugiat eu nunc sit
-                                            amet, maximus sagittis dolor. Vivamus nisi sapien, elementum
-                                            sit amet eros sit amet, ultricies cursus ipsum. Sed consequat
-                                            luctus ligula. Curabitur laoreet rhoncus blandit. Aenean vel
-                                            diam ut arcu pharetra dignissim ut sed leo. Vivamus faucibus,
-                                            ipsum in vestibulum vulputate, lorem orci convallis quam, sit
-                                            amet consequat nulla felis pharetra lacus. Duis semper erat
-                                            mauris, sed egestas purus commodo vel.
+                                        Chi tiết.
                                         </p>
                                         <ul className="list-inside mt-32 ms-16">
                                             <li className="text-gray-400 mb-4">
@@ -849,7 +830,7 @@ const ProductDetailsTwo = () => {
                                         </div>
                                         <div className="col-lg-6">
                                             <div className="ms-xxl-5">
-                                                <h6 className="mb-24">Customers Feedback</h6>
+                                                <h6 className="mb-24">Phản hồi của khách hàng</h6>
                                                 <div className="d-flex flex-wrap gap-44">
                                                     <div className="border border-gray-100 rounded-8 px-40 py-52 flex-center flex-column flex-shrink-0 text-center">
                                                         <h2 className="mb-6 text-main-600">4.8</h2>

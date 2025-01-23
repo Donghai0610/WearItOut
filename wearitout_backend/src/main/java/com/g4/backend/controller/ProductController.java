@@ -1,4 +1,5 @@
 package com.g4.backend.controller;
+
 import com.g4.backend.dto.request.NewProductRequestDTO;
 import com.g4.backend.dto.request.UpdateProductRequestDTO;
 import com.g4.backend.dto.response.*;
@@ -35,9 +36,9 @@ public class ProductController {
             @RequestParam(required = false) String shop,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "9") int size,
-    @RequestParam(defaultValue = "asc") String sortDirection) {
+            @RequestParam(defaultValue = "asc") String sortDirection) {
 
-        Page<ProductsResponseDTO> productPage = productServices.getAllProducts(productName, price, setting, shop, page,size, sortDirection);
+        Page<ProductsResponseDTO> productPage = productServices.getAllProducts(productName, price, setting, shop, page, size, sortDirection);
 
         return ResponseEntity.ok(new SearchResponse(productPage.getContent(), productPage.getTotalPages()));
     }
@@ -85,17 +86,18 @@ public class ProductController {
 
         return ResponseEntity.ok(new ResponseDTO(200, "Success", dto));
     }
+
     @PostMapping("/update/{productId}")
-    public ResponseEntity<?> updateProduct(@PathVariable Long productId,@ModelAttribute UpdateProductRequestDTO requestDTO) {
+    public ResponseEntity<?> updateProduct(@PathVariable Long productId, @ModelAttribute UpdateProductRequestDTO requestDTO) {
         Product updatedProduct = productServices.updateProduct(productId, requestDTO);
 
         if (updatedProduct == null) {
             ResponseDTO responseDTO = ResponseDTO.builder()
-                            .code(404)
-                            .message("Product not found")
-                            .data(null)
-                            .build();
-            return  new ResponseEntity<>(responseDTO,HttpStatus.NOT_FOUND);
+                    .code(404)
+                    .message("Product not found")
+                    .data(null)
+                    .build();
+            return new ResponseEntity<>(responseDTO, HttpStatus.NOT_FOUND);
         }
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -126,6 +128,7 @@ public class ProductController {
                         .data(requestDTO1)
                         .build());
     }
+
     @PostMapping("/delete/{productId}")
     public ResponseEntity<ResponseDTO> deleteProduct(@PathVariable Long productId) {
         try {
@@ -145,6 +148,7 @@ public class ProductController {
                             .build());
         }
     }
+
     @GetMapping("/shops")
     public ResponseEntity<?> getAllShopIdAndNames() {
         try {
@@ -154,4 +158,30 @@ public class ProductController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("/top-rated")
+    public List<ProductsResponseDTO> getTopRatedProducts(@RequestParam(defaultValue = "10") int limit) {
+        return productServices.getTopRatedProducts(limit);
+    }
+
+
+    @GetMapping("/category/{typeId}")
+    public ResponseEntity<?> getCategoryName(@PathVariable int typeId) {
+        try {
+            List<SettingIdNameResponseDTO> settingNames = userService.getCategoryName(typeId);
+            return new ResponseEntity<>(settingNames, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/trending")
+    public ResponseEntity<List<ProductsResponseDTO>> getTrendingProductByCategoryId(
+             @RequestParam(required = false) Long settingId,
+            @RequestParam(defaultValue = "10") int limit) {
+
+        List<ProductsResponseDTO> products = productServices.getTrendingProducts(settingId, limit);
+        return ResponseEntity.ok(products);
+    }
+
 }
