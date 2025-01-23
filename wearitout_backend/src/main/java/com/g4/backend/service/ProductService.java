@@ -360,4 +360,35 @@ public class ProductService {
         return url.substring(url.indexOf("/dev/product/"), url.lastIndexOf(publicIdWithExtension) - 1);
     }
 
+//Feature Product
+    public List<ProductsResponseDTO> getTopRatedProducts(int limit) {
+        Pageable pageable = PageRequest.of(0, limit); // Lấy trang đầu tiên với số lượng sản phẩm là 'limit'
+        List<Product> products = productRepository.findTopRatedProducts(pageable);
+
+        // Map từ Product sang ProductsResponseDTO
+        return products.stream()
+                .map(this::toProductsResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<ProductsResponseDTO> getTrendingProducts(Long settingId, int limit) {
+        Pageable pageable = PageRequest.of(0, limit);
+
+        List<Product> products;
+        if (settingId == null || settingId == 0) {
+            // Nếu không truyền settingId, lấy sản phẩm có rating cao nhất
+            products = productRepository.findTopRatedProducts(pageable);
+        } else {
+            // Nếu có settingId, lấy sản phẩm theo danh mục
+            products = productRepository.findTrendingProducts(settingId, pageable);
+        }
+
+        // Map từ Product sang ProductsResponseDTO
+        return products.stream()
+                .map(this::toProductsResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+
+
 }

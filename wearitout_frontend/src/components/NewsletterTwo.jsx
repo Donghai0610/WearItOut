@@ -11,10 +11,10 @@ const NewsletterTwo = () => {
                         </span>
                         <div>
                             <h5 className="text-white mb-12 fw-medium">
-                                Join Our Newsletter, Get 10% Off
+                                Tham gia nhận bản tin, giảm 10%
                             </h5>
                             <p className="text-white fw-light">
-                                Get all latest information on events, sales and offer
+                                Nhận thông tin mới nhất về sự kiện, giảm giá và ưu đãi
                             </p>
                         </div>
                     </div>
@@ -23,21 +23,19 @@ const NewsletterTwo = () => {
                             <input
                                 type="text"
                                 className="common-input style-two rounded-8 flex-grow-1 py-14"
-                                placeholder="Enter your email address"
+                                placeholder="Nhập địa chỉ email của bạn"
                             />
                             <button
                                 type="submit"
                                 className="btn btn-main-two flex-shrink-0 rounded-8 py-16"
                             >
-                                {" "}
-                                Subscribe
+                                Đăng ký
                             </button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
-
     )
 }
 

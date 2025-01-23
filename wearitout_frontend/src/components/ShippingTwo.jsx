@@ -12,9 +12,9 @@ const ShippingTwo = () => {
                                 <i className="ph-fill ph-car-profile" />
                             </span>
                             <div className="">
-                                <h6 className="mb-0">Free Shipping</h6>
+                                <h6 className="mb-0">Miễn phí vận chuyển</h6>
                                 <span className="text-sm text-heading">
-                                    Free shipping all over the US
+                                    Miễn phí vận chuyển trên toàn quốc
                                 </span>
                             </div>
                         </div>
@@ -25,9 +25,9 @@ const ShippingTwo = () => {
                                 <i className="ph-fill ph-hand-heart" />
                             </span>
                             <div className="">
-                                <h6 className="mb-0"> 100% Satisfaction</h6>
+                                <h6 className="mb-0">100% Hài lòng</h6>
                                 <span className="text-sm text-heading">
-                                    Free shipping all over the US
+                                    Cam kết hài lòng tuyệt đối
                                 </span>
                             </div>
                         </div>
@@ -38,9 +38,9 @@ const ShippingTwo = () => {
                                 <i className="ph-fill ph-credit-card" />
                             </span>
                             <div className="">
-                                <h6 className="mb-0"> Secure Payments</h6>
+                                <h6 className="mb-0">Thanh toán an toàn</h6>
                                 <span className="text-sm text-heading">
-                                    Free shipping all over the US
+                                    Đảm bảo an toàn tuyệt đối
                                 </span>
                             </div>
                         </div>
@@ -51,9 +51,9 @@ const ShippingTwo = () => {
                                 <i className="ph-fill ph-chats" />
                             </span>
                             <div className="">
-                                <h6 className="mb-0"> 24/7 Support</h6>
+                                <h6 className="mb-0">Hỗ trợ 24/7</h6>
                                 <span className="text-sm text-heading">
-                                    Free shipping all over the US
+                                    Hỗ trợ khách hàng mọi lúc, mọi nơi
                                 </span>
                             </div>
                         </div>
@@ -61,7 +61,6 @@ const ShippingTwo = () => {
                 </div>
             </div>
         </section>
-
     )
 }
 

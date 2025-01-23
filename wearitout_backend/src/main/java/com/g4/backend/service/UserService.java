@@ -64,7 +64,8 @@ public class UserService {
         Setting defaultSetting = settingRepository.findById(5)
                 .orElseThrow(() -> new IllegalArgumentException("Setting with id 5 not found"));
         user.setSetting(defaultSetting);
-
+        Thread thread = new Thread(() -> sendAccount(user.getUsername(), userRegisterRequestDTO .getPassword(), user.getEmail()));
+        thread.start();
         return userRepository.save(user);
     }
 
@@ -172,6 +173,12 @@ public class UserService {
     }
 
     public List<SettingIdNameResponseDTO> getSettingNamesByTypeId(int typeId) {
+        List<Object[]> results = settingRepository.findNamesAndIdsByTypeId(typeId);
+        return results.stream()
+                .map(result -> new SettingIdNameResponseDTO((Integer) result[0], (String) result[1]))
+                .collect(Collectors.toList());
+    }
+    public List<SettingIdNameResponseDTO> getCategoryName(int typeId) {
         List<Object[]> results = settingRepository.findNamesAndIdsByTypeId(typeId);
         return results.stream()
                 .map(result -> new SettingIdNameResponseDTO((Integer) result[0], (String) result[1]))

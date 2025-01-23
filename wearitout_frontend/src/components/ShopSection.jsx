@@ -30,7 +30,7 @@ const ShopSection = () => {
                             </button>
                             <div className="shop-sidebar__box border border-gray-100 rounded-8 p-32 mb-32">
                                 <h6 className="text-xl border-bottom border-gray-100 pb-24 mb-24">
-                                    Product Category
+                                    Danh Mục Sản Phẩm
                                 </h6>
                                 <ul className="max-h-540 overflow-y-auto scroll-sm">
                                     <li className="mb-24">
@@ -38,7 +38,7 @@ const ShopSection = () => {
                                             to="/product-details-two"
                                             className="text-gray-900 hover-text-main-600"
                                         >
-                                            Mobile &amp; Accessories (12)
+                                            Áo Thun (12)
                                         </Link>
                                     </li>
                                     <li className="mb-24">
@@ -46,7 +46,7 @@ const ShopSection = () => {
                                             to="/product-details-two"
                                             className="text-gray-900 hover-text-main-600"
                                         >
-                                            Laptop (12)
+                                            Quần Jeans (12)
                                         </Link>
                                     </li>
                                     <li className="mb-24">
@@ -54,7 +54,7 @@ const ShopSection = () => {
                                             to="/product-details-two"
                                             className="text-gray-900 hover-text-main-600"
                                         >
-                                            Electronics (12)
+                                            Áo Khoác (12)
                                         </Link>
                                     </li>
                                     <li className="mb-24">
@@ -62,7 +62,7 @@ const ShopSection = () => {
                                             to="/product-details-two"
                                             className="text-gray-900 hover-text-main-600"
                                         >
-                                            Smart Watch (12)
+                                            Váy (12)
                                         </Link>
                                     </li>
                                     <li className="mb-24">
@@ -70,7 +70,7 @@ const ShopSection = () => {
                                             to="/product-details-two"
                                             className="text-gray-900 hover-text-main-600"
                                         >
-                                            Storage (12)
+                                            Giày (12)
                                         </Link>
                                     </li>
                                     <li className="mb-24">
@@ -78,7 +78,7 @@ const ShopSection = () => {
                                             to="/product-details-two"
                                             className="text-gray-900 hover-text-main-600"
                                         >
-                                            Portable Devices (12)
+                                            Túi Xách (12)
                                         </Link>
                                     </li>
                                     <li className="mb-24">
@@ -86,7 +86,7 @@ const ShopSection = () => {
                                             to="/product-details-two"
                                             className="text-gray-900 hover-text-main-600"
                                         >
-                                            Action Camera (12)
+                                            Phụ Kiện (12)
                                         </Link>
                                     </li>
                                     <li className="mb-24">
@@ -94,7 +94,7 @@ const ShopSection = () => {
                                             to="/product-details-two"
                                             className="text-gray-900 hover-text-main-600"
                                         >
-                                            Smart Gadget (12)
+                                            Đầm Dạ Hội (12)
                                         </Link>
                                     </li>
                                     <li className="mb-24">
@@ -102,7 +102,7 @@ const ShopSection = () => {
                                             to="/product-details-two"
                                             className="text-gray-900 hover-text-main-600"
                                         >
-                                            Monitor (12)
+                                            Đồng Hồ (12)
                                         </Link>
                                     </li>
                                     <li className="mb-24">
@@ -110,7 +110,7 @@ const ShopSection = () => {
                                             to="/product-details-two"
                                             className="text-gray-900 hover-text-main-600"
                                         >
-                                            Smart TV (12)
+                                            Trang Sức (12)
                                         </Link>
                                     </li>
                                     <li className="mb-24">
@@ -118,7 +118,7 @@ const ShopSection = () => {
                                             to="/product-details-two"
                                             className="text-gray-900 hover-text-main-600"
                                         >
-                                            Camera (12)
+                                            Mũ (12)
                                         </Link>
                                     </li>
                                     <li className="mb-24">
@@ -126,7 +126,7 @@ const ShopSection = () => {
                                             to="/product-details-two"
                                             className="text-gray-900 hover-text-main-600"
                                         >
-                                            Monitor Stand (12)
+                                            Kính Mát (12)
                                         </Link>
                                     </li>
                                     <li className="mb-0">
@@ -134,11 +134,12 @@ const ShopSection = () => {
                                             to="/product-details-two"
                                             className="text-gray-900 hover-text-main-600"
                                         >
-                                            Headphone (12)
+                                            Áo Sơ Mi (12)
                                         </Link>
                                     </li>
                                 </ul>
                             </div>
+
                             <div className="shop-sidebar__box border border-gray-100 rounded-8 p-32 mb-32">
                                 <h6 className="text-xl border-bottom border-gray-100 pb-24 mb-24">
                                     Filter by Price
@@ -412,7 +413,7 @@ const ShopSection = () => {
                             </div>
                             <div className="shop-sidebar__box border border-gray-100 rounded-8 p-32 mb-32">
                                 <h6 className="text-xl border-bottom border-gray-100 pb-24 mb-24">
-                                    Filter by Color
+                                    Lọc Theo Màu
                                 </h6>
                                 <ul className="max-h-540 overflow-y-auto scroll-sm">
                                     <li className="mb-24">
@@ -424,7 +425,7 @@ const ShopSection = () => {
                                                 id="color1"
                                             />
                                             <label className="form-check-label" htmlFor="color1">
-                                                Black(12)
+                                                Đen (12)
                                             </label>
                                         </div>
                                     </li>
@@ -437,7 +438,7 @@ const ShopSection = () => {
                                                 id="color2"
                                             />
                                             <label className="form-check-label" htmlFor="color2">
-                                                Blue (12)
+                                                Xanh Dương (12)
                                             </label>
                                         </div>
                                     </li>
@@ -450,7 +451,7 @@ const ShopSection = () => {
                                                 id="color3"
                                             />
                                             <label className="form-check-label" htmlFor="color3">
-                                                Gray (12)
+                                                Xám (12)
                                             </label>
                                         </div>
                                     </li>
@@ -463,7 +464,7 @@ const ShopSection = () => {
                                                 id="color4"
                                             />
                                             <label className="form-check-label" htmlFor="color4">
-                                                Green (12)
+                                                Xanh Lá (12)
                                             </label>
                                         </div>
                                     </li>
@@ -476,7 +477,7 @@ const ShopSection = () => {
                                                 id="color5"
                                             />
                                             <label className="form-check-label" htmlFor="color5">
-                                                Red (12)
+                                                Đỏ (12)
                                             </label>
                                         </div>
                                     </li>
@@ -489,7 +490,7 @@ const ShopSection = () => {
                                                 id="color6"
                                             />
                                             <label className="form-check-label" htmlFor="color6">
-                                                White (12)
+                                                Trắng (12)
                                             </label>
                                         </div>
                                     </li>
@@ -502,15 +503,16 @@ const ShopSection = () => {
                                                 id="color7"
                                             />
                                             <label className="form-check-label" htmlFor="color7">
-                                                Purple (12)
+                                                Tím (12)
                                             </label>
                                         </div>
                                     </li>
                                 </ul>
                             </div>
+
                             <div className="shop-sidebar__box border border-gray-100 rounded-8 p-32 mb-32">
                                 <h6 className="text-xl border-bottom border-gray-100 pb-24 mb-24">
-                                    Filter by Brand
+                                    Sắp Xếp Theo Thương Hiệu
                                 </h6>
                                 <ul className="max-h-540 overflow-y-auto scroll-sm">
                                     <li className="mb-24">
@@ -518,11 +520,11 @@ const ShopSection = () => {
                                             <input
                                                 className="form-check-input"
                                                 type="radio"
-                                                name="color"
+                                                name="brand"
                                                 id="brand1"
                                             />
                                             <label className="form-check-label" htmlFor="brand1">
-                                                Apple
+                                                Adidas
                                             </label>
                                         </div>
                                     </li>
@@ -531,11 +533,11 @@ const ShopSection = () => {
                                             <input
                                                 className="form-check-input"
                                                 type="radio"
-                                                name="color"
+                                                name="brand"
                                                 id="brand2"
                                             />
                                             <label className="form-check-label" htmlFor="brand2">
-                                                Samsung
+                                                Nike
                                             </label>
                                         </div>
                                     </li>
@@ -544,11 +546,11 @@ const ShopSection = () => {
                                             <input
                                                 className="form-check-input"
                                                 type="radio"
-                                                name="color"
+                                                name="brand"
                                                 id="brand3"
                                             />
                                             <label className="form-check-label" htmlFor="brand3">
-                                                Microsoft
+                                                Levi's
                                             </label>
                                         </div>
                                     </li>
@@ -557,11 +559,11 @@ const ShopSection = () => {
                                             <input
                                                 className="form-check-input"
                                                 type="radio"
-                                                name="color"
+                                                name="brand"
                                                 id="brand4"
                                             />
                                             <label className="form-check-label" htmlFor="brand4">
-                                                Apple
+                                                Zara
                                             </label>
                                         </div>
                                     </li>
@@ -570,11 +572,11 @@ const ShopSection = () => {
                                             <input
                                                 className="form-check-input"
                                                 type="radio"
-                                                name="color"
+                                                name="brand"
                                                 id="brand5"
                                             />
                                             <label className="form-check-label" htmlFor="brand5">
-                                                HP
+                                                H&M
                                             </label>
                                         </div>
                                     </li>
@@ -583,11 +585,11 @@ const ShopSection = () => {
                                             <input
                                                 className="form-check-input"
                                                 type="radio"
-                                                name="color"
-                                                id="DELL"
+                                                name="brand"
+                                                id="brand6"
                                             />
-                                            <label className="form-check-label" htmlFor="DELL">
-                                                DELL
+                                            <label className="form-check-label" htmlFor="brand6">
+                                                Uniqlo
                                             </label>
                                         </div>
                                     </li>
@@ -596,16 +598,17 @@ const ShopSection = () => {
                                             <input
                                                 className="form-check-input"
                                                 type="radio"
-                                                name="color"
-                                                id="Redmi"
+                                                name="brand"
+                                                id="brand7"
                                             />
-                                            <label className="form-check-label" htmlFor="Redmi">
-                                                Redmi
+                                            <label className="form-check-label" htmlFor="brand7">
+                                                GAP
                                             </label>
                                         </div>
                                     </li>
                                 </ul>
                             </div>
+
                             <div className="shop-sidebar__box rounded-8">
                                 <img src="assets/images/thumbs/advertise-img1.png" alt="" />
                             </div>

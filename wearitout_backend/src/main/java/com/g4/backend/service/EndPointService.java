@@ -5,6 +5,7 @@ public class EndPointService {
             "/api/v1/auth/login",
             "/api/v1/auth/logout",
             "/api/v1/user/register",
+
     };
 
     public static final String[] adminGetEndPoint = {
@@ -29,9 +30,13 @@ public class EndPointService {
             "/api/v1/shop/vn-pay-callback",
             "/api/v1/shop/shop-payment/{shopId}",
             "/api/v1/admin/settings/{typeId}",
-            "/api/v1/product/shops"
+            "/api/v1/product/shops",
+            "/swagger-ui/**",
+            "/api/v1/product/top-rated",
+            "/api/v1/product/category/{typeId}",
+            "api/v1/product/trending"
     };
-    public static  final String[] adminShopGetEndPoint = {
+    public static final String[] adminShopGetEndPoint = {
             "/api/v1/product/productofshop/**",
             "/api/v1/product/shop/*/detail/*",
             "/api/v1/product/delete/**",
@@ -40,7 +45,7 @@ public class EndPointService {
 
 
     };
-    public static  final String[] adminShopPostEndPoint = {
+    public static final String[] adminShopPostEndPoint = {
             "/api/v1/product/add",
             "/api/v1/product/update/**",
     };

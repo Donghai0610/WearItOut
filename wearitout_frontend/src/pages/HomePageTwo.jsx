@@ -47,7 +47,7 @@ const HomePageTwo = () => {
       <PromotionalTwo />
 
       {/* DealsOne */}
-      <DealsOne />
+      {/* <DealsOne /> */}
 
       {/* TopSellingOne */}
       <TopSellingOne />
@@ -59,25 +59,25 @@ const HomePageTwo = () => {
       <DiscountOne />
 
       {/* FeaturedOne */}
-      <FeaturedOne />
+      {/* <FeaturedOne /> */}
 
       {/* BigDealOne */}
-      <BigDealOne />
+      {/* <BigDealOne /> */}
 
       {/* TopSellingTwo */}
-      <TopSellingTwo />
+      {/* <TopSellingTwo /> */}
 
       {/* PopularProductsOne */}
-      <PopularProductsOne />
+      {/* <PopularProductsOne /> */}
 
       {/* TopVendorsTwo */}
-      <TopVendorsTwo />
+      {/* <TopVendorsTwo /> */}
 
       {/* DaySaleOne */}
-      <DaySaleOne />
+      {/* <DaySaleOne /> */}
 
       {/* RecentlyViewedOne */}
-      <RecentlyViewedOne />
+      {/* <RecentlyViewedOne /> */}
 
       {/* BrandTwo */}
       <BrandTwo />
