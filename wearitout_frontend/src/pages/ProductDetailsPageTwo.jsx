@@ -10,6 +10,7 @@ import NewsletterOne from "../components/NewsletterOne";
 import FooterTwo from "../components/FooterTwo";
 import BottomFooter from "../components/BottomFooter";
 import ScrollToTop from "react-scroll-to-top";
+import ShippingTwo from "../components/ShippingTwo";
 
 
 const ProductDetailsPageTwo = () => {
@@ -40,10 +41,10 @@ const ProductDetailsPageTwo = () => {
       <NewArrivalTwo />
 
       {/* ShippingOne */}
-      <ShippingOne />
+      <ShippingTwo />
 
       {/* NewsletterOne */}
-      <NewsletterOne />
+      {/* <NewsletterOne /> */}
 
       {/* FooterTwo */}
       <FooterTwo />

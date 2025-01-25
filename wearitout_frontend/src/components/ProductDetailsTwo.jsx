@@ -1,10 +1,71 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import Slider from 'react-slick';
 import { getCountdown } from '../helper/Countdown';
+import Product_Services from '../services/product';
+import Cart_Services from '../services/cart';
+import Account_Service from '../services/account';
+import Swal from 'sweetalert2';
 
 const ProductDetailsTwo = () => {
+    const { id } = useParams(); // Lấy id từ URL
+    const [product, setProduct] = useState(null); // Dữ liệu sản phẩm từ API
     const [timeLeft, setTimeLeft] = useState(getCountdown());
+    const [mainImage, setMainImage] = useState(''); // Ảnh chính
+    const [quantity, setQuantity] = useState(1); // Số lượng sản phẩm
+    const [deliveryAddress, setDeliveryAddress] = useState('Loading...');
+    const [error, setError] = useState(''); // State for error messages
+
+    // Tăng/giảm số lượng
+    const incrementQuantity = () => {
+        if (quantity < product.stockQuantity) {
+            setQuantity(quantity + 1);
+        } else {
+            alert(`Số lượng không được vượt quá ${product.stockQuantity}`);
+        }
+    };
+
+    const decrementQuantity = () => {
+        if (quantity > 1) {
+            setQuantity(quantity - 1);
+        } else {
+            alert('Số lượng không được nhỏ hơn 1');
+        }
+    };
+
+    // Lấy giỏ hàng và thêm sản phẩm vào giỏ hàng
+    const handleAddToCart = async () => {
+        const userId = Account_Service.getUserIdFromToken(); // Hàm lấy userId từ token (giả sử bạn đã có hàm này)
+
+        if (!userId) {
+            setError("User not authenticated");
+            return;
+        }
+
+        try {
+            const payload = {
+                productId: product.id,
+                quantity: quantity
+            };
+
+            await Cart_Services.Add_Product_To_Cart(userId, payload); // Gọi API thêm sản phẩm vào giỏ
+            Swal.fire({
+                icon: 'success',
+                title: 'Đã thêm sản phẩm vào giỏ hàng',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        } catch (err) {
+            console.error('Error adding product to cart:', err);
+            setError('Không thể thêm sản phẩm vào giỏ hàng');
+            Swal.fire({
+                icon: 'error',
+                title: 'Không thể thêm sản phẩm vào giỏ hàng',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    };
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -13,22 +74,74 @@ const ProductDetailsTwo = () => {
 
         return () => clearInterval(interval);
     }, []);
-    const productImages = [
-        "assets/images/thumbs/product-details-two-thumb1.png",
-        "assets/images/thumbs/product-details-two-thumb2.png",
-        "assets/images/thumbs/product-details-two-thumb3.png",
-        "assets/images/thumbs/product-details-two-thumb1.png",
-        "assets/images/thumbs/product-details-two-thumb2.png",
-    ];
 
+    useEffect(() => {
+        const fetchProductDetails = async () => {
+            try {
+                const parsedId = parseInt(id, 10); // Chuyển id từ URL sang số nguyên
+                if (!parsedId) {
+                    throw new Error("Invalid Product ID");
+                }
 
-    // increment & decrement
-    const [quantity, setQuantity] = useState(1);
-    const incrementQuantity = () => setQuantity(quantity + 1);
-    const decrementQuantity = () => setQuantity(quantity > 1 ? quantity - 1 : quantity);
+                const response = await Product_Services.Product_Details(parsedId); // Gọi API qua Product_Services
+                const productData = response.data;
+                setProduct(productData);
+                setMainImage(productData.imageUrls[0]); // Đặt ảnh đầu tiên làm ảnh chính
+            } catch (error) {
+                console.error('Error fetching product details:', error);
+            }
+        };
+        const fetchDeliveryAddress = async () => {
+            try {
+                const response = await fetch('https://api.ipify.org/?format=json');
+                const data = await response.json();
+                const ip = data.ip;
 
+                const locationResponse = await fetch(`https://ipapi.co/${ip}/json/`);
+                const locationData = await locationResponse.json();
 
-    const [mainImage, setMainImage] = useState(productImages[0]);
+                setDeliveryAddress(`${locationData.city}, ${locationData.region}, ${locationData.country_name}`);
+            } catch (error) {
+                console.error('Error fetching delivery address:', error);
+                setDeliveryAddress('Unable to retrieve location');
+            }
+        };
+        fetchProductDetails();
+        fetchDeliveryAddress();
+    }, [id]);
+
+    if (!product) {
+        return <div>Loading...</div>;
+    }
+
+    const renderStars = (rating) => {
+        const stars = [];
+        for (let i = 0; i < 5; i++) {
+            if (i < rating) {
+                stars.push(
+                    <span className="text-15 fw-medium text-warning-600 d-flex" key={i}>
+                        <i className="ph-fill ph-star" />
+                    </span>
+                );
+            } else {
+                stars.push(
+                    <span className="text-15 fw-medium text-gray-400 d-flex" key={i}>
+                        <i className="ph-fill ph-star" />
+                    </span>
+                );
+            }
+        }
+        return stars;
+    };
+
+    //Price
+    const calculateOriginalPrice = (price) => {
+        return (price * 1.15).toFixed(2);
+    };
+
+    const formatVND = (price) => {
+        return price.toLocaleString('vi-VN') + ' VNĐ'; // Định dạng số kiểu Việt Nam
+    };
 
     const settingsThumbs = {
         dots: false,
@@ -56,9 +169,13 @@ const ProductDetailsTwo = () => {
                                     <div className="mt-24">
                                         <div className="product-details__images-slider">
                                             <Slider {...settingsThumbs}>
-                                                {productImages.map((image, index) => (
-                                                    <div className="center max-w-120 max-h-120 h-100 flex-center border border-gray-100 rounded-16 p-8" key={index} onClick={() => setMainImage(image)}>
-                                                        <img className='thum' src={image} alt={`Thumbnail ${index}`} />
+                                                {product.imageUrls.map((image, index) => (
+                                                    <div
+                                                        className="center max-w-120 max-h-120 h-100 flex-center border border-gray-100 rounded-16 p-8"
+                                                        key={index}
+                                                        onClick={() => setMainImage(image)}
+                                                    >
+                                                        <img className="thum" src={image} alt={`Thumbnail ${index}`} />
                                                     </div>
                                                 ))}
                                             </Slider>
@@ -68,7 +185,7 @@ const ProductDetailsTwo = () => {
                             </div>
                             <div className="col-xl-6">
                                 <div className="product-details__content">
-                                    <div className="flex-center mb-24 flex-wrap gap-16 bg-color-one rounded-8 py-16 px-24 position-relative z-1">
+                                    {/* <div className="flex-center mb-24 flex-wrap gap-16 bg-color-one rounded-8 py-16 px-24 position-relative z-1">
                                         <img
                                             src="assets/images/bg/details-offer-bg.png"
                                             alt="Hình nền ưu đãi"
@@ -96,61 +213,46 @@ const ProductDetailsTwo = () => {
                                         <span className="text-white text-xs">
                                             Còn lại cho đến khi kết thúc ưu đãi
                                         </span>
-                                    </div>
+                                    </div> */}
                                     <h5 className="mb-12">
-                                        Áo Khoác Nam Thời Trang - Màu Xám Hiện Đại
+                                        {product.productName}
                                     </h5>
                                     <div className="flex-align flex-wrap gap-12">
                                         <div className="flex-align gap-12 flex-wrap">
                                             <div className="flex-align gap-8">
-                                                <span className="text-15 fw-medium text-warning-600 d-flex">
-                                                    <i className="ph-fill ph-star" />
-                                                </span>
-                                                <span className="text-15 fw-medium text-warning-600 d-flex">
-                                                    <i className="ph-fill ph-star" />
-                                                </span>
-                                                <span className="text-15 fw-medium text-warning-600 d-flex">
-                                                    <i className="ph-fill ph-star" />
-                                                </span>
-                                                <span className="text-15 fw-medium text-warning-600 d-flex">
-                                                    <i className="ph-fill ph-star" />
-                                                </span>
-                                                <span className="text-15 fw-medium text-warning-600 d-flex">
-                                                    <i className="ph-fill ph-star" />
-                                                </span>
+                                                {renderStars(product.rating)} {/* Gọi hàm render ngôi sao */}
                                             </div>
                                             <span className="text-sm fw-medium text-neutral-600">
-                                                Đánh giá 4.7 sao
+                                                Đánh giá {product.rating} sao
                                             </span>
-                                            <span className="text-sm fw-medium text-gray-500">
-                                                (21,671)
-                                            </span>
+                                            <span className="text-sm fw-medium text-gray-500">(21,671)</span>
                                         </div>
                                         <span className="text-sm fw-medium text-gray-500">|</span>
                                         <span className="text-gray-900">
-                                            <span className="text-gray-400">Mã SKU:</span>EB4DRP
+                                            <span className="text-gray-400">Mã SKU:</span> {product.id}
                                         </span>
                                     </div>
+
                                     <span className="mt-32 pt-32 text-gray-700 border-top border-gray-100 d-block" />
                                     <p className="text-gray-700">
-                                        Sản phẩm được trang bị bộ xử lý Intel và bộ nhớ eMMC 64 GB, mang lại hiệu suất đáp ứng nhanh chóng. Giữ năng suất với các ứng dụng tương thích như Microsoft Office, Google Workspace và nhiều hơn nữa. Hệ điều hành Chrome OS mang đến trải nghiệm trực tuyến nhanh chóng, đơn giản và an toàn với bảo vệ chống virus tích hợp.
+                                        {product.description}
                                     </p>
                                     <div className="my-32 flex-align gap-16 flex-wrap">
                                         <div className="flex-align gap-8">
                                             <div className="flex-align gap-8 text-main-two-600">
                                                 <i className="ph-fill ph-seal-percent text-xl" />
-                                                -10%
+                                                -15%
                                             </div>
-                                            <h6 className="mb-0">USD 320.99</h6>
+                                            <h6 className="mb-0">{formatVND(product.price)}</h6>
                                         </div>
                                         <div className="flex-align gap-8">
                                             <span className="text-gray-700">Giá gốc</span>
                                             <h6 className="text-xl text-gray-400 mb-0 fw-medium">
-                                                USD 452.99
+                                                {formatVND(product.price * 1.15)}
                                             </h6>
                                         </div>
                                     </div>
-                                    <div className="my-32 flex-align flex-wrap gap-12">
+                                    {/* <div className="my-32 flex-align flex-wrap gap-12">
                                         <Link
                                             to="#"
                                             className="px-12 py-8 text-sm rounded-8 flex-align gap-8 text-gray-900 border border-gray-200 hover-border-main-600 hover-text-main-600"
@@ -172,9 +274,9 @@ const ProductDetailsTwo = () => {
                                             Bảo mật &amp; Quyền riêng tư
                                             <i className="ph ph-caret-right" />
                                         </Link>
-                                    </div>
+                                    </div> */}
                                     <span className="mt-32 pt-32 text-gray-700 border-top border-gray-100 d-block" />
-                                    <div className="mt-32">
+                                    {/* <div className="mt-32">
                                         <h6 className="mb-16">Tổng quan nhanh</h6>
                                         <div className="flex-between align-items-start flex-wrap gap-16">
                                             <div>
@@ -232,10 +334,10 @@ const ProductDetailsTwo = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> */}
                                     <span className="mt-32 pt-32 text-gray-700 border-top border-gray-100 d-block" />
                                     <Link
-                                        to="/https://www.whatsapp.com"
+                                        to="https://www.facebook.com/nwm1693"
                                         className="btn btn-black flex-center gap-8 rounded-8 py-16"
                                     >
                                         <i className="ph ph-whatsapp-logo text-lg" />
@@ -246,7 +348,7 @@ const ProductDetailsTwo = () => {
                                             Đảm bảo thanh toán an toàn 100%
                                         </span>
                                         <div className="mt-10">
-                                            <img src="assets/images/thumbs/gateway-img.png" alt="Hình ảnh cổng thanh toán" />
+                                            <img src="https://news.khangz.com/wp-content/uploads/2023/05/MOMO-LA-GI-1.jpg" alt="Hình ảnh cổng thanh toán" />
                                         </div>
                                     </div>
                                 </div>
@@ -255,40 +357,32 @@ const ProductDetailsTwo = () => {
                     </div>
                     <div className="col-xl-3">
                         <div className="product-details__sidebar py-40 px-32 border border-gray-100 rounded-16">
+                            {/* Delivery Address */}
                             <div className="mb-32">
-                                <label
-                                    htmlFor="delivery"
-                                    className="h6 activePage mb-8 text-heading fw-semibold d-block"
-                                >
-                                    Delivery
+                                <label htmlFor="delivery" className="h6 activePage mb-8 text-heading fw-semibold d-block">
+                                    Vận chuyển
                                 </label>
                                 <div className="flex-align border border-gray-100 rounded-4 px-16">
                                     <span className="text-xl d-flex text-main-600">
                                         <i className="ph ph-map-pin" />
                                     </span>
-                                    <select defaultValue={1}
+                                    <input
+                                        type="text"
                                         className="common-input border-0 px-8 rounded-4"
-                                        id="delivery"
-                                    >
-                                        <option value={1}>Maymansign</option>
-                                        <option value={1}>Khulna</option>
-                                        <option value={1}>Rajshahi</option>
-                                        <option value={1}>Rangpur</option>
-                                    </select>
+                                        value={deliveryAddress}
+                                        readOnly
+                                    />
                                 </div>
                             </div>
+
+                            {/* Stock Quantity */}
                             <div className="mb-32">
-                                <label
-                                    htmlFor="stock"
-                                    className="text-lg mb-8 text-heading fw-semibold d-block"
-                                >
-                                    Total Stock: 21
+                                <label htmlFor="stock" className="text-lg mb-8 text-heading fw-semibold d-block">
+                                    Tổng số sản phẩm còn lại: {product.stockQuantity}
                                 </label>
-                                <span className="text-xl d-flex">
-                                    <i className="ph ph-location" />
-                                </span>
                                 <div className="d-flex rounded-4 overflow-hidden">
-                                    <button onClick={decrementQuantity}
+                                    <button
+                                        onClick={decrementQuantity}
                                         type="button"
                                         className="quantity__minus flex-shrink-0 h-48 w-48 text-neutral-600 bg-gray-50 flex-center hover-bg-main-600 hover-text-white"
                                     >
@@ -297,13 +391,11 @@ const ProductDetailsTwo = () => {
                                     <input
                                         type="number"
                                         className="quantity__input flex-grow-1 border border-gray-100 border-start-0 border-end-0 text-center w-32 px-16"
-                                        id="stock"
-                                        value={
-                                            quantity
-                                        } readOnly
-
+                                        value={quantity}
+                                        readOnly
                                     />
-                                    <button onClick={incrementQuantity}
+                                    <button
+                                        onClick={incrementQuantity}
                                         type="button"
                                         className="quantity__plus flex-shrink-0 h-48 w-48 text-neutral-600 bg-gray-50 flex-center hover-bg-main-600 hover-text-white"
                                     >
@@ -311,97 +403,34 @@ const ProductDetailsTwo = () => {
                                     </button>
                                 </div>
                             </div>
+
+                            {/* Price */}
                             <div className="mb-32">
                                 <div className="flex-between flex-wrap gap-8 border-bottom border-gray-100 pb-16 mb-16">
-                                    <span className="text-gray-500">Price</span>
-                                    <h6 className="text-lg mb-0">$150.00</h6>
+                                    <span className="text-gray-500">Giá</span>
+                                    <h6 className="text-lg mb-0">{formatVND(product.price)}</h6>
                                 </div>
                                 <div className="flex-between flex-wrap gap-8">
-                                    <span className="text-gray-500">Shipping</span>
-                                    <h6 className="text-lg mb-0">From $10.00</h6>
+                                    <span className="text-gray-500">Phí Ship</span>
+                                    <h6 className="text-lg mb-0">From 50,000 VNĐ</h6>
                                 </div>
                             </div>
-                            <Link
-                                to="#"
-                                className="btn btn-main flex-center gap-8 rounded-8 py-16 fw-normal mt-48"
+
+                            {/* Add to Cart and Buy Now */}
+                            <div className="my-32 flex-align gap-16">
+                                <button
+                                    className="btn btn-danger w-100"
+                                    onClick={handleAddToCart}
+                                >
+                                    <i className="ph ph-shopping-cart-simple text-lg" />
+                                    Thêm vào giỏ hàng
+                                </button>
+                            </div>
+                            <button
+                                className="btn btn-outline-main rounded-8 py-16 fw-normal mt-16 w-100 "
                             >
-                                <i className="ph ph-shopping-cart-simple text-lg" />
-                                Add To Cart
-                            </Link>
-                            <Link
-                                to="#"
-                                className="btn btn-outline-main rounded-8 py-16 fw-normal mt-16 w-100"
-                            >
-                                Buy Now
-                            </Link>
-                            <div className="mt-32">
-                                <div className="px-16 py-8 bg-main-50 rounded-8 flex-between gap-24 mb-14">
-                                    <span className="w-32 h-32 bg-white text-main-600 rounded-circle flex-center text-xl flex-shrink-0">
-                                        <i className="ph-fill ph-truck" />
-                                    </span>
-                                    <span className="text-sm text-neutral-600">
-                                        Ship from <span className="fw-semibold">MarketPro</span>{" "}
-                                    </span>
-                                </div>
-                                <div className="px-16 py-8 bg-main-50 rounded-8 flex-between gap-24 mb-0">
-                                    <span className="w-32 h-32 bg-white text-main-600 rounded-circle flex-center text-xl flex-shrink-0">
-                                        <i className="ph-fill ph-storefront" />
-                                    </span>
-                                    <span className="text-sm text-neutral-600">
-                                        Sold by:{" "}
-                                        <span className="fw-semibold">MR Distribution LLC</span>{" "}
-                                    </span>
-                                </div>
-                            </div>
-                            <div className="mt-32">
-                                <div className="px-32 py-16 rounded-8 border border-gray-100 flex-between gap-8">
-                                    <Link to="#" className="d-flex text-main-600 text-28">
-                                        <i className="ph-fill ph-chats-teardrop" />
-                                    </Link>
-                                    <span className="h-26 border border-gray-100" />
-                                    <div className="dropdown on-hover-item">
-                                        <button className="d-flex text-main-600 text-28" type="button">
-                                            <i className="ph-fill ph-share-network" />
-                                        </button>
-                                        <div className="on-hover-dropdown common-dropdown border-0 inset-inline-start-auto inset-inline-end-0">
-                                            <ul className="flex-align gap-16">
-                                                <li>
-                                                    <Link
-                                                        to="/https://www.facebook.com"
-                                                        className="w-44 h-44 flex-center bg-main-100 text-main-600 text-xl rounded-circle hover-bg-main-600 hover-text-white"
-                                                    >
-                                                        <i className="ph-fill ph-facebook-logo" />
-                                                    </Link>
-                                                </li>
-                                                <li>
-                                                    <Link
-                                                        to="/https://www.twitter.com"
-                                                        className="w-44 h-44 flex-center bg-main-100 text-main-600 text-xl rounded-circle hover-bg-main-600 hover-text-white"
-                                                    >
-                                                        <i className="ph-fill ph-twitter-logo" />
-                                                    </Link>
-                                                </li>
-                                                <li>
-                                                    <Link
-                                                        to="/https://www.linkedin.com"
-                                                        className="w-44 h-44 flex-center bg-main-100 text-main-600 text-xl rounded-circle hover-bg-main-600 hover-text-white"
-                                                    >
-                                                        <i className="ph-fill ph-instagram-logo" />
-                                                    </Link>
-                                                </li>
-                                                <li>
-                                                    <Link
-                                                        to="/https://www.pinterest.com"
-                                                        className="w-44 h-44 flex-center bg-main-100 text-main-600 text-xl rounded-circle hover-bg-main-600 hover-text-white"
-                                                    >
-                                                        <i className="ph-fill ph-linkedin-logo" />
-                                                    </Link>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                                Mua ngay
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -424,7 +453,7 @@ const ProductDetailsTwo = () => {
                                         aria-controls="pills-description"
                                         aria-selected="true"
                                     >
-                                        Description
+                                        Mô tả
                                     </button>
                                 </li>
                                 <li className="nav-item" role="presentation">
@@ -438,7 +467,7 @@ const ProductDetailsTwo = () => {
                                         aria-controls="pills-reviews"
                                         aria-selected="false"
                                     >
-                                        Reviews
+                                        Xem đánh giá
                                     </button>
                                 </li>
                             </ul>
@@ -460,12 +489,12 @@ const ProductDetailsTwo = () => {
                                     tabIndex={0}
                                 >
                                     <div className="mb-40">
-                                        <h6 className="mb-24">Product Description</h6>
+                                        <h6 className="mb-24">Mô tả sản phẩm </h6>
                                         <p>
                                             Chi tiết.{" "}
                                         </p>
                                         <p>
-                                        Chi tiết.
+                                            Chi tiết.
                                         </p>
                                         <ul className="list-inside mt-32 ms-16">
                                             <li className="text-gray-400 mb-4">

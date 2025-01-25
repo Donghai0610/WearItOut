@@ -52,7 +52,5 @@ public class Product {
     @JsonBackReference
     private List<OrderDetail> orderDetails;
 
-    @ManyToMany(mappedBy = "products")
-    @JsonBackReference
-    private List<Cart> carts;
+
 }

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Slider from 'react-slick';
 import Product_Services from '../services/product';
+import formatVND from '../helper/formatVND';
 
 const TopSellingOne = () => {
     const [products, setProducts] = useState([]);
@@ -22,6 +23,9 @@ const TopSellingOne = () => {
 
         fetchProducts();
     }, []);
+
+
+   
 
     function SampleNextArrow(props) {
         const { className, onClick } = props;
@@ -103,7 +107,7 @@ const TopSellingOne = () => {
                                             className="btn text-heading border-neutral-600 hover-bg-neutral-600 hover-text-white py-16 px-24 flex-center d-inline-flex rounded-pill gap-8 fw-medium"
                                             tabIndex={0}
                                         >
-                                            Shop Now <i className="ph ph-shopping-cart text-xl d-flex" />
+                                            Xem chi tiết <i className="ph ph-shopping-cart text-xl d-flex" />
                                         </Link>
                                     </div>
                                     <div className="d-md-block d-none mt-36">
@@ -162,19 +166,19 @@ const TopSellingOne = () => {
                                                     </div>
                                                     <div className="product-card__price my-20">
                                                         <span className="text-gray-400 text-md fw-semibold text-decoration-line-through">
-                                                            ${(product.price * 1.2).toFixed(2)}
+                                                            {formatVND(product.price * 1.2)}
                                                         </span>
                                                         <span className="text-heading text-md fw-semibold">
-                                                            ${product.price.toFixed(2)}{" "}
+                                                            {formatVND(product.price)}{" "}
                                                             <span className="text-gray-500 fw-normal">/Qty</span>
                                                         </span>
                                                     </div>
                                                     <Link
-                                                        to="/cart"
+                                                        to={`/product-details/${topProduct.id}`}
                                                         className="product-card__cart btn bg-gray-50 text-heading hover-bg-main-600 hover-text-white py-11 px-24 rounded-8 flex-center gap-8 fw-medium"
                                                         tabIndex={0}
                                                     >
-                                                        Add To Cart <i className="ph ph-shopping-cart" />
+                                                        Xem sản phẩm <i className="ph ph-shopping-cart" />
                                                     </Link>
                                                 </div>
                                             </div>

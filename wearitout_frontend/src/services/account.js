@@ -1,3 +1,4 @@
+import { jwtDecode } from "jwt-decode";
 import axiosInstance from "./axios";
 
  const login = async (username, password) => {
@@ -38,10 +39,18 @@ const register = async (username, password, email, phone) => {
         throw error;
     }
 };
+
+  const getUserIdFromToken = () => {
+        const token = localStorage.getItem('token'); // Lấy token từ localStorage
+        if (!token) return null;
+        const decoded = jwtDecode(token);
+        return decoded.userId;
+    };
    
  const  Account_Service ={
     login,
     register,
+    getUserIdFromToken
 
 };
 export default Account_Service;

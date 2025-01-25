@@ -31,17 +31,39 @@ public class ProductController {
     @GetMapping("/search")
     public ResponseEntity<?> getAllProducts(
             @RequestParam(required = false) String productName,
-            @RequestParam(required = false) Double price,
+            @RequestParam(required = false) Double priceMin,
+            @RequestParam(required = false) Double priceMax,
+            @RequestParam(required = false) Double ratingMin,
+            @RequestParam(required = false) Double ratingMax,
             @RequestParam(required = false) String setting,
             @RequestParam(required = false) String shop,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "9") int size,
             @RequestParam(defaultValue = "asc") String sortDirection) {
 
-        Page<ProductsResponseDTO> productPage = productServices.getAllProducts(productName, price, setting, shop, page, size, sortDirection);
+        // Gọi service để lấy dữ liệu sản phẩm
+        Page<ProductsResponseDTO> productPage = productServices.getAllProducts(
+                productName,
+                priceMin,
+                priceMax,
+                ratingMin,
+                ratingMax,
+                setting,
+                shop,
+                page,
+                size,
+                sortDirection
+        );
 
-        return ResponseEntity.ok(new SearchResponse(productPage.getContent(), productPage.getTotalPages()));
+        // Trả về kết quả
+        return ResponseEntity.ok(
+                new SearchResponse(
+                        productPage.getContent(),
+                        productPage.getTotalPages()
+                )
+        );
     }
+
 
     @GetMapping("/{productId}")
     public ResponseEntity<ResponseDTO> getProductDetail(@PathVariable Long productId) {
@@ -181,6 +203,12 @@ public class ProductController {
             @RequestParam(defaultValue = "10") int limit) {
 
         List<ProductsResponseDTO> products = productServices.getTrendingProducts(settingId, limit);
+        return ResponseEntity.ok(products);
+    }
+
+    @GetMapping("/same-product/{productId}")
+    public ResponseEntity<?> getSameProduct(@PathVariable Long productId) {
+        List<ProductsResponseDTO> products = productServices.getSameProductSameShop(productId);
         return ResponseEntity.ok(products);
     }
 

@@ -14,20 +14,27 @@ import java.util.Optional;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long>{
 
-    @Query("SELECT distinct p FROM Product p " +
+    @Query("SELECT DISTINCT p FROM Product p " +
             "LEFT JOIN p.setting st " +
             "LEFT JOIN p.shop sh " +
             "WHERE " +
             "(:productName IS NULL OR LOWER(p.productName) LIKE LOWER(CONCAT('%', :productName, '%'))) " +
-            "AND (:price IS NULL OR p.price = :price) " +
+            "AND (:priceMin IS NULL OR p.price >= :priceMin) " +
+            "AND (:priceMax IS NULL OR p.price <= :priceMax) " +
+            "AND (:ratingMin IS NULL OR p.rating >= :ratingMin) " +
+            "AND (:ratingMax IS NULL OR p.rating <= :ratingMax) " +
             "AND (:setting IS NULL OR LOWER(st.name) LIKE LOWER(CONCAT('%', :setting, '%'))) " +
             "AND (:shop IS NULL OR LOWER(sh.name) LIKE LOWER(CONCAT('%', :shop, '%')))")
     Page<Product> searchByProductFields(
             @Param("productName") String productName,
-            @Param("price") Double price,
+            @Param("priceMin") Double priceMin,
+            @Param("priceMax") Double priceMax,
+            @Param("ratingMin") Double ratingMin,
+            @Param("ratingMax") Double ratingMax,
             @Param("setting") String setting,
             @Param("shop") String shop,
             Pageable pageable);
+
 
 
     @Query("SELECT p FROM Product p " +
@@ -60,5 +67,9 @@ public interface ProductRepository extends JpaRepository<Product, Long>{
             "ORDER BY p.rating DESC")
     List<Product> findTrendingProducts(Long settingId, Pageable pageable);
 
+    @Query("SELECT p FROM Product p " +
+            "WHERE p.shop.shopId = (SELECT p2.shop.shopId FROM Product p2 WHERE p2.id = :productId) " +
+            "AND p.id != :productId")
+    List<Product> findProductsFromSameShop(@Param("productId") Long productId);
 
 }

@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -19,23 +20,13 @@ public class Cart {
     @Column(name = "cart_id")
     private Long cartId;
 
-    private Double price;
+    private Double price; // Tổng giá của giỏ hàng
 
-    private int quantity;
-
-    @ManyToMany
-    @JoinTable(
-            name = "cart_item",
-            joinColumns = @JoinColumn(name = "cart_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id")
-    )
-    @JsonBackReference
-    private List<Product> products;
-
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CartItem> cartItems = new ArrayList<>(); // Danh sách CartItem trong giỏ hàng
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false,
-            foreignKey = @ForeignKey(name = "FK_Cart_User")
-    )
+            foreignKey = @ForeignKey(name = "FK_Cart_User"))
     private User user;
 }

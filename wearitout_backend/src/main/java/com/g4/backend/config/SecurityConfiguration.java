@@ -30,8 +30,10 @@ import java.util.List;
 @EnableMethodSecurity
 public class SecurityConfiguration {
     private AuthService authService;
-    @Value("${frontend.url}")
+
+    @Value("${frontend.url")
     private String frontendUrl;
+
     private OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private JwtFilter jwtFilter;
 
@@ -76,6 +78,8 @@ public class SecurityConfiguration {
                     auth.requestMatchers(HttpMethod.POST, "/api/webhook/handler-bank-transfer").permitAll();
                     auth.requestMatchers(HttpMethod.GET, EndPointService.adminShopGetEndPoint).permitAll();
                     auth.requestMatchers(HttpMethod.POST,EndPointService.adminShopPostEndPoint).hasAnyAuthority("ROLE_ADMIN","ROLE_SELLER","ROLE_SHOPSTAFF");
+                    auth.requestMatchers(HttpMethod.POST,EndPointService.userPostEndPoint).hasAnyAuthority("ROLE_USER","ROLE_ADMIN","ROLE_SELLER","ROLE_SHOPSTAFF");
+                    auth.requestMatchers(HttpMethod.GET,EndPointService.userGetEndPoint).hasAnyAuthority("ROLE_USER","ROLE_ADMIN","ROLE_SELLER","ROLE_SHOPSTAFF");
                 })
                 .oauth2Login(oath2 -> {
                     oath2.loginPage("/oauth2/authorization/google").permitAll();
@@ -87,7 +91,7 @@ public class SecurityConfiguration {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000/"));
+        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.setAllowCredentials(true);

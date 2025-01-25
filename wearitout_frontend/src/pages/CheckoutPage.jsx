@@ -8,6 +8,7 @@ import BottomFooter from "../components/BottomFooter";
 import ShippingOne from "../components/ShippingOne";
 import Checkout from "../components/Checkout";
 import ScrollToTop from "react-scroll-to-top";
+import ShippingTwo from "../components/ShippingTwo";
 
 
 const CheckoutPage = () => {
@@ -35,7 +36,7 @@ const CheckoutPage = () => {
       <Checkout />
 
       {/* ShippingOne */}
-      <ShippingOne />
+      <ShippingTwo />
 
       {/* FooterTwo */}
       <FooterTwo />

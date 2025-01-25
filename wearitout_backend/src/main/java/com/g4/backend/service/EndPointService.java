@@ -34,7 +34,8 @@ public class EndPointService {
             "/swagger-ui/**",
             "/api/v1/product/top-rated",
             "/api/v1/product/category/{typeId}",
-            "api/v1/product/trending"
+            "api/v1/product/trending",
+            "/api/v1/product/same-product/{productId}"
     };
     public static final String[] adminShopGetEndPoint = {
             "/api/v1/product/productofshop/**",
@@ -50,4 +51,13 @@ public class EndPointService {
             "/api/v1/product/update/**",
     };
 
+    public static final  String[]  userPostEndPoint ={
+            "/api/v1/cart/{userId}/add",
+            "/api/v1/cart/{userId}/update",
+            "/api/v1/cart/{userId}/remove/{productId}",
+    };
+    public static final  String[] userGetEndPoint ={
+            "/api/v1/cart/{userId}",
+            "/api/v1/cart/{cartId}/count-products"
+    };
 }

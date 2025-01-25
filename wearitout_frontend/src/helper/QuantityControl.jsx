@@ -1,10 +1,19 @@
 import React, { useState } from 'react';
+import useDebounce from './useDebounce';
 
-const QuantityControl = ({ initialQuantity = 1 }) => {
+const QuantityControl = ({ initialQuantity = 1, onUpdate }) => {
     const [quantity, setQuantity] = useState(initialQuantity);
+    const debouncedQuantity = useDebounce(quantity, 2000); // Debounce 2 giây
 
     const incrementQuantity = () => setQuantity(quantity + 1);
     const decrementQuantity = () => setQuantity(quantity > 1 ? quantity - 1 : quantity);
+
+    // Gọi callback `onUpdate` khi `debouncedQuantity` thay đổi
+    React.useEffect(() => {
+        if (debouncedQuantity !== initialQuantity) {
+            onUpdate(debouncedQuantity);
+        }
+    }, [debouncedQuantity, onUpdate, initialQuantity]);
 
     return (
         <div className="d-flex rounded-4 overflow-hidden">

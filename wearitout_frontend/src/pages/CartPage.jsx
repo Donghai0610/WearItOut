@@ -8,6 +8,7 @@ import BottomFooter from "../components/BottomFooter";
 import CartSection from "../components/CartSection";
 import ShippingOne from "../components/ShippingOne";
 import ScrollToTop from "react-scroll-to-top";
+import ShippingTwo from "../components/ShippingTwo";
 
 
 const CartPage = () => {
@@ -35,7 +36,7 @@ const CartPage = () => {
       <CartSection />
 
       {/* ShippingOne */}
-      <ShippingOne />
+      <ShippingTwo />
 
       {/* FooterTwo */}
       <FooterTwo />

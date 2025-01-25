@@ -36,7 +36,7 @@ const Header = ({ category }) => {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const data = await Product_Services.Product_Category(); // Gọi API để lấy danh sách danh mục
+                const data = await Product_Services.Product_Category(6); // Gọi API để lấy danh sách danh mục
                 setCategories(data); // Lưu danh sách vào state
             } catch (error) {
                 console.error('Error fetching categories:', error);
@@ -74,7 +74,7 @@ const Header = ({ category }) => {
                         {/* Logo */}
                         <div className="logo">
                             <Link to="/" className="link">
-                                <img src="assets/images/logo/Logo-4.png" alt="Logo" width={216} />
+                                <img src="assets/images/logo/logo.png" alt="Logo"  />
                             </Link>
                         </div>
                         {/* Category Search */}

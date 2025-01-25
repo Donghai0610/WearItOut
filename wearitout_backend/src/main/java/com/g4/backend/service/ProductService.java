@@ -103,10 +103,12 @@ public class ProductService {
                 .imageUrls(imageUrls)
                 .build();
     }
-
     public Page<ProductsResponseDTO> getAllProducts(
             String productName,
-            Double price,
+            Double priceMin,
+            Double priceMax,
+            Double ratingMin,
+            Double ratingMax,
             String setting,
             String shop,
             int page,
@@ -114,15 +116,26 @@ public class ProductService {
             String sortDirection) {
 
         // Kiểm tra hướng sắp xếp
-        Sort sort = sortDirection.equalsIgnoreCase("desc") ? Sort.by("price").descending() : Sort.by("price").ascending();
+        Sort sort = sortDirection.equalsIgnoreCase("desc")
+                ? Sort.by("price").descending()
+                : Sort.by("price").ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        // Lấy danh sách sản phẩm từ repository
-        Page<Product> productPage = productRepository.searchByProductFields(productName, price, setting, shop, pageable);
+        // Lấy danh sách sản phẩm từ repository với các tham số lọc mới
+        Page<Product> productPage = productRepository.searchByProductFields(
+                productName,
+                priceMin,
+                priceMax,
+                ratingMin,
+                ratingMax,
+                setting,
+                shop,
+                pageable);
 
         // Chuyển đổi Page<Product> thành Page<ProductsResponseDTO>
         return productPage.map(this::toProductsResponseDTO); // Gọi phương thức chuyển đổi
     }
+
 
     public ProductsResponseDTO getProductDetail(Long productId) {
         // Tìm sản phẩm theo ID
@@ -389,6 +402,13 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
+    public List<ProductsResponseDTO> getSameProductSameShop(long id){
+        List<Product> products = productRepository.findProductsFromSameShop(id);
+        return products.stream()
+                .map(this::toProductsResponseDTO)
+                .collect(Collectors.toList());
+
+    }
 
 
 }
