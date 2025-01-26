@@ -3,12 +3,17 @@ import query from 'jquery';
 import { Link, NavLink } from 'react-router-dom';
 import Product_Services from '../services/product';
 import { jwtDecode } from 'jwt-decode';
+import Cart_Items_Services from '../services/cart_item';
+import Account_Service from '../services/account';
 
 const Header = ({ category }) => {
     const [categories, setCategories] = useState([]);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [username, setUsername] = useState('');
-
+    const [totalItems, setTotalItems] = useState(0); // Store total items in the cart
+    const [loading, setLoading] = useState(true); // To show loading state
+    const [error, setError] = useState(null); // To store any error messages
+    const userId = Account_Service.getUserIdFromToken();
     useEffect(() => {
         // Kiểm tra trạng thái đăng nhập
         const token = localStorage.getItem('token');
@@ -27,6 +32,23 @@ const Header = ({ category }) => {
         }
     }, []);
 
+    useEffect(() => {
+        if (userId) {
+            const fetchTotalItems = async () => {
+                setLoading(true);
+                try {
+                    const items = await Cart_Items_Services.getTotalItemsInCart(userId); // Pass user ID to get the total items in the cart
+                    setTotalItems(items);
+                } catch (err) {
+                    setError('Could not fetch total items.');
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            fetchTotalItems();
+        }
+    }, [userId]); // Trigger when userId changes
     const handleLogout = () => {
         localStorage.removeItem('token');
         setIsLoggedIn(false);
@@ -74,7 +96,7 @@ const Header = ({ category }) => {
                         {/* Logo */}
                         <div className="logo">
                             <Link to="/" className="link">
-                                <img src="assets/images/logo/logo.png" alt="Logo"  />
+                                <img src="assets/images/logo/logo.png" alt="Logo" />
                             </Link>
                         </div>
                         {/* Category Search */}
@@ -117,17 +139,17 @@ const Header = ({ category }) => {
                             <div className="header-two-activities flex-align flex-wrap gap-32">
                                 {isLoggedIn ? (
                                     <>
-                                         <Link
-                                        to="/account"
-                                        className="flex-align flex-column gap-8 item-hover-two"
-                                    >
-                                        <span className="text-2xl text-white d-flex position-relative item-hover__text">
-                                            <i className="ph ph-user" />
-                                        </span>
-                                        <span className="text-md text-white item-hover__text d-none d-lg-flex">
-                                            Xin chào, {username}
-                                        </span>
-                                    </Link>
+                                        <Link
+                                            to="/account"
+                                            className="flex-align flex-column gap-8 item-hover-two"
+                                        >
+                                            <span className="text-2xl text-white d-flex position-relative item-hover__text">
+                                                <i className="ph ph-user" />
+                                            </span>
+                                            <span className="text-md text-white item-hover__text d-none d-lg-flex">
+                                                Xin chào, {username}
+                                            </span>
+                                        </Link>
                                         <button
                                             onClick={handleLogout}
                                             className="text-2xl text-white bg-transparent border-0 cursor-pointer"
@@ -135,8 +157,8 @@ const Header = ({ category }) => {
                                         >
                                             <i className="ph ph-sign-out" />
                                             <span className="text-md text-white item-hover__text d-none d-lg-flex">
-                                            Đăng Xuất
-                                        </span>
+                                                Đăng Xuất
+                                            </span>
                                         </button>
                                     </>
                                 ) : (
@@ -158,8 +180,15 @@ const Header = ({ category }) => {
                                 >
                                     <span className="text-2xl text-white d-flex position-relative me-6 mt-6 item-hover__text">
                                         <i className="ph ph-shopping-cart-simple" />
+                                        {/* Display the total items count dynamically */}
                                         <span className="w-16 h-16 flex-center rounded-circle bg-main-two-600 text-white text-xs position-absolute top-n6 end-n4">
-                                            2
+                                            {loading ? (
+                                                <span className="loader"></span> // You can add a loader here
+                                            ) : error ? (
+                                                <span>{error}</span> // Show error if API fails
+                                            ) : (
+                                                totalItems // Show the total number of items in the cart
+                                            )}
                                         </span>
                                     </span>
                                     <span className="text-md text-white item-hover__text d-none d-lg-flex">

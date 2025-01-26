@@ -12,7 +12,7 @@ const TrendingOne = () => {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const data = await Product_Services.Product_Category();
+                const data = await Product_Services.Product_Category(6);
                 setCategories(data || []);
             } catch (error) {
                 console.error('Error fetching categories:', error);

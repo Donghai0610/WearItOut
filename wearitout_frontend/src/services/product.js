@@ -4,10 +4,10 @@ import axiosInstance from "./axios";
 
 const Product_Top_Rated = async (limit = 3) => {
     try {
-        const response = await axiosInstance.get(`/api/v1/product/top-rated`,{ noAuth: true }, {
-            params: { limit }, 
+        const response = await axiosInstance.get(`/api/v1/product/top-rated`, { noAuth: true }, {
+            params: { limit },
         });
-        return response.data; 
+        return response.data;
     } catch (error) {
         console.error('Error fetching top-rated products:', error);
         throw error;
@@ -16,11 +16,11 @@ const Product_Top_Rated = async (limit = 3) => {
 
 const Product_Category = async (number) => {
     try {
-        const response = await axiosInstance.get(`/api/v1/admin/settings/${number}`,{ noAuth: true });
-        return response.data; 
+        const response = await axiosInstance.get(`/api/v1/admin/settings/${number}`, { noAuth: true });
+        return response.data;
     } catch (error) {
         console.error('Error fetching product category:', error);
-        throw error; 
+        throw error;
     }
 };
 const Product_Trending = async (settingId = 0, limit = 10) => {
@@ -60,44 +60,53 @@ const Same_Product = async (id) => {
         throw error;
     }
 };
+const Product_Search = async (filters) => {
+    const {
+        productName,
+        priceMin,
+        priceMax,
+        ratingMin,
+        ratingMax,
+        setting,
+        shop,
+        page = 0,
+        size = 9,
+        sortDirection = 'asc'
+    } = filters;
 
+    const params = { page, size, sortDirection };
 
-const Product_Search=  async ({
-    productName = '',
-    priceMin = null,
-    priceMax = null,
-    ratingMin = null,
-    ratingMax = null,
-    setting = '',
-    shop = '',
-    page = 0,
-    size = 9,
-    sortDirection = 'asc',
-}) => {
+    // Thêm các tham số vào params nếu có giá trị
+    if (productName) {
+        params.productName = productName;
+    }
+    if (priceMin !== undefined) {
+        params.priceMin = priceMin;
+    }
+    if (priceMax !== undefined) {
+        params.priceMax = priceMax;
+    }
+    if (ratingMin !== undefined) {
+        params.ratingMin = ratingMin;
+    }
+    if (ratingMax !== undefined) {
+        params.ratingMax = ratingMax;
+    }
+    if (setting) {
+        params.setting = setting;
+    }
+    if (shop) {
+        params.shop = shop;
+    }
+
     try {
-        // Tạo query parameters
-        const params = {
-            productName,
-            priceMin,
-            priceMax,
-            ratingMin,
-            ratingMax,
-            setting,
-            shop,
-            page,
-            size,
-            sortDirection,
-        };
-
-        // Gọi API với axiosInstance
-        const response = await axiosInstance.get('/api/v1/products/search', { params });
-        return response.data;
+        const response = await axiosInstance.get('/api/v1/product/search', { params });
+        return response.data; // Trả về dữ liệu từ API
     } catch (error) {
-        console.error('Error searching products:', error);
+        console.error('Error fetching products:', error);
         throw error;
     }
 };
-
 
 
 
