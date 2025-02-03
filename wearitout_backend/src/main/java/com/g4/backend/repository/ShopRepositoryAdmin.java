@@ -81,4 +81,7 @@ public interface ShopRepositoryAdmin extends JpaRepository<Shop, Long> {
             "AND YEAR(o.createAt) = YEAR(CURRENT_DATE)")
     Order findSingleBillForShop(Long shopId);
 
+    @Query("SELECT s FROM Shop s JOIN s.users u WHERE u.userId = :userId")
+    List<Shop> findShopsByUserId(Long userId);
+
 }

@@ -5,11 +5,13 @@ import com.g4.backend.dto.request.UpdateProductRequestDTO;
 import com.g4.backend.dto.response.*;
 import com.g4.backend.model.Product;
 import com.g4.backend.service.ProductService;
+import com.g4.backend.service.ShopService;
 import com.g4.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,11 +23,13 @@ import java.util.List;
 public class ProductController {
     private final ProductService productServices;
     private final UserService userService;
+    private final ShopService shopService;
 
     @Autowired
-    public ProductController(ProductService productServices, UserService userService) {
+    public ProductController(ProductService productServices, UserService userService, ShopService shopService) {
         this.productServices = productServices;
         this.userService = userService;
+        this.shopService = shopService;
     }
 
     @GetMapping("/search")
@@ -199,7 +203,7 @@ public class ProductController {
 
     @GetMapping("/trending")
     public ResponseEntity<List<ProductsResponseDTO>> getTrendingProductByCategoryId(
-             @RequestParam(required = false) Long settingId,
+            @RequestParam(required = false) Long settingId,
             @RequestParam(defaultValue = "10") int limit) {
 
         List<ProductsResponseDTO> products = productServices.getTrendingProducts(settingId, limit);
@@ -211,5 +215,38 @@ public class ProductController {
         List<ProductsResponseDTO> products = productServices.getSameProductSameShop(productId);
         return ResponseEntity.ok(products);
     }
+
+
+    @GetMapping("/products-by-user-id")
+    public ResponseEntity<Page<ProductsResponseDTO>> getProductsByUserId(
+            @RequestParam Long userId,
+            @RequestParam(required = false) String productName,
+            @RequestParam(required = false) Double price,
+            @RequestParam(required = false) String setting,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "desc") String sortDirection,
+            @RequestParam(defaultValue = "id") String sortBy) {
+
+        // Tạo Sort object tùy theo hướng (ascending hoặc descending)
+        Sort sort = Sort.by(Sort.Order.by(sortBy));
+        if ("desc".equalsIgnoreCase(sortDirection)) {
+            sort = sort.descending();
+        } else {
+            sort = sort.ascending();
+        }
+
+        // Tạo Pageable với Sort
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        // Lấy shopId từ userId
+        Long shopId = shopService.getShopIdByUserId(userId);
+
+        // Lấy danh sách sản phẩm theo shopId
+        Page<ProductsResponseDTO> products = productServices.getProductsByShopId(shopId, productName, price, setting, pageable);
+
+        return ResponseEntity.ok(products);
+    }
+
 
 }

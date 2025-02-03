@@ -11,6 +11,12 @@ import BlogPage from "./pages/BlogPage";
 import BlogDetailsPage from "./pages/BlogDetailsPage";
 import ContactPage from "./pages/ContactPage";
 import OAuthCallback from "./services/oauthCallback";
+import ShopManagementPage from "./pages/ShopManagementPage";
+import OrderManagementPage from "./pages/OrderManagementPage";
+import DashBoardPage from "./pages/DashBoardPage";
+import AddProduct from "./components/AddProduct";
+import AddProductPage from "./pages/AddProductPage";
+
 
 function App() {
   return (
@@ -30,6 +36,10 @@ function App() {
         <Route exact path="/blog-details" element={<BlogDetailsPage />} />
         <Route exact path="/contact" element={<ContactPage />} />
         <Route exact path="/oauth-callback" element={<OAuthCallback />} />
+        <Route exact path="/shop-management" element={<ShopManagementPage/>}/>
+        <Route exact path="/order-management" element={<OrderManagementPage/>}/>
+        <Route exact path="/dashboard" element={<DashBoardPage/>}/>
+        <Route exact path="/add-product" element={<AddProductPage/>}/>
       </Routes>
     </BrowserRouter>
   );

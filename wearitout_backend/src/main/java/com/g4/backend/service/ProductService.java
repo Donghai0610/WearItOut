@@ -162,51 +162,6 @@ public class ProductService {
             throw new RuntimeException("Product not found with ID: " + productId + " in shop with ID: " + shopId); // Tạo exception nếu không tìm thấy
         }
     }
-//    @Transactional
-//    public Product addProduct(NewProductRequestDTO requestDTO) {
-//        Setting setting = settingRepository.findSettingByName(requestDTO.getSettingName())
-//                .orElseThrow(() -> new RuntimeException("Setting not found"));
-//
-//        Shop shop = shopRepositoryAdmin.findByName(requestDTO.getShopName())
-//                .orElseThrow(() -> new RuntimeException("Shop not found"));
-//
-//        // Tạo đối tượng Product
-//        Product product = new Product();
-//        product.setProductName(requestDTO.getProductName());
-//        product.setDescription(requestDTO.getDescription());
-//        product.setPrice(requestDTO.getPrice());
-//        product.setStockQuantity(requestDTO.getStockQuantity());
-//        product.setStatus(Boolean.parseBoolean(requestDTO.getStatus()));
-//        product.setRating(requestDTO.getRating());
-//        product.setSetting(setting);
-//        product.setShop(shop);
-//
-//        // Lưu product
-//        Product savedProduct = productRepository.save(product);
-//
-//        // Upload và lưu các hình ảnh
-//        List<ImageProduct> images = new ArrayList<>();
-//        for (MultipartFile file : requestDTO.getImageFiles()) {
-//            // Kiểm tra file trước khi upload
-//            FileUpLoadUtil.assertAllowed(file, FileUpLoadUtil.IMAGE_PATTERN);
-//            String fileName = FileUpLoadUtil.getFileName(file.getOriginalFilename());
-//
-//            // Upload file lên Cloudinary
-//            CloudinaryResponseDTO cloudinaryResponse = cloudinaryServices.uploadFile(file, fileName);
-//            String imageUrl = cloudinaryResponse.getUrl();
-//
-//            // Lưu đường dẫn ảnh vào bảng ImageProduct
-//            ImageProduct image = new ImageProduct();
-//            image.setUrl(imageUrl);
-//            image.setProduct(savedProduct);
-//            images.add(image);
-//        }
-//
-//        // Lưu các hình ảnh vào cơ sở dữ liệu
-//        imageProductRepository.saveAll(images);
-//
-//        return savedProduct;
-//    }
 
     public Product addProduct(NewProductRequestDTO requestDTO) {
 

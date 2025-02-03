@@ -1,22 +1,26 @@
-import React from "react";
-import Preloader from "../helper/Preloader";
 import ColorInit from "../helper/ColorInit";
+import Preloader from "../helper/Preloader";
+import ShopManagement from "../components/ShopManagement";
+
 import HeaderTwo from "../components/HeaderTwo";
 import Breadcrumb from "../components/Breadcrumb";
+import NewArrivalTwo from "../components/NewArrivalTwo";
 import FooterTwo from "../components/FooterTwo";
 import BottomFooter from "../components/BottomFooter";
-import ShippingOne from "../components/ShippingOne";
-import Checkout from "../components/Checkout";
 import ScrollToTop from "react-scroll-to-top";
 import ShippingTwo from "../components/ShippingTwo";
+import Sidebar from "../components/SideBar";
+import Layout from "../components/Layout";
 
 
-const CheckoutPage = () => {
+
+const ShopManagementPage = () => {
 
 
 
   return (
     <>
+
       {/* ColorInit */}
       <ColorInit color={true} />
 
@@ -30,13 +34,21 @@ const CheckoutPage = () => {
       <HeaderTwo category={true} />
 
       {/* Breadcrumb */}
-      <Breadcrumb title={"Kiểm tra đơn hàng"} />
+      <Breadcrumb title={"Quản lý sản phẩm"} />
 
-      {/* Checkout */}
-      <Checkout />
+    
+
+      {/* ProductDetailsTwo */}
+      <Layout>
+        <ShopManagement />
+      </Layout>
+
 
       {/* ShippingOne */}
       <ShippingTwo />
+
+      {/* NewsletterOne */}
+      {/* <NewsletterOne /> */}
 
       {/* FooterTwo */}
       <FooterTwo />
@@ -45,8 +57,9 @@ const CheckoutPage = () => {
       <BottomFooter />
 
 
+
     </>
   );
 };
 
-export default CheckoutPage;
+export default ShopManagementPage;

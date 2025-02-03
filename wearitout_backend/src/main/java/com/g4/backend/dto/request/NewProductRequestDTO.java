@@ -1,5 +1,7 @@
 package com.g4.backend.dto.request;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,7 +20,8 @@ public class NewProductRequestDTO {
     private Double price;
     private Integer stockQuantity;
     private String status;
-    private Double rating;
+    @Min(0) @Max(5)
+    private Double rating = 0.0;
     private String settingName; // Thay đổi từ settingId sang settingName
     private String shopName;
     private List<MultipartFile> imageFiles;

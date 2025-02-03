@@ -5,12 +5,15 @@ import 'select2/dist/js/select2.min.js';
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import "./index.scss";
+import { Provider } from "react-redux";
+import store from "./services/Store";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
+
 root.render(
-  <>
+  <Provider store={store}> {/* Bao bọc ứng dụng trong Provider */}
     <App />
-  </>
+  </Provider>
 );
 
 reportWebVitals();

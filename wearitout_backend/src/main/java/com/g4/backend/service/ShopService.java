@@ -242,4 +242,14 @@ public ResponseDTO processBills(Long shopId, Long tax){
         order.setPaymentStatus("PAID");
         return orderRepository.save(order);
     }
+
+    public Long getShopIdByUserId(Long userId) {
+        List<Shop> shops = shopRepository.findShopsByUserId(userId);
+
+        if (shops.size() != 1) {
+            throw new IllegalStateException("User must have exactly one shop");
+        }
+
+        return shops.get(0).getShopId(); // Trả về shopId
+    }
 }

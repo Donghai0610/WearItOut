@@ -1,5 +1,6 @@
 import axios from "axios";
 import axiosInstance from "./axios";
+import Account_Service from "./account";
 
 
 const Product_Top_Rated = async (limit = 3) => {
@@ -111,8 +112,73 @@ const Product_Search = async (filters) => {
 
 
 
+const Add_Product = async ({ 
+    productName, 
+    description, 
+    price, 
+    stockQuantity, 
+    status, 
+    rating, 
+    settingName, 
+    shopName, 
+    imageFiles 
+}) => {
+    try {
+        const userId = Account_Service. getUserIdFromToken(); // Lấy userId từ token
+        if (!userId) throw new Error("User ID không tồn tại.");
 
+        // Chuẩn bị dữ liệu gửi lên
+        const formData = new FormData();
+        formData.append("productName", productName);
+        formData.append("description", description);
+        formData.append("price", price);
+        formData.append("stockQuantity", stockQuantity);
+        formData.append("status", status);
+        formData.append("rating", rating);
+        formData.append("settingName", settingName);
+        formData.append("shopName", shopName);
 
+        // Thêm danh sách hình ảnh
+        imageFiles.forEach((file) => {
+            formData.append("imageFiles", file);
+        });
+
+        // Gửi request POST để thêm sản phẩm
+        const response = await axiosInstance.post('/api/v1/product/add', formData, {
+            headers: {
+                "Content-Type": "multipart/form-data"
+            }
+        });
+
+        return response.data; // Trả về dữ liệu phản hồi từ server
+    } catch (error) {
+        console.error('Error adding product:', error);
+        throw error;
+    }
+};
+
+const Update_Product = async (productId, formData) => {
+    try {
+      // Gửi request POST để cập nhật sản phẩm với FormData
+      const response = await axiosInstance.post(`/api/v1/product/update/${productId}`, formData);
+  
+      return response.data;
+    } catch (error) {
+      console.error(`Error updating product (ID: ${productId}):`, error);
+      throw error;
+    }
+  };
+  
+  // 🛠️ Xóa sản phẩm
+  const Delete_Product = async (productId) => {
+    try {
+      const response = await axiosInstance.post(`/api/v1/product/delete/${productId}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error deleting product (ID: ${productId}):`, error);
+      throw error;
+    }
+  };
 
 
 
@@ -124,6 +190,10 @@ const Product_Services = {
     Product_Details,
     Same_Product,
     Product_Search,
+    Add_Product,
+    Update_Product,
+    Delete_Product
+
 
 }
 export default Product_Services;

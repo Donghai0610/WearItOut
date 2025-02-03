@@ -30,7 +30,7 @@ const CartPage = () => {
       <HeaderTwo category={true} />
 
       {/* Breadcrumb */}
-      <Breadcrumb title={"Cart"} />
+      <Breadcrumb title={"Giỏ Hàng Của Bạn"} />
 
       {/* CartSection */}
       <CartSection />

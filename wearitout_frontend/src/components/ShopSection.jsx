@@ -18,10 +18,10 @@ const ShopSection = () => {
     const [currentPage, setCurrentPage] = useState(0);
     const [filters, setFilters] = useState({
         productName: '',
-        priceMin: 1,
-        priceMax: 50000000,
-        ratingMin: 1,
-        ratingMax: 5,
+        priceMin: '',
+        priceMax: '',
+        ratingMin: '',
+        ratingMax: '',
         setting: '',
         shop: '',
         page: 0,
@@ -103,8 +103,8 @@ const ShopSection = () => {
             productName: '',
             priceMin: 1,
             priceMax: 50000000,
-            ratingMin: 1,
-            ratingMax: 5,
+            ratingMin: 0,
+            ratingMax: 0,
             setting: '',
             shop: '',
             page: 0,
@@ -222,7 +222,7 @@ const ShopSection = () => {
                                         className="horizontal-slider"
                                         thumbClassName="example-thumb"
                                         trackClassName="example-track"
-                                        value={[filters.ratingMin || 1, filters.ratingMax || 5]}
+                                        value={[filters.ratingMin || 0, filters.ratingMax || 5]}
                                         onChange={(value) => handleFilterChange('ratingMin', value[0], 'ratingMax', value[1])}
                                         ariaLabel={['Lower thumb', 'Upper thumb']}
                                         pearling
@@ -295,11 +295,20 @@ const ShopSection = () => {
                             {products.map((product) => (
                                 <div key={product.id} className="product-card h-100 p-16 border border-gray-100 hover-border-main-600 rounded-16 position-relative transition-2">
                                     <Link to={`/product-details/${product.id}`} className="product-card__thumb flex-center rounded-8 bg-gray-50 position-relative">
-                                        <img src={product.imageUrls[0] || 'default-image-url.png'} alt={product.productName} className="w-auto max-w-unset" />
+                                        <img
+                                            src={product.imageUrls[0] || 'default-image-url.png'}
+                                            alt={product.productName}
+                                            style={{
+                                                objectFit: 'cover',   // Đảm bảo ảnh bao phủ toàn bộ thẻ mà không bị méo
+                                                width: '100%',        // Đặt chiều rộng ảnh 100%
+                                                height: '100%'        // Đặt chiều cao ảnh 100%
+                                            }}
+                                        />
                                         <span className="product-card__badge bg-primary-600 px-8 py-4 text-sm text-white position-absolute inset-inline-start-0 inset-block-start-0">
                                             {product.status ? 'Available' : 'Sold Out'}
                                         </span>
                                     </Link>
+
                                     <div className="product-card__content mt-16">
                                         <h6 className="title text-lg fw-semibold mt-12 mb-8">
                                             <Link to={`/product-details/${product.id}`} className="link text-line-2" tabIndex={0}>

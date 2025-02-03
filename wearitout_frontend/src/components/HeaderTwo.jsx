@@ -46,9 +46,18 @@ const Header = ({ category }) => {
                 }
             };
 
+            // Fetch initially when component mounts
             fetchTotalItems();
+
+            // Set up interval to fetch the total items every 10 seconds
+            const intervalId = setInterval(() => {
+                fetchTotalItems();
+            }, 10000); // 10 seconds
+
+            // Clean up the interval when the component unmounts
+            return () => clearInterval(intervalId);
         }
-    }, [userId]); // Trigger when userId changes
+    }, [userId]); // Dependency on userId to refetch when userId changes
     const handleLogout = () => {
         localStorage.removeItem('token');
         setIsLoggedIn(false);
@@ -150,6 +159,17 @@ const Header = ({ category }) => {
                                                 Xin chào, {username}
                                             </span>
                                         </Link>
+                                        <Link
+                                            to="/dashboard"
+                                            className="flex-align flex-column gap-8 item-hover-two"
+                                        >
+                                            <span className="text-2xl text-white d-flex position-relative item-hover__text">
+                                                <i className="ph ph-airplay" />
+                                            </span>
+                                            <span className="text-md text-white item-hover__text d-none d-lg-flex">
+                                                Quản lý
+                                            </span>
+                                        </Link>
                                         <button
                                             onClick={handleLogout}
                                             className="text-2xl text-white bg-transparent border-0 cursor-pointer"
@@ -185,7 +205,7 @@ const Header = ({ category }) => {
                                             {loading ? (
                                                 <span className="loader"></span> // You can add a loader here
                                             ) : error ? (
-                                                <span>{error}</span> // Show error if API fails
+                                                <span>{error}</span>
                                             ) : (
                                                 totalItems // Show the total number of items in the cart
                                             )}
