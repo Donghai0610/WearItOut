@@ -61,6 +61,7 @@ public class EndPointService {
     public static final  String[] userGetEndPoint ={
             "/api/v1/cart/{userId}",
             "/api/v1/cart/{cartId}/count-products",
-            "/api/v1/cart_item/total-items/{cartId}"
+            "/api/v1/cart_item/total-items/{cartId}",
+            "/api/v1/user/{userId}",
     };
 }

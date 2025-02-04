@@ -1,17 +1,15 @@
-import OrderManagement from "../components/OrderManagement";
 
 import Preloader from "../helper/Preloader";
 import ColorInit from "../helper/ColorInit";
 import HeaderTwo from "../components/HeaderTwo";
 import Breadcrumb from "../components/Breadcrumb";
-import NewArrivalTwo from "../components/NewArrivalTwo";
 import FooterTwo from "../components/FooterTwo";
 import BottomFooter from "../components/BottomFooter";
 import ScrollToTop from "react-scroll-to-top";
 import ShippingTwo from "../components/ShippingTwo";
-import Sidebar from "../components/SideBar";
 import Layout from "../components/Layout";
-const OrderManagementPage = () => {
+import OrderManagementUser from "../components/OrderManagementUser";
+const OrderManagementUserPage = () => {
 
 
 
@@ -31,12 +29,12 @@ const OrderManagementPage = () => {
             <HeaderTwo category={true} />
 
             {/* Breadcrumb */}
-            <Breadcrumb title={"Quản lý đơn bán"} />
+            <Breadcrumb title={"Quản lý đơn mua"} />
 
             {/* ProductDetailsTwo */}
             {/* ProductDetailsTwo */}
             <Layout>
-                <OrderManagement />
+                <OrderManagementUser />
             </Layout>
             {/* NewArrivalTwo */}
             {/* <NewArrivalTwo /> */}
@@ -60,4 +58,4 @@ const OrderManagementPage = () => {
     );
 };
 
-export default OrderManagementPage;
+export default OrderManagementUserPage;

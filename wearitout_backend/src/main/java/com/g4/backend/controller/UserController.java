@@ -1,5 +1,6 @@
 package com.g4.backend.controller;
 
+import com.g4.backend.dto.UserDetailDTO;
 import com.g4.backend.dto.request.UserRegisterRequestDTO;
 import com.g4.backend.dto.response.ResponseDTO;
 import com.g4.backend.model.User;
@@ -49,7 +50,15 @@ public class UserController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @GetMapping("/{userId}")
+    public ResponseEntity<?> viewUserDetail(@PathVariable Long userId) {
+        try {
+            UserDetailDTO userDetail = userService.viewUserDetail(userId);
+            return new ResponseEntity<>(userDetail, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
 
 
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import query from 'jquery';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import Product_Services from '../services/product';
 import { jwtDecode } from 'jwt-decode';
 import Cart_Items_Services from '../services/cart_item';
@@ -14,6 +14,7 @@ const Header = ({ category }) => {
     const [loading, setLoading] = useState(true); // To show loading state
     const [error, setError] = useState(null); // To store any error messages
     const userId = Account_Service.getUserIdFromToken();
+    const navigate = useNavigate();
     useEffect(() => {
         // Kiểm tra trạng thái đăng nhập
         const token = localStorage.getItem('token');
@@ -62,6 +63,7 @@ const Header = ({ category }) => {
         localStorage.removeItem('token');
         setIsLoggedIn(false);
         setUsername('');
+        
     };
 
     useEffect(() => {
@@ -149,7 +151,7 @@ const Header = ({ category }) => {
                                 {isLoggedIn ? (
                                     <>
                                         <Link
-                                            to="/account"
+                                            to="/"
                                             className="flex-align flex-column gap-8 item-hover-two"
                                         >
                                             <span className="text-2xl text-white d-flex position-relative item-hover__text">
