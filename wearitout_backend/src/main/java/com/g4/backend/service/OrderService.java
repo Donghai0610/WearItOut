@@ -1,10 +1,12 @@
 package com.g4.backend.service;
 
+import com.g4.backend.dto.request.OrderRequestDTO;
+import com.g4.backend.dto.response.NewOrderResponseDTO;
 import com.g4.backend.dto.response.OrderResponseDTO;
 import com.g4.backend.mapper.OrderMapper;
-import com.g4.backend.model.Order;
+import com.g4.backend.model.*;
 
-import com.g4.backend.repository.OrderRepository;
+import com.g4.backend.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -15,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -22,6 +25,10 @@ import java.util.Optional;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
+    private final CartItemRepository cartItemRepository;
+    private final ProductRepository productRepository;
+    private final CartRepository cartRepository;
+    private final UserRepository userRepository;
 
     public Page<OrderResponseDTO> getOrderByShop(long shopId, String searchKeyword, String paymentStatus, String shippingStatus, int page, int size) {
 //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -85,4 +92,27 @@ public class OrderService {
             throw new EntityNotFoundException("Order with ID " + id + " not found");
         }
     }
+
+    public NewOrderResponseDTO createOrder(OrderRequestDTO orderRequestDTO, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Cart cart = cartRepository.findCartByUser(user)
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
+
+        List<CartItem> cartItems = cartItemRepository.findByCart(cart);
+
+        Order order = orderMapper.mapToOrder(orderRequestDTO, cartItems);
+
+        List<OrderDetail> orderDetails = orderMapper.mapToOrderDetails(cartItems);
+
+        order.setOrderDetails(orderDetails);
+
+        order = orderRepository.save(order);
+
+        return new NewOrderResponseDTO(order.getOrderId(), order.getTotalPrice(), order.getTotalQuantity());
+    }
+
+
+
 }

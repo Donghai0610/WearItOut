@@ -1,17 +1,19 @@
 package com.g4.backend.controller;
 
-import com.g4.backend.dto.response.OrderDetailResponseDTO;
-import com.g4.backend.dto.response.OrderResponse;
-import com.g4.backend.dto.response.OrderResponseDTO;
-import com.g4.backend.dto.response.OrderShippingStatusDTO;
+import com.g4.backend.dto.request.OrderRequestDTO;
+import com.g4.backend.dto.response.*;
+import com.g4.backend.model.Order;
 import com.g4.backend.service.OrderDetailService;
 import com.g4.backend.service.OrderService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @AllArgsConstructor
@@ -48,5 +50,34 @@ public class UserOrderController {
     public ResponseEntity<?> getOrderShippingStatus(@PathVariable long orderId) {
         List<OrderShippingStatusDTO> orderShippingStatusDTOS = orderDetailService.getOrderShippingStatus(orderId);
         return ResponseEntity.ok(orderShippingStatusDTOS);
+    }
+
+
+    @PostMapping("/create")
+    public NewOrderResponseDTO  createOrder(@Valid @RequestBody OrderRequestDTO orderRequestDTO, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            List<String> errorMessages = bindingResult.getAllErrors().stream()
+                    .map(error -> error.getDefaultMessage())
+                    .collect(Collectors.toList());
+
+            throw new IllegalArgumentException("Invalid input data: " + String.join(", ", errorMessages));
+        }
+
+        try {
+            return orderService.createOrder(orderRequestDTO, orderRequestDTO.getUserId());
+        } catch (RuntimeException e) {
+            throw new IllegalArgumentException("Error creating order: " + e.getMessage());
+        }
+    }
+
+    // Lấy đơn hàng theo ID
+    @GetMapping("/{orderId}")
+    public NewOrderResponseDTO getOrder(@PathVariable Long orderId) {
+        try {
+            Order order = orderService.getOrderById(orderId);
+            return new NewOrderResponseDTO(order.getOrderId(), order.getTotalPrice(), order.getTotalQuantity());
+        } catch (Exception e) {
+            throw new RuntimeException("Order not found for id: " + orderId);
+        }
     }
 }
