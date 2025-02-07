@@ -42,7 +42,6 @@ const DashBoardPage = () =>{
             </div>
 
             {/* NewArrivalTwo */}
-            <NewArrivalTwo />
 
             {/* ShippingOne */}
             <ShippingTwo />

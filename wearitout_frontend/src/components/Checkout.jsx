@@ -162,17 +162,10 @@ const Checkout = () => {
                                                 type="text"
                                                 className="common-input border-gray-100"
                                                 placeholder="Tên"
-                                                defaultValue={userDetails.firstName || ''}
+                                                defaultValue={userDetails.username || ''}
                                             />
                                         </div>
-                                        <div className="col-sm-6 col-xs-6">
-                                            <input
-                                                type="text"
-                                                className="common-input border-gray-100"
-                                                placeholder="Họ"
-                                                defaultValue={userDetails.lastName || ''}
-                                            />
-                                        </div>
+                                     
 
                                         {/* Chọn tỉnh/thành phố */}
                                         <div className="col-12">
@@ -225,10 +218,12 @@ const Checkout = () => {
                                         </div>
                                         <div className="col-12">
                                             <input
+                                             
                                                 type="email"
                                                 className="common-input border-gray-100"
                                                 placeholder="Địa chỉ Email"
                                                 defaultValue={userDetails.email || ''}
+                                                disabled
                                             />
                                         </div>
                                     </>
@@ -292,7 +287,7 @@ const Checkout = () => {
                                                 {product.productName}
                                             </span>
                                             <span className="text-gray-900 fw-normal text-md font-heading-two">
-                                                <i className="ph-bold ph-x" />
+                                                {/* <i className="ph-bold ph-x" /> */}
                                             </span>
                                             <span className="text-gray-900 fw-semibold text-md font-heading-two">
                                                 {product.quantity}
