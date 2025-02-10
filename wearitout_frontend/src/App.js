@@ -19,6 +19,7 @@ import AddProductPage from "./pages/AddProductPage";
 import { AuthProvider } from "./helper/AuthContext";
 import OrderManagementUserPage from "./pages/OrderManagementUserPage ";
 import PrivateRoute from "./helper/PrivateRoute";
+import PaymentPage from "./components/Payment";
 
 function App() {
   return (
@@ -47,6 +48,11 @@ function App() {
             exact
             path="/checkout"
             element={<PrivateRoute element={<CheckoutPage />} />}
+          />
+          <Route
+            exact
+            path="/payment"
+            element={<PrivateRoute element={<PaymentPage />} />}
           />
           <Route
             exact

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import Cart_Services from '../services/cart';
 import Account_Service from '../services/account';
@@ -20,9 +21,19 @@ const Checkout = () => {
     const [selectedDistrict, setSelectedDistrict] = useState(null);
     const [selectedWard, setSelectedWard] = useState(null);
 
+    const navigate = useNavigate(); // Khai báo navigate
+
     // Hàm xử lý thay đổi phương thức thanh toán
     const handlePaymentChange = (event) => {
         setSelectedPayment(event.target.id);
+    };
+
+    // Chuyển hướng sau khi đặt hàng
+    const handlePlaceOrder = () => {
+        // Gửi yêu cầu thanh toán hoặc đơn hàng tại đây
+
+        // Sau khi gửi đơn hàng thành công, chuyển đến trang thanh toán
+        navigate('/payment'); // Chuyển hướng đến trang Payment
     };
 
     // Hàm gọi API lấy tỉnh/thành phố
@@ -338,9 +349,12 @@ const Checkout = () => {
                                         </label>
                                     </div>
                                     {selectedPayment === 'payment1' && (
-                                        <div className="payment-item__content px-16 py-24 rounded-8 bg-main-50 position-relative d-block">
+                                        <div
+                                            className="payment-item__content px-16 py-24 rounded-8 bg-main-50 position-relative d-block">
                                             <p className="text-gray-800">
-                                                Thanh toán trực tiếp vào tài khoản ngân hàng của chúng tôi. Vui lòng sử dụng Mã đơn hàng của bạn làm tham chiếu thanh toán. Đơn hàng của bạn sẽ không được vận chuyển cho đến khi tiền được xác nhận vào tài khoản.
+                                                Thanh toán trực tiếp vào tài khoản ngân hàng của chúng tôi. Vui lòng sử
+                                                dụng Mã đơn hàng của bạn làm tham chiếu thanh toán. Đơn hàng của bạn sẽ
+                                                không được vận chuyển cho đến khi tiền được xác nhận vào tài khoản.
                                             </p>
                                         </div>
                                     )}
@@ -357,12 +371,20 @@ const Checkout = () => {
                                     .
                                 </p>
                             </div>
-                            <Link
-                                to="/checkout"
-                                className="btn btn-main mt-40 py-18 w-100 rounded-8 mt-56"
-                            >
-                                Đặt hàng
-                            </Link>
+                            {/*<Link*/}
+                            {/*    to="/checkout"*/}
+                            {/*    className="btn btn-main mt-40 py-18 w-100 rounded-8 mt-56"*/}
+                            {/*>*/}
+                            {/*    Đặt hàng*/}
+                            {/*</Link>*/}
+                            <div className="mt-32">
+                                <button
+                                    onClick={handlePlaceOrder} // Gọi hàm handlePlaceOrder khi bấm nút
+                                    className="btn btn-main mt-40 py-18 w-100 rounded-8 mt-56"
+                                >
+                                    Đặt hàng
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
