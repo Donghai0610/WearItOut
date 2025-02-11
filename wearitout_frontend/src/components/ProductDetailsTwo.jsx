@@ -185,35 +185,7 @@ const ProductDetailsTwo = () => {
                             </div>
                             <div className="col-xl-6">
                                 <div className="product-details__content">
-                                    {/* <div className="flex-center mb-24 flex-wrap gap-16 bg-color-one rounded-8 py-16 px-24 position-relative z-1">
-                                        <img
-                                            src="assets/images/bg/details-offer-bg.png"
-                                            alt="Hình nền ưu đãi"
-                                            className="position-absolute inset-block-start-0 inset-inline-start-0 w-100 h-100 z-n1"
-                                        />
-                                        <div className="flex-align gap-16">
-                                            <span className="text-white text-sm">Ưu đãi đặc biệt:</span>
-                                        </div>
-                                        <div className="countdown" id="countdown11">
-                                            <ul className="countdown-list flex-align flex-wrap">
-                                                <li className="countdown-list__item text-heading flex-align gap-4 text-xs fw-medium w-28 h-28 rounded-4 border border-main-600 p-0 flex-center">
-                                                    {timeLeft.days}<span className="days" />
-                                                </li>
-                                                <li className="countdown-list__item text-heading flex-align gap-4 text-xs fw-medium w-28 h-28 rounded-4 border border-main-600 p-0 flex-center">
-                                                    {timeLeft.hours}<span className="hours" />
-                                                </li>
-                                                <li className="countdown-list__item text-heading flex-align gap-4 text-xs fw-medium w-28 h-28 rounded-4 border border-main-600 p-0 flex-center">
-                                                    {timeLeft.minutes}<span className="minutes" />
-                                                </li>
-                                                <li className="countdown-list__item text-heading flex-align gap-4 text-xs fw-medium w-28 h-28 rounded-4 border border-main-600 p-0 flex-center">
-                                                    {timeLeft.seconds}<span className="seconds" />
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <span className="text-white text-xs">
-                                            Còn lại cho đến khi kết thúc ưu đãi
-                                        </span>
-                                    </div> */}
+                                  
                                     <h5 className="mb-12">
                                         {product.productName}
                                     </h5>
@@ -252,89 +224,9 @@ const ProductDetailsTwo = () => {
                                             </h6>
                                         </div>
                                     </div>
-                                    {/* <div className="my-32 flex-align flex-wrap gap-12">
-                                        <Link
-                                            to="#"
-                                            className="px-12 py-8 text-sm rounded-8 flex-align gap-8 text-gray-900 border border-gray-200 hover-border-main-600 hover-text-main-600"
-                                        >
-                                            Trả góp hàng tháng USD 15.00
-                                            <i className="ph ph-caret-right" />
-                                        </Link>
-                                        <Link
-                                            to="#"
-                                            className="px-12 py-8 text-sm rounded-8 flex-align gap-8 text-gray-900 border border-gray-200 hover-border-main-600 hover-text-main-600"
-                                        >
-                                            Phí vận chuyển
-                                            <i className="ph ph-caret-right" />
-                                        </Link>
-                                        <Link
-                                            to="#"
-                                            className="px-12 py-8 text-sm rounded-8 flex-align gap-8 text-gray-900 border border-gray-200 hover-border-main-600 hover-text-main-600"
-                                        >
-                                            Bảo mật &amp; Quyền riêng tư
-                                            <i className="ph ph-caret-right" />
-                                        </Link>
-                                    </div> */}
+                                   
                                     <span className="mt-32 pt-32 text-gray-700 border-top border-gray-100 d-block" />
-                                    {/* <div className="mt-32">
-                                        <h6 className="mb-16">Tổng quan nhanh</h6>
-                                        <div className="flex-between align-items-start flex-wrap gap-16">
-                                            <div>
-                                                <span className="text-gray-900 d-block mb-12">
-                                                    Màu sắc:
-                                                    <span className="fw-medium">Bạc Khoáng</span>
-                                                </span>
-                                                <div className="color-list flex-align gap-8">
-                                                    <button
-                                                        type="button"
-                                                        className="color-list__button w-20 h-20 border border-2 border-gray-50 rounded-circle bg-info-600"
-                                                    />
-                                                    <button
-                                                        type="button"
-                                                        className="color-list__button w-20 h-20 border border-2 border-gray-50 rounded-circle bg-warning-600"
-                                                    />
-                                                    <button
-                                                        type="button"
-                                                        className="color-list__button w-20 h-20 border border-2 border-gray-50 rounded-circle bg-tertiary-600"
-                                                    />
-                                                    <button
-                                                        type="button"
-                                                        className="color-list__button w-20 h-20 border border-2 border-gray-50 rounded-circle bg-main-600"
-                                                    />
-                                                    <button
-                                                        type="button"
-                                                        className="color-list__button w-20 h-20 border border-2 border-gray-50 rounded-circle bg-gray-100"
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <span className="text-gray-900 d-block mb-12">
-                                                    Tên mẫu:
-                                                    <span className="fw-medium">có ưu đãi</span>
-                                                </span>
-                                                <div className="flex-align gap-8 flex-wrap">
-                                                    <Link
-                                                        to="#"
-                                                        className="px-12 py-8 text-sm rounded-8 text-gray-900 border border-gray-200 hover-border-main-600 hover-text-main-600"
-                                                    >
-                                                        có ưu đãi
-                                                    </Link>
-                                                    <Link
-                                                        to="#"
-                                                        className="px-12 py-8 text-sm rounded-8 text-gray-900 border border-gray-200 hover-border-main-600 hover-text-main-600"
-                                                    >
-                                                        Laptop thế hệ 12
-                                                    </Link>
-                                                    <Link
-                                                        to="#"
-                                                        className="px-12 py-8 text-sm rounded-8 text-gray-900 border border-gray-200 hover-border-main-600 hover-text-main-600"
-                                                    >
-                                                        không có ưu đãi
-                                                    </Link>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div> */}
+                                    
                                     <span className="mt-32 pt-32 text-gray-700 border-top border-gray-100 d-block" />
                                     <Link
                                         to="https://www.facebook.com/nwm1693"
@@ -479,7 +371,7 @@ const ProductDetailsTwo = () => {
                                 100% Satisfaction Guaranteed
                             </Link>
                         </div>
-                        <div className="product-dContent__box">
+                        {/* <div className="product-dContent__box">
                             <div className="tab-content" id="pills-tabContent">
                                 <div
                                     className="tab-pane fade show active"
@@ -1068,7 +960,7 @@ const ProductDetailsTwo = () => {
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>
