@@ -67,7 +67,68 @@ public class OrderService {
         this.settingRepository = settingRepository;
     }
 
+    public Page<OrderResponseDTO> getOrderByShop(long shopId, String searchKeyword, String paymentStatus, String shippingStatus, int page, int size) {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        Object principal = authentication.getPrincipal();
+//
+//        String username;
+//        if (principal instanceof UserDetails) {
+//            username = ((UserDetails) principal).getUsername();
+//        } else {
+//            username = principal.toString();
+//        }
 
+        Pageable pageable = PageRequest.of(page, size);
+        Page<OrderResponseDTO> orders = orderRepository.getOrdersByShopAndFilter(shopId, searchKeyword, paymentStatus, shippingStatus, pageable);
+        return orders;
+    }
+
+    public Page<OrderResponseDTO> getOrderByUser(String paymentStatus, String shippingStatus, int page, int size) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+
+        String username;
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails) principal).getUsername();
+        } else {
+            username = principal.toString();
+        }
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<OrderResponseDTO> orders = orderRepository.getOrdersByUserAndFilter(username, paymentStatus, shippingStatus, pageable);
+        return orders;
+    }
+
+    public void cancelOrder(long orderId) {
+        Optional<Order> orderOptional = orderRepository.findById(orderId);
+        if (orderOptional.isPresent()) {
+            Order order = orderOptional.get();
+            order.setPaymentStatus("CANCEL");
+            orderRepository.save(order);
+        }
+    }
+
+    public void changeStatusOrderToPaid(long orderId) {
+        Optional<Order> orderOptional = orderRepository.findById(orderId);
+        if (orderOptional.isPresent()) {
+            Order order = orderOptional.get();
+            order.setPaymentStatus("PAID");
+            orderRepository.save(order);
+        }
+    }
+
+    public Order getOrderById(long orderId) {
+        Optional<Order> orderOptional = orderRepository.findById(orderId);
+        return unwarppedOrder(orderOptional, orderId);
+    }
+
+    static Order unwarppedOrder(Optional<Order> entity, Long id) {
+        if (entity.isPresent()) {
+            return entity.get();
+        } else {
+            throw new EntityNotFoundException("Order with ID " + id + " not found");
+        }
+    }
 
 
 
@@ -136,9 +197,7 @@ public class OrderService {
             // Cập nhật số lượng sản phẩm trong Product và xóa CartItem
             updateProductQuantityAndClearCartItems(itemsForShop);
 
-            // Nếu phương thức thanh toán là tự động, tạo link thanh toán
             if (paymentMethod == PaymentMethod.TRANSFER_TO_SHOP_AUTOMATIC) {
-                // Tạo PaymentData cho Order và truyền tổng tiền thanh toán của website
                 PaymentData paymentData = createPaymentDataForOrder(order, totalPaymentForWebsite);
                 // Tạo Payment Link từ PayOS
                 CheckoutResponseData paymentLinkResponse = createPaymentLink(paymentData);
