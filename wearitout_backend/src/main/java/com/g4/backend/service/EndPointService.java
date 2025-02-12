@@ -65,6 +65,7 @@ public class EndPointService {
             "/api/v1/cart_item/total-items/{cartId}",
             "/api/v1/user/{userId}",
             "/api/v1/user/order/**",
+            "/api/v1/user/order/{userId}/purchased-products"
 
     };
 }

@@ -61,7 +61,7 @@ const CartSection = () => {
         const userId = Account_Service.getUserIdFromToken();
 
         if (!userId) return;
-    
+
         // Hiển thị hộp thoại xác nhận
         Swal.fire({
             title: "Are you sure?",
@@ -76,7 +76,7 @@ const CartSection = () => {
                 try {
                     await Cart_Services.Remove_Product_From_Cart(userId, productId); // Gọi API xóa sản phẩm
                     fetchCart(); // Refresh giỏ hàng
-    
+
                     // Hiển thị thông báo thành công
                     Swal.fire({
                         title: "Deleted!",
@@ -94,7 +94,7 @@ const CartSection = () => {
             }
         });
     };
-    
+
     useEffect(() => {
         fetchCart(); // Gọi API lấy giỏ hàng khi component mount
     }, []);
@@ -122,11 +122,12 @@ const CartSection = () => {
                                 <table className="table style-three">
                                     <thead>
                                         <tr>
-                                            <th className="h6 mb-0 text-lg fw-bold">Delete</th>
-                                            <th className="h6 mb-0 text-lg fw-bold">Product Name</th>
-                                            <th className="h6 mb-0 text-lg fw-bold">Price</th>
-                                            <th className="h6 mb-0 text-lg fw-bold">Quantity</th>
-                                            <th className="h6 mb-0 text-lg fw-bold">Subtotal</th>
+                                            <th className="h6 mb-0 text-lg fw-bold">Xóa</th>
+                                            <th className="h6 mb-0 text-lg fw-bold">Sản Phẩm</th>
+                                            <th className="h6 mb-0 text-lg fw-bold">Của Hàng</th>
+                                            <th className="h6 mb-0 text-lg fw-bold">Giá</th>
+                                            <th className="h6 mb-0 text-lg fw-bold">Số Lượng</th>
+                                            <th className="h6 mb-0 text-lg fw-bold">Ươc Tính</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -139,7 +140,7 @@ const CartSection = () => {
                                                         onClick={() => handleRemoveProduct(item.productId)}
                                                     >
                                                         <i className="ph ph-x-circle text-2xl d-flex" />
-                                                        Remove
+                                                        Xóa
                                                     </button>
                                                 </td>
                                                 <td>
@@ -178,6 +179,12 @@ const CartSection = () => {
                                                 </td>
                                                 <td>
                                                     <span className="text-lg h6 mb-0 fw-semibold">
+                                                        {item.shopName}
+                                                    </span>
+                                                </td>
+
+                                                <td>
+                                                    <span className="text-lg h6 mb-0 fw-semibold">
                                                         {formatVND(item.price)}
                                                     </span>
                                                 </td>
@@ -205,30 +212,30 @@ const CartSection = () => {
                     {/* Cart Sidebar */}
                     <div className="col-xl-3 col-lg-4">
                         <div className="cart-sidebar border border-gray-100 rounded-8 px-24 py-40">
-                            <h6 className="text-xl mb-32">Cart Totals</h6>
+                            <h6 className="text-xl mb-32">Tổng tiền trong giỏ hàng</h6>
                             <div className="bg-color-three rounded-8 p-24">
                                 <div className="mb-32 flex-between gap-8">
-                                    <span className="text-gray-900 font-heading-two">Subtotal</span>
+                                    <span className="text-gray-900 font-heading-two">Tổng Tiền</span>
                                     <span className="text-gray-900 fw-semibold">
                                         {formatVND(cart.totalPrice)}
                                     </span>
                                 </div>
                                 <div className="mb-32 flex-between gap-8">
                                     <span className="text-gray-900 font-heading-two">
-                                        Estimated Delivery
+                                        Phí Giao Hàng
                                     </span>
                                     <span className="text-gray-900 fw-semibold">Free</span>
                                 </div>
                                 <div className="mb-0 flex-between gap-8">
                                     <span className="text-gray-900 font-heading-two">
-                                        Estimated Taxes
+                                        
                                     </span>
                                     <span className="text-gray-900 fw-semibold">0 VND</span>
                                 </div>
                             </div>
                             <div className="bg-color-three rounded-8 p-24 mt-24">
                                 <div className="flex-between gap-8">
-                                    <span className="text-gray-900 text-xl fw-semibold">Total</span>
+                                    <span className="text-gray-900 text-xl fw-semibold">Tổng Tiền</span>
                                     <span className="text-gray-900 text-xl fw-semibold">
                                         {formatVND(cart.totalPrice)}
                                     </span>
@@ -238,7 +245,7 @@ const CartSection = () => {
                                 to="/checkout"
                                 className="btn btn-main mt-40 py-18 w-100 rounded-8"
                             >
-                                Proceed to checkout
+                                Tiến Hành Thanh Toán
                             </Link>
                         </div>
                     </div>

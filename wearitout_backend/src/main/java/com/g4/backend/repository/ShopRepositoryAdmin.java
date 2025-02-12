@@ -84,4 +84,6 @@ public interface ShopRepositoryAdmin extends JpaRepository<Shop, Long> {
     @Query("SELECT s FROM Shop s JOIN s.users u WHERE u.userId = :userId")
     List<Shop> findShopsByUserId(Long userId);
 
+    @Query("SELECT s FROM Shop s WHERE s.shopId = :shopId")
+    Shop findShopByShopId(Long shopId);
 }

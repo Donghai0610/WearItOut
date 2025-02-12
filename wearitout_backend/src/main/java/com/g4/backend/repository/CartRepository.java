@@ -24,5 +24,7 @@ Cart findByCartId(Long cartId);
 Optional<Cart> findCartByUser(User user);
 //
 
+    Cart findByUser(User user);
+
 }
 

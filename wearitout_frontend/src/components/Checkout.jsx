@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Cart_Services from '../services/cart';
 import Account_Service from '../services/account';
 import formatVND from '../helper/formatVND';
 import axios from 'axios'; // Đảm bảo đã cài axios
 import Select from 'react-select'; // Đảm bảo đã cài react-select
-
+import useOrderServices from '../services/order';
+import Order_Service from '../services/orderService';
+import Swal from 'sweetalert2';
 const Checkout = () => {
-    const [selectedPayment, setSelectedPayment] = useState("payment1");
+    const [selectedPayment, setSelectedPayment] = useState("COD"); // Default payment method is COD
     const [cart, setCart] = useState(null); // State để lưu thông tin giỏ hàng
     const [userId, setUserId] = useState(null);
     const [userDetails, setUserDetails] = useState(null);
@@ -19,11 +21,14 @@ const Checkout = () => {
     const [selectedProvince, setSelectedProvince] = useState(null);
     const [selectedDistrict, setSelectedDistrict] = useState(null);
     const [selectedWard, setSelectedWard] = useState(null);
+    const [address, setAddress] = useState(''); // Địa chỉ nhà nhập tay
+
+    const navigate = useNavigate();
 
     // Hàm xử lý thay đổi phương thức thanh toán
     const handlePaymentChange = (event) => {
-        setSelectedPayment(event.target.id);
-    };
+        setSelectedPayment(event.target.value);  // Chỉ cần dùng value thay vì id
+      };
 
     // Hàm gọi API lấy tỉnh/thành phố
     const fetchProvinces = async () => {
@@ -51,9 +56,8 @@ const Checkout = () => {
     const fetchWards = async (districtId) => {
         try {
             const response = await axios.get(`https://open.oapi.vn/location/wards/${districtId}?page=0&size=30&query=`);
-            setWards(response.data.data); // Cập nhật phường/xã vào state\
+            setWards(response.data.data); // Cập nhật phường/xã vào state
             setSelectedWard(null); // Reset phường/xã khi thay đổi quận
-        
         } catch (error) {
             console.error('Error fetching wards:', error);
         }
@@ -91,7 +95,6 @@ const Checkout = () => {
 
     // Cập nhật state khi chọn tỉnh
     const handleProvinceChange = (selectedOption) => {
-        console.log('Selected Province:', selectedOption);
         if (selectedOption && selectedOption.value) {
             setSelectedProvince(selectedOption);
             fetchDistricts(selectedOption.value); // Gọi API khi thay đổi tỉnh
@@ -106,6 +109,11 @@ const Checkout = () => {
         if (selectedOption && selectedOption.value) {
             fetchWards(selectedOption.value); // Gọi API khi thay đổi quận
         }
+    };
+
+    // Cập nhật địa chỉ nhập tay
+    const handleAddressChange = (e) => {
+        setAddress(e.target.value); // Cập nhật địa chỉ nhà nhập tay
     };
 
     // Chuyển đổi dữ liệu tỉnh thành dạng phù hợp cho react-select
@@ -129,11 +137,33 @@ const Checkout = () => {
         return <div>Đang tải...</div>;
     }
 
-    // Xử lý khi người dùng điền thông tin và submit
-    const handleSubmit = () => {
-        const fullAddress = `${selectedWard ? selectedWard.label : ''}, ${selectedDistrict ? selectedDistrict.label : ''}, ${selectedProvince ? selectedProvince.label : ''}`;
+    const handleSubmit = async () => {
+        const fullAddress = `${address ? address : ''}, ${selectedWard ? selectedWard.label : ''}, ${selectedDistrict ? selectedDistrict.label : ''}, ${selectedProvince ? selectedProvince.label : ''}`;
         console.log('Địa chỉ đầy đủ:', fullAddress);
-        // Tiến hành xử lý gửi dữ liệu
+
+        // Gọi API createOrder để tạo đơn hàng
+        const orderData = {
+            userId: userId,
+            shipAddress: fullAddress,
+            paymentMethod: selectedPayment // Lấy phương thức thanh toán từ state
+        };
+
+        try {
+            const createdOrder = await Order_Service.createOrder(orderData); // Gọi method createOrder từ OrderServices
+            console.log('Đơn hàng đã được tạo:', createdOrder);
+            alert("Đơn hàng của bạn đã được tạo thành công!");
+            Swal.fire({
+                icon: 'success',
+                title: 'Đơn hàng đã được tạo thành công!',
+                showConfirmButton: false,
+                timer: 1500
+            });
+            navigate('/order-user'); // Chuyển hướng đến trang kết quả đơn hàng
+
+        } catch (error) {
+            console.error('Lỗi khi tạo đơn hàng:', error);
+            alert("Có lỗi xảy ra khi tạo đơn hàng. Vui lòng thử lại.");
+        }
     };
 
     return (
@@ -165,7 +195,6 @@ const Checkout = () => {
                                                 defaultValue={userDetails.username || ''}
                                             />
                                         </div>
-                                     
 
                                         {/* Chọn tỉnh/thành phố */}
                                         <div className="col-12">
@@ -205,8 +234,11 @@ const Checkout = () => {
                                                 type="text"
                                                 className="common-input border-gray-100"
                                                 placeholder="Địa chỉ nhà"
+                                                value={address}
+                                                onChange={handleAddressChange}
                                             />
                                         </div>
+
 
                                         <div className="col-12">
                                             <input
@@ -218,7 +250,6 @@ const Checkout = () => {
                                         </div>
                                         <div className="col-12">
                                             <input
-                                             
                                                 type="email"
                                                 className="common-input border-gray-100"
                                                 placeholder="Địa chỉ Email"
@@ -254,8 +285,6 @@ const Checkout = () => {
                                         />
                                     </div>
                                 </div>
-
-                               
                             </div>
                         </form>
                     </div>
@@ -319,28 +348,69 @@ const Checkout = () => {
                                 </div>
                             </div>
                             <div className="mt-32">
-                                {/* Payment options */}
                                 <div className="payment-item">
                                     <div className="form-check common-check common-radio py-16 mb-0">
                                         <input
                                             className="form-check-input"
                                             type="radio"
                                             name="payment"
-                                            id="payment1"
-                                            checked={selectedPayment === 'payment1'}
+                                            value="COD"  // Sử dụng value thay vì id
+                                            checked={selectedPayment === "COD"}
                                             onChange={handlePaymentChange}
                                         />
-                                        <label
-                                            className="form-check-label fw-semibold text-neutral-600"
-                                            htmlFor="payment1"
-                                        >
-                                            Chuyển khoản ngân hàng trực tiếp
+                                        <label className="form-check-label fw-semibold text-neutral-600" htmlFor="payment1">
+                                            Thanh toán khi nhận hàng (COD)
                                         </label>
                                     </div>
-                                    {selectedPayment === 'payment1' && (
+
+                                    <div className="form-check common-check common-radio py-16 mb-0">
+                                        <input
+                                            className="form-check-input"
+                                            type="radio"
+                                            name="payment"
+                                            value="TRANSFER_TO_SHOP"  // Sử dụng value thay vì id
+                                            checked={selectedPayment === "TRANSFER_TO_SHOP"}
+                                            onChange={handlePaymentChange}
+                                        />
+                                        <label className="form-check-label fw-semibold text-neutral-600" htmlFor="payment2">
+                                            Chuyển khoản thủ công
+                                        </label>
+                                    </div>
+
+                                    <div className="form-check common-check common-radio py-16 mb-0">
+                                        <input
+                                            className="form-check-input"
+                                            type="radio"
+                                            name="payment"
+                                            value="TRANSFER_TO_SHOP_AUTOMATIC"  // Sử dụng value thay vì id
+                                            checked={selectedPayment === "TRANSFER_TO_SHOP_AUTOMATIC"}
+                                            onChange={handlePaymentChange}
+                                        />
+                                        <label className="form-check-label fw-semibold text-neutral-600" htmlFor="payment3">
+                                            Chuyển khoản tự động
+                                        </label>
+                                    </div>
+
+                                    {selectedPayment === "COD" && (
                                         <div className="payment-item__content px-16 py-24 rounded-8 bg-main-50 position-relative d-block">
                                             <p className="text-gray-800">
-                                                Thanh toán trực tiếp vào tài khoản ngân hàng của chúng tôi. Vui lòng sử dụng Mã đơn hàng của bạn làm tham chiếu thanh toán. Đơn hàng của bạn sẽ không được vận chuyển cho đến khi tiền được xác nhận vào tài khoản.
+                                                Thanh toán trực tiếp cho nhân viên giao hàng khi nhận hàng.
+                                            </p>
+                                        </div>
+                                    )}
+
+                                    {selectedPayment === "TRANSFER_TO_SHOP" && (
+                                        <div className="payment-item__content px-16 py-24 rounded-8 bg-main-50 position-relative d-block">
+                                            <p className="text-gray-800">
+                                                Thanh toán bằng cách chuyển khoản vào tài khoản ngân hàng của chúng tôi. Vui lòng sử dụng Mã đơn hàng của bạn làm tham chiếu thanh toán. Đơn hàng của bạn sẽ không được vận chuyển cho đến khi tiền được xác nhận vào tài khoản.
+                                            </p>
+                                        </div>
+                                    )}
+
+                                    {selectedPayment === "TRANSFER_TO_SHOP_AUTOMATIC" && (
+                                        <div className="payment-item__content px-16 py-24 rounded-8 bg-main-50 position-relative d-block">
+                                            <p className="text-gray-800">
+                                                Sau khi thanh toán xong, hệ thống sẽ tự động xác nhận và gửi hàng cho bạn.
                                             </p>
                                         </div>
                                     )}
@@ -357,12 +427,12 @@ const Checkout = () => {
                                     .
                                 </p>
                             </div>
-                            <Link
-                                to="/checkout"
+                            <button
+                                onClick={handleSubmit}
                                 className="btn btn-main mt-40 py-18 w-100 rounded-8 mt-56"
                             >
                                 Đặt hàng
-                            </Link>
+                            </button>
                         </div>
                     </div>
                 </div>

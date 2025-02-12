@@ -46,8 +46,8 @@ const TrendingOne = () => {
                             <ul className="nav common-tab style-two nav-pills" id="pills-tab" role="tablist">
                                 {/* Nút "All" */}
                                 <li className="nav-item" role="presentation">
-                                    <button 
-                                        className={`nav-link ${selectedCategory === 0 ? 'active' : ''}`} 
+                                    <button
+                                        className={`nav-link ${selectedCategory === 0 ? 'active' : ''}`}
                                         onClick={() => setSelectedCategory(0)}
                                     >
                                         All
@@ -56,8 +56,8 @@ const TrendingOne = () => {
                                 {/* Hiển thị danh mục từ API */}
                                 {categories.map(category => (
                                     <li className="nav-item" role="presentation" key={category.settingId}>
-                                        <button 
-                                            className={`nav-link ${selectedCategory === category.settingId ? 'active' : ''}`} 
+                                        <button
+                                            className={`nav-link ${selectedCategory === category.settingId ? 'active' : ''}`}
                                             onClick={() => setSelectedCategory(category.settingId)}
                                         >
                                             {category.settingName}
@@ -100,9 +100,18 @@ const TrendingOne = () => {
                                                     <span className="product-card__badge bg-tertiary-600 px-8 py-4 text-sm text-white position-absolute inset-inline-start-0 inset-block-start-0">
                                                         {product.rating >= 4.5 ? 'Best Seller' : 'Trending'}
                                                     </span>
-                                                    <img src={product.imageUrls.length > 0 ? product.imageUrls[0] : "https://via.placeholder.com/150"}
-                                                        alt={product.productName} className="w-auto max-w-unset" />
+                                                    <img
+                                                        src={product.imageUrls.length > 0 ? product.imageUrls[0] : "https://via.placeholder.com/150"}
+                                                        alt={product.productName}
+                                                        className="w-auto max-w-unset"
+                                                        style={{
+                                                            objectFit: 'cover', // Đảm bảo ảnh bao phủ toàn bộ khung
+                                                            width: '100%',       // Đảm bảo ảnh chiếm hết chiều rộng của thẻ
+                                                            height: '100%'       // Đảm bảo ảnh chiếm hết chiều cao của thẻ
+                                                        }}
+                                                    />
                                                 </Link>
+
                                                 <div className="product-card__content mt-16">
                                                     <span className="text-success-600 bg-success-50 text-sm fw-medium py-4 px-8">
                                                         {Math.floor(Math.random() * 30) + 10}% OFF
@@ -135,7 +144,7 @@ const TrendingOne = () => {
                                 )}
                             </div>
                         </div>
-                    </div>     
+                    </div>
                 </div>
             </div>
         </section>
