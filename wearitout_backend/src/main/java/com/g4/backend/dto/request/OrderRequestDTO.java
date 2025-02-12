@@ -18,12 +18,14 @@ public class OrderRequestDTO {
     private Long cartId;
     @NotNull(message = "User id is required")
     private Long userId;
-    @NotNull(message = "Shop id is required")
-    private Long shopId;
+
     @NotEmpty(message = "Shipping address cannot be empty")
     private String shipAddress;
     @NotEmpty(message = "Payment status cannot be empty")
     private String paymentStatus;
+
+    @NotEmpty(message = "Payment status cannot be empty")
+    private String paymentMethod;
 
     private List<CartItemRequestDTO> cartItems;
 

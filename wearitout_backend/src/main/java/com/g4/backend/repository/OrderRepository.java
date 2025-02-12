@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("SELECT new com.g4.backend.dto.response.OrderResponseDTO(o.orderId, o.totalPrice, o.paymentStatus, s.name, o.totalQuantity, o.createAt, o.shipAddress, " +
@@ -52,4 +54,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
                                                     @Param("paymentStatus") String paymentStatus,
                                                     @Param("shippingStatus") String shippingStatus,
                                                     Pageable pageable);
+
+    @Query("select o from Order o where o.user.userId = :userId")
+    List<Order> findOrderByUserId(@Param("userId") long userId);
 }

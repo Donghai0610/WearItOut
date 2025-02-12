@@ -19,4 +19,6 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, Long> 
             " WHERE os.order.orderId = :orderId" +
             " ORDER BY os.updateAt DESC")
     List<Object[]> getOrderShippingStatus(@Param("orderId") long orderId);
+
+
 }

@@ -1,6 +1,7 @@
 package com.g4.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.g4.backend.utils.PaymentMethod;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -55,4 +56,12 @@ public class Order {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderSetting> orderSettings;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "payment_method")
+    private PaymentMethod paymentMethod;
+
+    @Column(name = "payment_link_url")
+    private String paymentLinkUrl;
+
 }

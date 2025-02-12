@@ -5,9 +5,11 @@ import com.g4.backend.dto.response.*;
 import com.g4.backend.model.Order;
 import com.g4.backend.service.OrderDetailService;
 import com.g4.backend.service.OrderService;
+import com.g4.backend.utils.PaymentMethod;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -54,19 +56,13 @@ public class UserOrderController {
 
 
     @PostMapping("/create")
-    public NewOrderResponseDTO  createOrder(@Valid @RequestBody OrderRequestDTO orderRequestDTO, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            List<String> errorMessages = bindingResult.getAllErrors().stream()
-                    .map(error -> error.getDefaultMessage())
-                    .collect(Collectors.toList());
-
-            throw new IllegalArgumentException("Invalid input data: " + String.join(", ", errorMessages));
-        }
-
+    public ResponseEntity<String> createOrder(@RequestParam Long userId, @RequestParam String shipAddress, @RequestParam PaymentMethod paymentMethod) {
         try {
-            return orderService.createOrder(orderRequestDTO, orderRequestDTO.getUserId());
-        } catch (RuntimeException e) {
-            throw new IllegalArgumentException("Error creating order: " + e.getMessage());
+            // Gọi service để tạo đơn hàng
+            orderService.createOrdersForCart(userId, shipAddress, paymentMethod);
+            return ResponseEntity.ok("Đơn hàng đã được tạo thành công!");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Có lỗi xảy ra: " + e.getMessage());
         }
     }
 
@@ -79,5 +75,15 @@ public class UserOrderController {
         } catch (Exception e) {
             throw new RuntimeException("Order not found for id: " + orderId);
         }
+    }
+
+    @GetMapping("/{userId}/purchased-products")
+    public ResponseEntity<List<OrderDetailResponseDTO>> getUserPurchasedProducts(@PathVariable("userId") Long userId) {
+        List<OrderDetailResponseDTO> orderDetails = orderService.getPurchasedProductsByUser(userId);
+
+        if (orderDetails.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        return ResponseEntity.ok(orderDetails);
     }
 }
