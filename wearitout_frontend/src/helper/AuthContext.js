@@ -10,7 +10,6 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [role, setRole] = useState(null);
 
-  // Kiểm tra trạng thái đăng nhập khi ứng dụng tải lại
   useEffect(() => {
     const token = localStorage.getItem("token");
     const savedRole = localStorage.getItem("role");

@@ -24,10 +24,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.payos.PayOS;
-import vn.payos.type.CheckoutResponseData;
-import vn.payos.type.PaymentData;
-import vn.payos.type.PaymentLinkData;
-import vn.payos.type.WebhookData;
+import vn.payos.type.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -112,10 +109,13 @@ public class OrderService {
         Optional<Order> orderOptional = orderRepository.findById(orderId);
         if (orderOptional.isPresent()) {
             Order order = orderOptional.get();
-            order.setPaymentStatus("PAID");
+            order.setPaymentStatus("PAID");  // Cập nhật trạng thái thanh toán thành "PAID"
             orderRepository.save(order);
+        } else {
+            throw new RuntimeException("Không tìm thấy đơn hàng với ID: " + orderId);
         }
     }
+
 
     public Order getOrderById(long orderId) {
         Optional<Order> orderOptional = orderRepository.findById(orderId);
@@ -131,28 +131,7 @@ public class OrderService {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-
+    @Transactional
     public void createOrdersForCart(Long userId, String shipAddress, PaymentMethod paymentMethod) {
         // Lấy người dùng
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Người dùng không tồn tại"));
@@ -198,7 +177,7 @@ public class OrderService {
             updateProductQuantityAndClearCartItems(itemsForShop);
 
             if (paymentMethod == PaymentMethod.TRANSFER_TO_SHOP_AUTOMATIC) {
-                PaymentData paymentData = createPaymentDataForOrder(order, totalPaymentForWebsite);
+                PaymentData paymentData = createPaymentDataForOrder(order, totalPaymentForWebsite, cartItems); // Lưu ý: truyền toàn bộ giỏ hàng vào
                 // Tạo Payment Link từ PayOS
                 CheckoutResponseData paymentLinkResponse = createPaymentLink(paymentData);
 
@@ -295,13 +274,30 @@ public class OrderService {
         return order;
     }
 
-    private PaymentData createPaymentDataForOrder(Order order, double totalPaymentForWebsite) {
-        // Tạo PaymentData với thông tin đơn hàng
-        return PaymentData.builder()
-                .orderCode(order.getOrderId())
-                .amount((int) totalPaymentForWebsite)  // Sử dụng totalPaymentForWebsite làm số tiền thanh toán cho website
-                .description("Thanh toán cho đơn hàng")
+    private PaymentData createPaymentDataForOrder(Order order, double totalPaymentForWebsite, List<CartItem> cartItems) {
+        // Tạo PaymentData với các thông tin thanh toán của đơn hàng
+        PaymentData paymentData = PaymentData.builder()
+                .orderCode(order.getOrderId())  // Mã đơn hàng
+                .amount((int) totalPaymentForWebsite)  // Số tiền thanh toán (chuyển sang kiểu int)
+                .description("WearItOut-Thanh toán cho đơn hàng " + order.getOrderId())  // Mô tả thanh toán
+                .items(createItemDataForCartItems(cartItems))  // Danh sách sản phẩm trong giỏ hàng
+                .cancelUrl("http://localhost:3000/checkout")  // URL khi hủy thanh toán
+                .returnUrl("http://localhost:3000/order-user")  // URL khi thanh toán thành công
                 .build();
+        return paymentData;
+    }
+
+    private List<ItemData> createItemDataForCartItems(List<CartItem> cartItems) {
+        List<ItemData> items = new ArrayList<>();
+        for (CartItem cartItem : cartItems) {
+            ItemData item = ItemData.builder()
+                    .name(cartItem.getProduct().getProductName())  // Tên sản phẩm
+                    .quantity(cartItem.getQuantity())  // Số lượng sản phẩm
+                    .price(cartItem.getProduct().getPrice().intValue())  // Giá sản phẩm
+                    .build();
+            items.add(item);
+        }
+        return items;
     }
 
 
@@ -318,6 +314,51 @@ public class OrderService {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public List<OrderDetailResponseDTO> getPurchasedProductsByUser(Long userId) {
+        // Lấy tất cả đơn hàng của người dùng
+        List<Order> orders = orderRepository.findOrderByUserId(userId);
+
+        // Danh sách chứa thông tin chi tiết đơn hàng
+        List<OrderDetailResponseDTO> orderDetails = new ArrayList<>();
+
+        // Lặp qua từng đơn hàng và lấy chi tiết sản phẩm
+        for (Order order : orders) {
+            // Lấy chi tiết của mỗi đơn hàng
+            List<OrderDetail> details = orderDetailRepository.getOrderDetailsByOrder_OrderId(order.getOrderId());
+
+            // Lấy trạng thái vận chuyển gần nhất từ OrderSetting (nếu có)
+            String shippingStatus = order.getOrderSettings().stream()
+                    .sorted((o1, o2) -> o2.getUpdateAt().compareTo(o1.getUpdateAt()))  // Sắp xếp theo thời gian cập nhật (mới nhất trước)
+                    .map(orderSetting -> orderSetting.getSetting().getName())  // Lấy tên trạng thái từ Setting
+                    .findFirst()
+                    .orElse("Unknown");  // Nếu không có trạng thái, trả về "Unknown"
+
+            // Lặp qua từng chi tiết đơn hàng và ánh xạ vào DTO
+            for (OrderDetail detail : details) {
+                OrderDetailResponseDTO dto = OrderDetailResponseDTO.builder()
+                        .orderId(order.getOrderId())
+                        .totalPrice(order.getTotalPrice())
+                        .paymentStatus(order.getPaymentStatus())
+                        .shippingStatus(shippingStatus)  // Đã sửa: lấy setting name thay vì status
+                        .totalQuantity(order.getTotalQuantity())
+                        .shipAddress(order.getShipAddress())
+                        .paymentMethod(order.getPaymentMethod().name())
+                        .customerName(order.getUser().getUsername())  // Giả sử bạn sử dụng `username` thay cho `fullName`
+                        .customerEmail(order.getUser().getEmail())
+                        .customerPhone(order.getUser().getPhone())
+                        .productId(detail.getProduct().getId())  // Lấy thông tin sản phẩm
+                        .productName(detail.getProduct().getProductName())
+                        .productPrice(detail.getProduct().getPrice())
+                        .quantity(detail.getQuantity())
+                        .build();
+
+                orderDetails.add(dto);
+            }
+        }
+
+        return orderDetails;
     }
 
 

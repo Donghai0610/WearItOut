@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import vn.payos.type.WebhookData;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -86,4 +87,65 @@ public class UserOrderController {
         }
         return ResponseEntity.ok(orderDetails);
     }
+
+    @PostMapping("/create-payment")
+    public ResponseEntity<NewOrderMessageResponseDTO> createOrderAndPayment(
+            @RequestParam Long userId,
+            @RequestParam String shipAddress,
+            @RequestParam PaymentMethod paymentMethod) {
+
+        try {
+            // Tạo đơn hàng và thanh toán
+            orderService.createOrdersForCart(userId, shipAddress, paymentMethod);
+
+            // Trả về thông tin đơn hàng mới tạo
+            NewOrderMessageResponseDTO responseDTO = new NewOrderMessageResponseDTO();
+            responseDTO.setMessage("Đơn hàng đã được tạo và thanh toán thành công!");
+
+            return ResponseEntity.ok(responseDTO);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body(new NewOrderMessageResponseDTO("Đã xảy ra lỗi: " + e.getMessage()));
+        }
+    }
+
+    // API nhận thông tin thanh toán sau khi người dùng hoàn tất thanh toán
+    @PostMapping("/payment-success")
+    public ResponseEntity<String> handlePaymentSuccess(@RequestParam Long orderId) {
+        try {
+            // Cập nhật trạng thái thanh toán của đơn hàng thành "PAID"
+            orderService.changeStatusOrderToPaid(orderId);
+
+            // Trả về phản hồi thành công
+            return ResponseEntity.ok("Trạng thái thanh toán đã được cập nhật thành công!");
+
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body("Lỗi khi cập nhật trạng thái thanh toán: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/payment-webhook")
+    public ResponseEntity<String> handlePaymentWebhook(@RequestBody WebhookData webhookData) {
+        try {
+            // Kiểm tra webhook data và cập nhật trạng thái thanh toán nếu thanh toán thành công
+            if (webhookData.getCode().equals("00") && webhookData.getDesc().equals("success")) {
+                // Kiểm tra trạng thái thành công (webhookData.getCode() == "00" hoặc điều kiện theo tài liệu)
+                Long orderId = webhookData.getOrderCode(); // Sử dụng orderCode từ webhookData
+
+                // Gọi phương thức service để cập nhật trạng thái thanh toán
+                orderService.changeStatusOrderToPaid(orderId);
+
+                // Trả về phản hồi thành công
+                return ResponseEntity.ok("Thanh toán thành công và trạng thái đã được cập nhật!");
+            }
+
+            // Nếu thanh toán không thành công, trả về lỗi
+            return ResponseEntity.status(400).body("Thanh toán không thành công.");
+        } catch (Exception e) {
+            // Xử lý lỗi và trả về phản hồi lỗi
+            return ResponseEntity.status(400).body("Lỗi khi xử lý webhook: " + e.getMessage());
+        }
+    }
+
+
 }

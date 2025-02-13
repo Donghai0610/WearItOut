@@ -58,6 +58,10 @@ public class EndPointService {
             "/api/v1/product/update/**",
             "/api/v1/product/delete/**",
             "/api/v1/user/order/create",
+            "/api/v1/user/order/payment-success",
+            "/api/v1/user/order/payment-webhook",
+            "/api/v1/user/order/create-payment",
+
     };
     public static final  String[] userGetEndPoint ={
             "/api/v1/cart/{userId}",
@@ -65,7 +69,7 @@ public class EndPointService {
             "/api/v1/cart_item/total-items/{cartId}",
             "/api/v1/user/{userId}",
             "/api/v1/user/order/**",
-            "/api/v1/user/order/{userId}/purchased-products"
+            "/api/v1/user/order/{userId}/purchased-products",
 
     };
 }

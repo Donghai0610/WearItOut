@@ -25,6 +25,7 @@ const Checkout = () => {
 
     const navigate = useNavigate();
 
+    
     // Hàm xử lý thay đổi phương thức thanh toán
     const handlePaymentChange = (event) => {
         setSelectedPayment(event.target.value);  // Chỉ cần dùng value thay vì id
