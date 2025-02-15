@@ -18,7 +18,7 @@ public class EndPointService {
             "/api/v1/admin/users/setting-type/{settingId}",
     };
     public static final String[] adminPostEndPoint = {
-            "/api/v1/admin/shop/create",
+
             "/api/v1/admin/update/**",
             "/api/v1/admin/update-active/**",
             "/api/v1/admin/updateshop/{shopId}"
@@ -60,6 +60,7 @@ public class EndPointService {
             "/api/v1/product/delete/**",
             "/api/v1/user/order/create-payment",
             "/api/v1/user/order/payment-success",
+            "/api/v1/admin/shop/create",
 
 
     };

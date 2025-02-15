@@ -7,7 +7,7 @@ import axios from 'axios'; // Đảm bảo đã cài axios
 import Select from 'react-select'; // Đảm bảo đã cài react-select
 import Order_Service from '../services/orderService';
 import Swal from 'sweetalert2';
-import { usePayOS, PayOSConfig } from "payos-checkout";
+import { Dialog, DialogTitle, DialogContent, Button } from "@mui/material";
 const Checkout = () => {
     const [selectedPayment, setSelectedPayment] = useState("COD"); // Default payment method is COD
     const [cart, setCart] = useState(null); // State để lưu thông tin giỏ hàng
@@ -23,7 +23,7 @@ const Checkout = () => {
     const [selectedWard, setSelectedWard] = useState(null);
     const [address, setAddress] = useState(''); // Địa chỉ nhà nhập tay
 
-    
+    const [showQRModal, setShowQRModal] = useState(false);
 
 
     // Hàm xử lý thay đổi phương thức thanh toán
@@ -138,27 +138,42 @@ const Checkout = () => {
         return <div>Đang tải...</div>;
     }
 
-
+    const qrCodeUrl = `https://api.vietqr.io/image/970422-0867811672-H340B2G.jpg?accountName=LE%20CONG%20TRUONG%20THINH&amount=${cart.totalPrice}&addInfo=WearItOut Thanh toan don hang`;
     const handleSubmit = async () => {
         const fullAddress = `${address ? address : ''}, ${selectedWard ? selectedWard.label : ''}, ${selectedDistrict ? selectedDistrict.label : ''}, ${selectedProvince ? selectedProvince.label : ''}`;
         console.log('Địa chỉ đầy đủ:', fullAddress);
-
+    
         try {
+            // Gửi request tạo đơn hàng
             const response = await Order_Service.createOrderAndPayment(userId, fullAddress, selectedPayment);
             console.log("Order Created Successfully:", response);
-
-            if (response.paymentUrl) {
-                // Nếu có URL thanh toán, chuyển hướng người dùng đến trang thanh toán của PayOS
-                window.location.href = response.paymentUrl;
+    
+            if (selectedPayment === "TRANSFER_TO_SHOP_AUTOMATIC") {
+                // Nếu chọn thanh toán tự động, chuyển hướng đến PayOS
+                if (response.paymentUrl) {
+                    window.location.href = response.paymentUrl;
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi thanh toán',
+                        text: 'Không có URL thanh toán.',
+                    });
+                }
+            } else if (selectedPayment === "TRANSFER_TO_Web") {
+                // Nếu chọn chuyển khoản thủ công, hiển thị mã QR
+                setShowQRModal(true);
             } else {
+                // Nếu chọn COD, hiển thị thông báo đặt hàng thành công
                 Swal.fire({
-                    icon: 'error',
-                    title: 'Lỗi thanh toán',
-                    text: 'Không có URL thanh toán.',
+                    icon: 'success',
+                    title: 'Đặt hàng thành công!',
+                    text: 'Đơn hàng của bạn đã được tạo thành công. Cảm ơn bạn!',
+                }).then(() => {
+                    window.location.href = "/order-user"; // Chuyển hướng về trang quản lý đơn hàng
                 });
             }
         } catch (error) {
-            console.error("Error creating order:", error);
+            console.error("Lỗi khi tạo đơn hàng:", error);
             Swal.fire({
                 icon: 'error',
                 title: 'Có lỗi xảy ra khi tạo đơn hàng.',
@@ -166,6 +181,7 @@ const Checkout = () => {
             });
         }
     };
+    
 
 
 
@@ -372,8 +388,8 @@ const Checkout = () => {
                                             className="form-check-input"
                                             type="radio"
                                             name="payment"
-                                            value="TRANSFER_TO_SHOP"  // Sử dụng value thay vì id
-                                            checked={selectedPayment === "TRANSFER_TO_SHOP"}
+                                            value="TRANSFER_TO_Web"  // Sử dụng value thay vì id
+                                            checked={selectedPayment === "TRANSFER_TO_Web"}
                                             onChange={handlePaymentChange}
                                         />
                                         <label className="form-check-label fw-semibold text-neutral-600" htmlFor="payment2">
@@ -403,7 +419,7 @@ const Checkout = () => {
                                         </div>
                                     )}
 
-                                    {selectedPayment === "TRANSFER_TO_SHOP" && (
+                                    {selectedPayment === "TRANSFER_TO_Web" && (
                                         <div className="payment-item__content px-16 py-24 rounded-8 bg-main-50 position-relative d-block">
                                             <p className="text-gray-800">
                                                 Thanh toán bằng cách chuyển khoản vào tài khoản ngân hàng của chúng tôi. Vui lòng sử dụng Mã đơn hàng của bạn làm tham chiếu thanh toán. Đơn hàng của bạn sẽ không được vận chuyển cho đến khi tiền được xác nhận vào tài khoản.
@@ -441,6 +457,15 @@ const Checkout = () => {
                     </div>
                 </div>
             </div>
+            {/* Pop-up QR Code */}
+            <Dialog open={showQRModal} onClose={() => setShowQRModal(false)}>
+                <DialogTitle>Quét mã QR để thanh toán</DialogTitle>
+                <DialogContent>
+                    <img src={qrCodeUrl} alt="QR Code Thanh Toán" style={{ width: "100%", height: "auto" }} />
+                    <p>Số tiền cần thanh toán: <strong>{formatVND(cart.totalPrice)}</strong></p>
+                </DialogContent>
+                <Button onClick={() => setShowQRModal(false)} color="primary">Đóng</Button>
+            </Dialog>
         </section>
     );
 };
