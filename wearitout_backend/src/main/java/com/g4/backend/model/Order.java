@@ -10,6 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Nationalized;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -34,7 +35,7 @@ public class Order {
 
     @CreationTimestamp
     @Column(updatable = false)
-    private LocalDate createAt;
+    private LocalDate  createAt;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     @JsonBackReference
@@ -63,5 +64,8 @@ public class Order {
 
     @Column(name = "payment_link_url")
     private String paymentLinkUrl;
+
+    @Column(name = "cart_id")
+    private Long cartId;  // Lưu cartId vào Order để liên kết với giỏ hàng
 
 }

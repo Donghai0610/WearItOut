@@ -1,29 +1,6 @@
 import axiosInstance from "./axios";
 
-const createOrder = async (order) => {
-    try {
-        // Gửi yêu cầu tạo đơn hàng tới API backend bằng query parameters
-        const response = await axiosInstance.post(`api/v1/user/order/create`, null, {
-            params: {
-                userId: order.userId,
-                shipAddress: order.shipAddress,
-                paymentMethod: order.paymentMethod
-            }
-        });
 
-        // Lấy thông tin đơn hàng từ phản hồi
-        const createdOrder = response.data;
-        
-        // Nếu cần, cập nhật danh sách đơn hàng trong state hoặc thực hiện xử lý khác
-        console.log('Đơn hàng được tạo thành công:', createdOrder);
-
-        // Trả về đơn hàng mới được tạo
-        return createdOrder;
-    } catch (error) {
-        console.error('Lỗi khi tạo đơn hàng:', error);
-        throw error;
-    }
-};
 
 
 const getPurchasedProductsByUser = async (userId) => {
@@ -44,10 +21,45 @@ const getPurchasedProductsByUser = async (userId) => {
     }
 };
 
+const createOrderAndPayment = async (userId, shipAddress, paymentMethod) => {
+    try {
+        const response = await axiosInstance.post(`/api/v1/user/order/create-payment`, null, {
+            params: {
+                userId: userId,
+                shipAddress: shipAddress,
+                paymentMethod: paymentMethod,
+            }
+        });
+
+        console.log("Đơn hàng và thanh toán thành công:", response.data);
+        return response.data;  // Trả về dữ liệu của đơn hàng mới tạo
+    } catch (error) {
+        console.error("Lỗi khi tạo đơn hàng và thanh toán:", error);
+        throw error;  // Ném lỗi để xử lý ở nơi gọi
+    }
+};
+const handlePaymentSuccess = async (orderId) => {
+    try {
+        const response = await axiosInstance.post(`/api/v1/user/order/payment-success`, null, {
+            params: {
+                orderId: orderId,
+            }
+        });
+
+        console.log("Trạng thái thanh toán đã được cập nhật:", response.data);
+        return response.data;  // Trả về thông tin thành công
+    } catch (error) {
+        console.error("Lỗi khi cập nhật trạng thái thanh toán:", error);
+        throw error;  // Ném lỗi để xử lý ở nơi gọi
+    }
+};
+
 
 const Order_Service = {
-    createOrder,
-    getPurchasedProductsByUser
+    getPurchasedProductsByUser,
+    createOrderAndPayment,
+    handlePaymentSuccess,
+
 };
 
 export default Order_Service;

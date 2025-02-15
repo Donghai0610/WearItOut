@@ -5,9 +5,9 @@ import Account_Service from '../services/account';
 import formatVND from '../helper/formatVND';
 import axios from 'axios'; // Đảm bảo đã cài axios
 import Select from 'react-select'; // Đảm bảo đã cài react-select
-import useOrderServices from '../services/order';
 import Order_Service from '../services/orderService';
 import Swal from 'sweetalert2';
+import { usePayOS, PayOSConfig } from "payos-checkout";
 const Checkout = () => {
     const [selectedPayment, setSelectedPayment] = useState("COD"); // Default payment method is COD
     const [cart, setCart] = useState(null); // State để lưu thông tin giỏ hàng
@@ -23,13 +23,13 @@ const Checkout = () => {
     const [selectedWard, setSelectedWard] = useState(null);
     const [address, setAddress] = useState(''); // Địa chỉ nhà nhập tay
 
-    const navigate = useNavigate();
-
     
+
+
     // Hàm xử lý thay đổi phương thức thanh toán
     const handlePaymentChange = (event) => {
         setSelectedPayment(event.target.value);  // Chỉ cần dùng value thay vì id
-      };
+    };
 
     // Hàm gọi API lấy tỉnh/thành phố
     const fetchProvinces = async () => {
@@ -138,38 +138,41 @@ const Checkout = () => {
         return <div>Đang tải...</div>;
     }
 
+
     const handleSubmit = async () => {
         const fullAddress = `${address ? address : ''}, ${selectedWard ? selectedWard.label : ''}, ${selectedDistrict ? selectedDistrict.label : ''}, ${selectedProvince ? selectedProvince.label : ''}`;
         console.log('Địa chỉ đầy đủ:', fullAddress);
 
-        // Gọi API createOrder để tạo đơn hàng
-        const orderData = {
-            userId: userId,
-            shipAddress: fullAddress,
-            paymentMethod: selectedPayment // Lấy phương thức thanh toán từ state
-        };
-
         try {
-            const createdOrder = await Order_Service.createOrder(orderData); // Gọi method createOrder từ OrderServices
-            console.log('Đơn hàng đã được tạo:', createdOrder);
-            alert("Đơn hàng của bạn đã được tạo thành công!");
-            Swal.fire({
-                icon: 'success',
-                title: 'Đơn hàng đã được tạo thành công!',
-                showConfirmButton: false,
-                timer: 1500
-            });
-            navigate('/order-user'); // Chuyển hướng đến trang kết quả đơn hàng
+            const response = await Order_Service.createOrderAndPayment(userId, fullAddress, selectedPayment);
+            console.log("Order Created Successfully:", response);
 
+            if (response.paymentUrl) {
+                // Nếu có URL thanh toán, chuyển hướng người dùng đến trang thanh toán của PayOS
+                window.location.href = response.paymentUrl;
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi thanh toán',
+                    text: 'Không có URL thanh toán.',
+                });
+            }
         } catch (error) {
-            console.error('Lỗi khi tạo đơn hàng:', error);
-            alert("Có lỗi xảy ra khi tạo đơn hàng. Vui lòng thử lại.");
+            console.error("Error creating order:", error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Có lỗi xảy ra khi tạo đơn hàng.',
+                text: error.message || 'Vui lòng thử lại!',
+            });
         }
     };
+
+
 
     return (
         <section className="checkout py-80">
             <div className="container container-lg">
+
                 <div className="border border-gray-100 rounded-8 px-30 py-20 mb-40">
                     <span className="">
                         Sử dụng mã ưu đãi?{" "}

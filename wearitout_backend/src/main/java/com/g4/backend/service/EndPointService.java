@@ -5,6 +5,7 @@ public class EndPointService {
             "/api/v1/auth/login",
             "/api/v1/auth/logout",
             "/api/v1/user/register",
+            "/confirm-webhook",
 
     };
 
@@ -57,10 +58,9 @@ public class EndPointService {
             "/api/v1/product/products-by-user-id",
             "/api/v1/product/update/**",
             "/api/v1/product/delete/**",
-            "/api/v1/user/order/create",
-            "/api/v1/user/order/payment-success",
-            "/api/v1/user/order/payment-webhook",
             "/api/v1/user/order/create-payment",
+            "/api/v1/user/order/payment-success",
+
 
     };
     public static final  String[] userGetEndPoint ={

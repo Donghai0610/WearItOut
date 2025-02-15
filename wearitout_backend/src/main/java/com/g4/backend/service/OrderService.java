@@ -1,6 +1,7 @@
 package com.g4.backend.service;
 
 import com.g4.backend.dto.request.OrderRequestDTO;
+import com.g4.backend.dto.response.NewOrderMessageResponseDTO;
 import com.g4.backend.dto.response.NewOrderResponseDTO;
 import com.g4.backend.dto.response.OrderDetailResponseDTO;
 import com.g4.backend.dto.response.OrderResponseDTO;
@@ -12,6 +13,8 @@ import com.g4.backend.repository.*;
 import com.g4.backend.utils.PaymentMethod;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import net.minidev.json.JSONObject;
+import org.apache.commons.codec.digest.HmacUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -39,6 +42,7 @@ public class OrderService {
     @Value("${PAYOS_CHECKSUM_KEY}")
     private String checksumKey;
 
+
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
     private final CartItemRepository cartItemRepository;
@@ -49,9 +53,11 @@ public class OrderService {
     private final OrderDetailRepository orderDetailRepository;
     private final OrderSettingRepository orderSettingRepository;
     private final SettingRepository settingRepository;
+    private final EmailServices emailServices;
 
     @Autowired
-    public OrderService(OrderRepository orderRepository, OrderMapper orderMapper, CartItemRepository cartItemRepository, ProductRepository productRepository, CartRepository cartRepository, UserRepository userRepository, ShopRepositoryAdmin shopRepository, OrderDetailRepository orderDetailRepository, OrderSettingRepository orderSettingRepository, SettingRepository settingRepository) {
+    public OrderService(OrderRepository orderRepository, OrderMapper orderMapper, CartItemRepository cartItemRepository, ProductRepository productRepository, CartRepository cartRepository, UserRepository userRepository, ShopRepositoryAdmin shopRepository, OrderDetailRepository orderDetailRepository, OrderSettingRepository orderSettingRepository, SettingRepository settingRepository,
+                        EmailServices emailServices) {
         this.orderRepository = orderRepository;
         this.orderMapper = orderMapper;
         this.cartItemRepository = cartItemRepository;
@@ -62,18 +68,11 @@ public class OrderService {
         this.orderDetailRepository = orderDetailRepository;
         this.orderSettingRepository = orderSettingRepository;
         this.settingRepository = settingRepository;
+        this.emailServices = emailServices;
     }
 
     public Page<OrderResponseDTO> getOrderByShop(long shopId, String searchKeyword, String paymentStatus, String shippingStatus, int page, int size) {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        Object principal = authentication.getPrincipal();
-//
-//        String username;
-//        if (principal instanceof UserDetails) {
-//            username = ((UserDetails) principal).getUsername();
-//        } else {
-//            username = principal.toString();
-//        }
+
 
         Pageable pageable = PageRequest.of(page, size);
         Page<OrderResponseDTO> orders = orderRepository.getOrdersByShopAndFilter(shopId, searchKeyword, paymentStatus, shippingStatus, pageable);
@@ -105,12 +104,29 @@ public class OrderService {
         }
     }
 
+    @Transactional
     public void changeStatusOrderToPaid(long orderId) {
+        // Lấy đơn hàng dựa trên orderId
         Optional<Order> orderOptional = orderRepository.findById(orderId);
         if (orderOptional.isPresent()) {
             Order order = orderOptional.get();
-            order.setPaymentStatus("PAID");  // Cập nhật trạng thái thanh toán thành "PAID"
-            orderRepository.save(order);
+
+            // Lấy cartId từ đơn hàng
+            Long cartId = order.getCartId();
+
+            // Truy vấn tất cả các đơn hàng với cùng cartId
+            List<Order> orders = orderRepository.findByCartIdAndPaymentStatusOrderByCreateAtDesc(cartId, "UNPAID");
+
+            // Cập nhật trạng thái thanh toán của tất cả các đơn hàng có cùng cartId thành "PAID"
+            for (Order o : orders) {
+                o.setPaymentStatus("PAID");
+                orderRepository.save(o); // Lưu lại đơn hàng đã cập nhật
+            }
+            Thread thread = new Thread(() -> {
+                sendOrderPaidEmail(order.getUser().getUsername(), order.getUser().getEmail());
+            });
+            thread.start();
+
         } else {
             throw new RuntimeException("Không tìm thấy đơn hàng với ID: " + orderId);
         }
@@ -132,158 +148,186 @@ public class OrderService {
 
 
     @Transactional
-    public void createOrdersForCart(Long userId, String shipAddress, PaymentMethod paymentMethod) {
-        // Lấy người dùng
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Người dùng không tồn tại"));
+    public NewOrderMessageResponseDTO createOrdersForCart(Long userId, String shipAddress, PaymentMethod paymentMethod) {
+        try {
+            // Lấy thông tin người dùng
+            User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Người dùng không tồn tại"));
 
-        // Lấy giỏ hàng của người dùng
-        Cart cart = cartRepository.findByUser(user);
-        if (cart == null) {
-            throw new RuntimeException("Giỏ hàng không tồn tại cho người dùng: " + userId);
-        }
+            // Lấy giỏ hàng của người dùng
+            Cart cart = cartRepository.findByUser(user);
+            if (cart == null) {
+                throw new RuntimeException("Giỏ hàng không tồn tại cho người dùng: " + userId);
+            }
 
-        // Lấy tất cả sản phẩm trong giỏ hàng
-        List<CartItem> cartItems = cartItemRepository.findByCart(cart);
-        if (cartItems.isEmpty()) {
-            throw new RuntimeException("Giỏ hàng trống cho người dùng: " + userId);
-        }
+            List<CartItem> cartItems = cartItemRepository.findByCart(cart);
+            if (cartItems.isEmpty()) {
+                throw new RuntimeException("Giỏ hàng trống cho người dùng: " + userId);
+            }
 
-        // Tính tổng tiền của giỏ hàng (toàn bộ đơn hàng ban đầu)
-        double totalPaymentForWebsite = cartItems.stream()
-                .mapToDouble(CartItem::getTotalPrice)
-                .sum();
-
-        // Nhóm các sản phẩm trong giỏ hàng theo shop_id
-        Map<Long, List<CartItem>> groupedByShop = cartItems.stream()
-                .collect(Collectors.groupingBy(cartItem -> cartItem.getProduct().getShop().getShopId()));
-
-        List<Order> orders = new ArrayList<>();
-
-        // Tạo đơn hàng cho từng cửa hàng
-        for (Long shopId : groupedByShop.keySet()) {
-            List<CartItem> itemsForShop = groupedByShop.get(shopId);
-            double totalPriceForShop = itemsForShop.stream()
+            double totalPaymentForWebsite = cartItems.stream()
                     .mapToDouble(CartItem::getTotalPrice)
                     .sum();
-            int totalQuantityForShop = itemsForShop.stream()
-                    .mapToInt(CartItem::getQuantity)
-                    .sum();
 
-            // Tạo đơn hàng cho cửa hàng
-            Order order = createOrderForShop(userId, shipAddress, paymentMethod, totalPriceForShop, totalQuantityForShop, itemsForShop, shopId);
-            orders.add(order);
+            Map<Long, List<CartItem>> groupedByShop = cartItems.stream()
+                    .collect(Collectors.groupingBy(cartItem -> cartItem.getProduct().getShop().getShopId()));
 
-            // Cập nhật số lượng sản phẩm trong Product và xóa CartItem
-            updateProductQuantityAndClearCartItems(itemsForShop);
+            List<Order> orders = new ArrayList<>();
+            Long cartId = cart.getCartId();  // Lưu cartId để truy vấn sau này
 
-            if (paymentMethod == PaymentMethod.TRANSFER_TO_SHOP_AUTOMATIC) {
-                PaymentData paymentData = createPaymentDataForOrder(order, totalPaymentForWebsite, cartItems); // Lưu ý: truyền toàn bộ giỏ hàng vào
-                // Tạo Payment Link từ PayOS
-                CheckoutResponseData paymentLinkResponse = createPaymentLink(paymentData);
+            for (Long shopId : groupedByShop.keySet()) {
+                List<CartItem> itemsForShop = groupedByShop.get(shopId);
+                double totalPriceForShop = itemsForShop.stream()
+                        .mapToDouble(CartItem::getTotalPrice)
+                        .sum();
+                int totalQuantityForShop = itemsForShop.stream()
+                        .mapToInt(CartItem::getQuantity)
+                        .sum();
 
-                // Lưu thông tin thanh toán vào Order
-                savePaymentLinkInfoForWebsite(order, paymentLinkResponse);
+                Order order = createOrderForShop(userId, shipAddress, paymentMethod, totalPriceForShop, totalQuantityForShop, itemsForShop, shopId, cartId);
+                orders.add(order);
+
+                // Cập nhật số lượng sản phẩm và xóa các item trong giỏ hàng
+                updateProductQuantityAndClearCartItems(itemsForShop);
+
+                // Tạo link thanh toán nếu phương thức thanh toán là TRANSFER_TO_SHOP_AUTOMATIC
+                if (paymentMethod == PaymentMethod.TRANSFER_TO_SHOP_AUTOMATIC) {
+                    PaymentData paymentData = createPaymentDataForOrder(order, totalPaymentForWebsite, cartItems);
+                    CheckoutResponseData paymentLinkResponse = createPaymentLink(paymentData);
+                    if (paymentLinkResponse != null) {
+                        System.out.println("Payment Link: " + paymentLinkResponse.getCheckoutUrl());
+                    } else {
+                        System.out.println("Error: Payment link response is null");
+                    }
+                    savePaymentLinkInfoForWebsite(order, paymentLinkResponse);
+                }
             }
-        }
 
-        // Lưu các đơn hàng cho các cửa hàng
-        for (Order order : orders) {
-            orderRepository.save(order);
+            // Lưu các đơn hàng cho các cửa hàng
+            for (Order order : orders) {
+                orderRepository.save(order);
+            }
+            Thread thread = new Thread(() -> {
+                sendOrderConfirmationEmail(user.getUsername(), cartItems, totalPaymentForWebsite, user.getEmail());
+            });
+            thread.start();
+
+            // Trả về payment link của đơn hàng đầu tiên
+            return generateResponseDTO(orders);
+        } catch (Exception e) {
+            throw new RuntimeException("Đã xảy ra lỗi khi tạo đơn hàng: " + e.getMessage());
         }
     }
 
+    private NewOrderMessageResponseDTO generateResponseDTO(List<Order> orders) {
+        NewOrderMessageResponseDTO responseDTO = new NewOrderMessageResponseDTO();
+        responseDTO.setCode("00");
+        responseDTO.setDesc("Tạo đơn hàng thành công");
 
-    @Transactional
-    protected void updateProductQuantityAndClearCartItems(List<CartItem> itemsForShop) {
-        Set<Cart> cartsToDelete = new HashSet<>(); // Tập hợp các cart cần kiểm tra
-
-        for (CartItem cartItem : itemsForShop) {
-            // 🔹 Trừ số lượng sản phẩm trong Product
-            Product product = cartItem.getProduct();
-            int quantitySold = cartItem.getQuantity();
-            product.setStockQuantity(product.getStockQuantity() - quantitySold);
-            productRepository.save(product);
-
-            // 🔹 Lưu lại Cart để kiểm tra sau khi xóa
-            Cart cart = cartItem.getCart();
-            cartsToDelete.add(cart);
-
-            System.out.println("Xóa CartItem có ID: " + cartItem.getCartItemId());
-            cartItemRepository.delete(cartItem); // Xóa CartItem
-            cartItemRepository.flush(); // Đảm bảo dữ liệu được xóa ngay lập tức
+        if (orders.size() > 0) {
+            Order firstOrder = orders.get(0);  // Lấy đơn hàng đầu tiên
+            responseDTO.setPaymentUrl(firstOrder.getPaymentLinkUrl());
+        } else {
+            responseDTO.setPaymentUrl("Không có link thanh toán");
         }
 
-        for (Cart cart : cartsToDelete) {
-            long remainingItems = cartItemRepository.countByCart(cart); // Đếm số CartItem còn lại
-            System.out.println("Cart ID: " + cart.getCartId() + " còn lại " + remainingItems + " sản phẩm.");
-            if (remainingItems == 0) {
-                cartRepository.delete(cart); // 🔥 Chỉ xóa Cart nếu không còn CartItem
-                System.out.println("Cart ID: " + cart.getCartId() + " đã bị xóa.");
-            } else {
-                System.out.println("Cart ID: " + cart.getCartId() + " vẫn còn sản phẩm, không xóa.");
-            }
-        }
+        return responseDTO;
     }
 
-    private Order createOrderForShop(Long userId, String shipAddress, PaymentMethod paymentMethod, double totalPriceForShop, int totalQuantityForShop, List<CartItem> itemsForShop, Long shopId) {
-        // Lấy người dùng và cửa hàng
+    private Order createOrderForShop(Long userId, String shipAddress, PaymentMethod paymentMethod, double totalPriceForShop, int totalQuantityForShop, List<CartItem> itemsForShop, Long shopId, Long cartId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Người dùng không tồn tại"));
         Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new RuntimeException("Cửa hàng không tồn tại"));
 
-        // Tạo đơn hàng cho cửa hàng
         Order order = new Order();
         order.setUser(user);
         order.setShop(shop);
         order.setShipAddress(shipAddress);
         order.setPaymentMethod(paymentMethod);
         order.setTotalPrice(totalPriceForShop);
-        order.setTotalQuantity(totalQuantityForShop);  // Cập nhật số lượng tổng cho đơn hàng
-        order.setPaymentStatus("UNPAID");  // Đặt payment_status là UNPAID khi tạo đơn hàng
+        order.setTotalQuantity(totalQuantityForShop);
+        order.setPaymentStatus("UNPAID");
+        order.setCartId(cartId);  // Lưu cartId vào đơn hàng
         order = orderRepository.save(order);
 
-        // 2. Tạo OrderSetting với trạng thái "Processed"
-        OrderSetting orderSetting = new OrderSetting();
-        Setting setting = settingRepository.findById(16)
-                .orElseThrow(() -> new RuntimeException("Setting không tồn tại"));
+        // Lưu OrderSetting
+        createOrderSetting(order);
 
-        // 3. Sau khi lưu Order, orderId đã được gán -> Bây giờ set key cho OrderSetting
-        orderSetting.setOrder(order);
-        orderSetting.setSetting(setting);
-        orderSetting.setKeyOrderSetting(new KeyOrderShipping(order.getOrderId(), setting.getSettingId())); // Đảm bảo orderId không null
-
-        // 4. Thêm OrderSetting vào danh sách và lưu vào database
-        orderSettingRepository.save(orderSetting);
-
-        // Khởi tạo danh sách orderDetails nếu chưa được khởi tạo
-        if (order.getOrderDetails() == null) {
-            order.setOrderDetails(new ArrayList<>());
-        }
-
-        // Tạo chi tiết đơn hàng cho các sản phẩm của cửa hàng
+        // Tạo OrderDetails cho sản phẩm trong đơn hàng
         for (CartItem cartItem : itemsForShop) {
-            Product product = cartItem.getProduct();
-            OrderDetail orderDetail = new OrderDetail();
-            orderDetail.setOrder(order);
-            orderDetail.setProduct(product);
-            orderDetail.setQuantity(cartItem.getQuantity());
-
-            // Thêm OrderDetail vào danh sách
-            order.getOrderDetails().add(orderDetail);
+            createOrderDetail(order, cartItem);
         }
 
         return order;
     }
 
+    private void createOrderSetting(Order order) {
+        OrderSetting orderSetting = new OrderSetting();
+        Setting setting = settingRepository.findById(16)
+                .orElseThrow(() -> new RuntimeException("Setting không tồn tại"));
+        orderSetting.setOrder(order);
+        orderSetting.setSetting(setting);
+        orderSetting.setKeyOrderSetting(new KeyOrderShipping(order.getOrderId(), setting.getSettingId()));
+
+        orderSettingRepository.save(orderSetting);
+    }
+
+    private void createOrderDetail(Order order, CartItem cartItem) {
+        // Khởi tạo danh sách orderDetails nếu chưa được khởi tạo
+        if (order.getOrderDetails() == null) {
+            order.setOrderDetails(new ArrayList<>());  // Khởi tạo danh sách orderDetails
+        }
+
+        // Tạo OrderDetail cho sản phẩm trong giỏ hàng
+        Product product = cartItem.getProduct();
+        OrderDetail orderDetail = new OrderDetail();
+        orderDetail.setOrder(order);
+        orderDetail.setProduct(product);
+        orderDetail.setQuantity(cartItem.getQuantity());
+
+        // Thêm OrderDetail vào danh sách
+        order.getOrderDetails().add(orderDetail);
+    }
+
+
     private PaymentData createPaymentDataForOrder(Order order, double totalPaymentForWebsite, List<CartItem> cartItems) {
         // Tạo PaymentData với các thông tin thanh toán của đơn hàng
+        String orderCode = String.valueOf(order.getOrderId() + 100);  // Mã đơn hàng
+        int amount = (int) totalPaymentForWebsite;  // Số tiền thanh toán (chuyển sang kiểu int)
+        String description = "WIO-Thanh toán mã " + order.getOrderId();  // Mô tả thanh toán
+
+        String buyerName = order.getUser().getUsername();
+        String buyerEmail = order.getUser().getEmail();
+        String buyerPhone = order.getUser().getPhone();
+        String buyerAddress = order.getShipAddress();
+        String cancelUrl = "http://localhost:3000/checkout";  // URL khi hủy thanh toán
+        String returnUrl = "http://localhost:3000/order-user";  // URL khi thanh toán thành công
+        long expireAt = System.currentTimeMillis() / 1000 + (30 * 60);  // Thời gian hết hạn thanh toán (30 phút tính bằng Unix timestamp
+
+        // Tạo chuỗi cần thiết cho signature (theo yêu cầu của API)
+        String signatureString = String.format("amount=%d&cancelUrl=%s&description=%s&orderCode=%s&returnUrl=%s",
+                amount, cancelUrl, description, orderCode, returnUrl);
+        System.out.println("Signature String: " + signatureString);
+        System.out.println("Checksum Key: " + checksumKey);
+        // Tạo signature bằng HMAC_SHA256
+        String signature = new HmacUtils("HmacSHA256", checksumKey).hmacHex(signatureString);
+
+        System.out.println("Signature: " + signature);
+
+        // Tạo PaymentData với tất cả thông tin
         PaymentData paymentData = PaymentData.builder()
-                .orderCode(order.getOrderId())  // Mã đơn hàng
-                .amount((int) totalPaymentForWebsite)  // Số tiền thanh toán (chuyển sang kiểu int)
-                .description("WearItOut-Thanh toán cho đơn hàng " + order.getOrderId())  // Mô tả thanh toán
+                .orderCode(Long.parseLong(orderCode))  // Mã đơn hàng
+                .amount(amount)  // Số tiền thanh toán
+                .description(description)  // Mô tả thanh toán
                 .items(createItemDataForCartItems(cartItems))  // Danh sách sản phẩm trong giỏ hàng
-                .cancelUrl("http://localhost:3000/checkout")  // URL khi hủy thanh toán
-                .returnUrl("http://localhost:3000/order-user")  // URL khi thanh toán thành công
+                .cancelUrl(cancelUrl)  // URL khi hủy thanh toán
+                .returnUrl(returnUrl)  // URL khi thanh toán thành công
+                .buyerName(buyerName)  // Tên người mua
+                .buyerEmail(buyerEmail)  // Email người mua
+                .buyerPhone(buyerPhone)  // Số điện thoại người mua
+                .buyerAddress(buyerAddress)  // Địa chỉ người mua
+                .expiredAt(expireAt)  // Thời gian hết hạn thanh toán
+                .signature(signature)  // Chữ ký thanh toán
                 .build();
+
         return paymentData;
     }
 
@@ -359,6 +403,82 @@ public class OrderService {
         }
 
         return orderDetails;
+    }
+
+    private void updateProductQuantityAndClearCartItems(List<CartItem> itemsForShop) {
+        Set<Cart> cartsToDelete = new HashSet<>();
+        for (CartItem cartItem : itemsForShop) {
+            Product product = cartItem.getProduct();
+            product.setStockQuantity(product.getStockQuantity() - cartItem.getQuantity());
+            productRepository.save(product);
+
+            Cart cart = cartItem.getCart();
+            cartsToDelete.add(cart);
+
+            cartItemRepository.delete(cartItem);
+            cartItemRepository.flush();
+        }
+
+        for (Cart cart : cartsToDelete) {
+            long remainingItems = cartItemRepository.countByCart(cart);
+            if (remainingItems == 0) {
+                cartRepository.deleteCartByCartId(cart.getCartId());
+            }
+        }
+    }
+
+
+    //Phương thức gửi mail 1 : Khi đặt đơn hàng thành công
+    public void sendOrderConfirmationEmail(String username, List<CartItem> cartItems, double totalPayment, String emailSend) {
+        String subject = "Đơn hàng của bạn đã được tạo thành công";
+
+        // HTML content for the email
+        StringBuilder htmlContent = new StringBuilder();
+        htmlContent.append("<html><body>")
+                .append("<h2>Cảm ơn bạn đã đặt hàng tại hệ thống!</h2>")
+                .append("<p>Đơn hàng của bạn đã được tạo thành công. Dưới đây là chi tiết đơn hàng:</p>")
+                .append("<table border='1' style='border-collapse: collapse;'>")
+                .append("<tr><th>Tên sản phẩm</th><th>Số lượng</th><th>Giá</th><th>Tổng</th></tr>");
+
+        // Thêm chi tiết các sản phẩm trong giỏ hàng
+        for (CartItem cartItem : cartItems) {
+            htmlContent.append("<tr>")
+                    .append("<td>").append(cartItem.getProduct().getProductName()).append("</td>")
+                    .append("<td>").append(cartItem.getQuantity()).append("</td>")
+                    .append("<td>").append(cartItem.getProduct().getPrice()).append("</td>")
+                    .append("<td>").append(cartItem.getTotalPrice()).append("</td>")
+                    .append("</tr>");
+        }
+
+        htmlContent.append("</table>")
+                .append("<p><strong>Tổng số tiền:</strong> ").append(totalPayment).append(" VND</p>")
+                .append("<p>Vui lòng kiểm tra chi tiết và theo dõi trạng thái đơn hàng trong tài khoản của bạn.</p>")
+                .append("<p>Cảm ơn bạn đã mua sắm tại hệ thống!</p>")
+                .append("<p>Thanks & Regards!<br>")
+                .append("E-Retail Team</p>")
+                .append("</body></html>");
+
+        // Gửi email
+        emailServices.sendEmail("interviewmanagement.fa.fpt@gmail.com", emailSend, subject, htmlContent.toString());
+
+
+    }
+
+    public void sendOrderPaidEmail(String username, String emailSend) {
+        String subject = "Cảm ơn bạn đã thanh toán đơn hàng";
+
+        // HTML content for the email
+        String htmlContent = "<html><body>" +
+                "<h2>Chúc mừng! Đơn hàng của bạn đã được thanh toán thành công.</h2>" +
+                "<p>Chúng tôi rất cảm ơn bạn đã mua sắm tại hệ thống của chúng tôi.</p>" +
+                "<p><strong>Xin lưu ý:</strong> Đơn hàng của bạn sẽ được vận chuyển trong thời gian sớm nhất.</p>" +
+                "<p>Vui lòng kiểm tra tài khoản của bạn để theo dõi trạng thái đơn hàng.</p>" +
+                "<p>Thanks & Regards!<br>" +
+                "E-Retail Team</p>" +
+                "</body></html>";
+
+        // Gửi email
+        emailServices.sendEmail("interviewmanagement.fa.fpt@gmail.com", emailSend, subject, htmlContent);
     }
 
 

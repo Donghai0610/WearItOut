@@ -22,7 +22,12 @@ const CartSection = () => {
             setCart(response); // Lưu giỏ hàng vào state
         } catch (err) {
             console.error(err);
-            setError('Error fetching cart data');
+           Swal.fire({
+                icon: 'error',
+                title: 'Lỗi',
+                text: 'Không thể lấy thông tin giỏ hàng.',
+            });
+            
         }
     };
 
@@ -64,13 +69,13 @@ const CartSection = () => {
 
         // Hiển thị hộp thoại xác nhận
         Swal.fire({
-            title: "Are you sure?",
-            text: "You won't be able to revert this!",
+            title: "Ban có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?",
+            text: "Hành động này không thể hoàn tác!",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
             cancelButtonColor: "#d33",
-            confirmButtonText: "Yes, delete it!"
+            confirmButtonText: "Xóa",
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
@@ -79,15 +84,15 @@ const CartSection = () => {
 
                     // Hiển thị thông báo thành công
                     Swal.fire({
-                        title: "Deleted!",
-                        text: "The product has been removed from your cart.",
+                        title: "Xóa sản phẩm thành công!",
+                        text: "Sản phẩm đã được xóa khỏi giỏ hàng.",
                         icon: "success"
                     });
                 } catch (err) {
                     console.error(err);
                     Swal.fire({
-                        title: "Error!",
-                        text: "There was an error removing the product from the cart.",
+                        title: "Lỗi",
+                        text: "Không thể xóa sản phẩm khỏi giỏ hàng.",
                         icon: "error"
                     });
                 }

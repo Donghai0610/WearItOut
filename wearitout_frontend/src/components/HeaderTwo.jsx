@@ -5,6 +5,7 @@ import Product_Services from '../services/product';
 import { jwtDecode } from 'jwt-decode';
 import Cart_Items_Services from '../services/cart_item';
 import Account_Service from '../services/account';
+import Swal from 'sweetalert2';
 
 const Header = ({ category }) => {
     const [categories, setCategories] = useState([]);
@@ -59,11 +60,20 @@ const Header = ({ category }) => {
             return () => clearInterval(intervalId);
         }
     }, [userId]); // Dependency on userId to refetch when userId changes
+
     const handleLogout = () => {
         localStorage.removeItem('token');
         setIsLoggedIn(false);
         setUsername('');
-        
+        window.location.reload();
+        navigate('/account');
+        Swal.fire({
+            icon: 'success',
+            title: 'Đăng Xuất Thành Công',
+            showConfirmButton: false,
+            timer: 1500,
+        });
+
     };
 
     useEffect(() => {
@@ -215,6 +225,18 @@ const Header = ({ category }) => {
                                     </span>
                                     <span className="text-md text-white item-hover__text d-none d-lg-flex">
                                         Giỏ Hàng
+                                    </span>
+
+                                </Link>
+                                <Link
+                                    to="/shop"
+                                    className="flex-align flex-column gap-8 item-hover-two"
+                                >
+                                    <span className="text-2xl text-white d-flex position-relative item-hover__text">
+                                        <i className="ph  ph-shopping-bag" />
+                                    </span>
+                                    <span className="text-md text-white item-hover__text d-none d-lg-flex">
+                                        Cửa Hàng
                                     </span>
                                 </Link>
                             </div>

@@ -2,6 +2,7 @@ package com.g4.backend.repository;
 
 import com.g4.backend.dto.response.OrderResponseDTO;
 import com.g4.backend.model.Order;
+import com.g4.backend.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -57,4 +58,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("select o from Order o where o.user.userId = :userId")
     List<Order> findOrderByUserId(@Param("userId") long userId);
+
+
+    List<Order> findByCartIdAndPaymentStatusOrderByCreateAtDesc(Long cartId, String paymentStatus);
 }

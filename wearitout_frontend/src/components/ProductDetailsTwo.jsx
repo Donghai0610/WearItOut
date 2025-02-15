@@ -63,10 +63,9 @@ const ProductDetailsTwo = () => {
             });
         } catch (err) {
             console.error('Error adding product to cart:', err);
-            setError('Không thể thêm sản phẩm vào giỏ hàng');
             Swal.fire({
                 icon: 'error',
-                title: 'Không thể thêm sản phẩm vào giỏ hàng',
+                title: 'Sản phẩm đã hết hàng',
                 showConfirmButton: false,
                 timer: 1500
             });
@@ -302,7 +301,7 @@ const ProductDetailsTwo = () => {
                                 </div>
                                 <div className="flex-between flex-wrap gap-8">
                                     <span className="text-gray-500">Phí Ship</span>
-                                    <h6 className="text-lg mb-0">From 50,000 VNĐ</h6>
+                                    <h6 className="text-lg mb-0"></h6>
                                 </div>
                             </div>
 

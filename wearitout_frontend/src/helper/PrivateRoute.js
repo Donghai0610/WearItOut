@@ -1,12 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 
-// PrivateRoute is now simplified: we use it only to conditionally render based on authentication status
 const PrivateRoute = ({ element }) => {
-  const { isAuthenticated } = useAuth(); // Check authentication state
+  const { isAuthenticated, checkAuthentication } = useAuth(); // Lấy checkAuthentication từ context
 
-  // If user is authenticated, render the passed component (element), otherwise redirect to /account
+  useEffect(() => {
+    checkAuthentication();  // Kiểm tra lại trạng thái đăng nhập khi render lại component
+  }, []);
+
+  // Nếu người dùng đã đăng nhập, render component được truyền vào (element), nếu không, chuyển hướng đến /account (đăng nhập)
   return isAuthenticated ? element : <Navigate to="/account" />;
 };
 

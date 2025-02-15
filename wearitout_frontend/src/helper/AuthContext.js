@@ -10,7 +10,8 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [role, setRole] = useState(null);
 
-  useEffect(() => {
+  // Hàm checkAuthentication
+  const checkAuthentication = () => {
     const token = localStorage.getItem("token");
     const savedRole = localStorage.getItem("role");
 
@@ -20,6 +21,10 @@ export const AuthProvider = ({ children }) => {
     } else {
       setIsAuthenticated(false);
     }
+  };
+
+  useEffect(() => {
+    checkAuthentication();  // Kiểm tra trạng thái đăng nhập khi component được load lại
   }, []);
 
   const login = (token, userRole) => {
@@ -37,7 +42,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, role, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, role, login, logout, checkAuthentication }}>
       {children}
     </AuthContext.Provider>
   );

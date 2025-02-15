@@ -1,5 +1,5 @@
-import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import RouteScrollToTop from "./helper/RouteScrollToTop";
 import PhosphorIconInit from "./helper/PhosphorIconInit";
 import HomePageTwo from "./pages/HomePageTwo";
@@ -16,71 +16,82 @@ import ShopManagementPage from "./pages/ShopManagementPage";
 import OrderManagementPage from "./pages/OrderManagementPage";
 import DashBoardPage from "./pages/DashBoardPage";
 import AddProductPage from "./pages/AddProductPage";
-import { AuthProvider } from "./helper/AuthContext";
 import OrderManagementUserPage from "./pages/OrderManagementUserPage ";
-import PrivateRoute from "./helper/PrivateRoute";
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  // Check if the user is authenticated (i.e., token exists)
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsAuthenticated(!!token); // Sets isAuthenticated to true if token exists
+  }, []);
+
+
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <RouteScrollToTop />
-        <PhosphorIconInit />
+    <BrowserRouter>
+      <RouteScrollToTop />
+      <PhosphorIconInit />
 
-        <Routes>
-          <Route exact path="/" element={<HomePageTwo />} />
-          <Route exact path="/home" element={<HomePageTwo />} />
-          <Route exact path="/shop" element={<ShopPage />} />
-          <Route exact path="/product-details/:id" element={<ProductDetailsPageTwo />} />
-          <Route exact path="/blog" element={<BlogPage />} />
-          <Route exact path="/blog-details" element={<BlogDetailsPage />} />
-          <Route exact path="/contact" element={<ContactPage />} />
-          <Route exact path="/oauth-callback" element={<OAuthCallback />} />
+      <Routes>
+        <Route exact path="/" element={<HomePageTwo />} />
+        <Route exact path="/home" element={<HomePageTwo />} />
+        <Route exact path="/shop" element={<ShopPage />} />
+        <Route exact path="/blog" element={<BlogPage />} />
+        <Route exact path="/blog-details" element={<BlogDetailsPage />} />
+        <Route exact path="/contact" element={<ContactPage />} />
+        <Route exact path="/oauth-callback" element={<OAuthCallback />} />
 
-          {/* Protected Routes */}
-          <Route
-            exact
-            path="/cart"
-            element={<PrivateRoute element={<CartPage />} />}
-          />
-          <Route
-            exact
-            path="/checkout"
-            element={<PrivateRoute element={<CheckoutPage />} />}
-          />
-          <Route
-            exact
-            path="/account"
-            element={<AccountPage />}
-          />
-          <Route
-            exact
-            path="/shop-management"
-            element={<PrivateRoute element={<ShopManagementPage />} />}
-          />
-          <Route
-            exact
-            path="/order-management"
-            element={<PrivateRoute element={<OrderManagementPage />} />}
-          />
-          <Route
-            exact
-            path="/order-user"
-            element={<PrivateRoute element={<OrderManagementUserPage />} />}
-          />
-          <Route
-            exact
-            path="/dashboard"
-            element={<PrivateRoute element={<DashBoardPage />} />}
-          />
-          <Route
-            exact
-            path="/add-product"
-            element={<PrivateRoute element={<AddProductPage />} />}
-          />
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+        {/* Public route (Account Page) */}
+        <Route
+          exact
+          path="/account"
+          element={isAuthenticated ? <Navigate to="/home" /> : <AccountPage />}  
+        />
+
+        {/* Protected routes */}
+        <Route
+          exact
+          path="/cart"
+          element={isAuthenticated ? <CartPage /> : <Navigate to="/account" />}
+        />
+        <Route
+          exact
+          path="/product-details/:id"
+          element={isAuthenticated ? <ProductDetailsPageTwo /> : <Navigate to="/account" />}
+        />
+        <Route
+          exact
+          path="/checkout"
+          element={isAuthenticated ? <CheckoutPage /> : <Navigate to="/account" />}
+        />
+        <Route
+          exact
+          path="/shop-management"
+          element={isAuthenticated ? <ShopManagementPage /> : <Navigate to="/account" />}
+        />
+        <Route
+          exact
+          path="/order-management"
+          element={isAuthenticated ? <OrderManagementPage /> : <Navigate to="/account" />}
+        />
+        <Route
+          exact
+          path="/order-user"
+          element={isAuthenticated ? <OrderManagementUserPage /> : <Navigate to="/account" />}
+        />
+        <Route
+          exact
+          path="/dashboard"
+          element={isAuthenticated ? <DashBoardPage /> : <Navigate to="/account" />}
+        />
+        <Route
+          exact
+          path="/add-product"
+          element={isAuthenticated ? <AddProductPage /> : <Navigate to="/account" />}
+        />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

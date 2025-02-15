@@ -2,7 +2,12 @@ package com.g4.backend.controller;
 
 import com.g4.backend.dto.request.OrderRequestDTO;
 import com.g4.backend.dto.response.*;
+import com.g4.backend.model.Cart;
 import com.g4.backend.model.Order;
+import com.g4.backend.model.User;
+import com.g4.backend.repository.CartRepository;
+import com.g4.backend.repository.OrderRepository;
+import com.g4.backend.repository.UserRepository;
 import com.g4.backend.service.OrderDetailService;
 import com.g4.backend.service.OrderService;
 import com.g4.backend.utils.PaymentMethod;
@@ -24,6 +29,9 @@ import java.util.stream.Collectors;
 public class UserOrderController {
     private final OrderService orderService;
     private final OrderDetailService orderDetailService;
+    private final OrderRepository orderRepository;
+    private final UserRepository userRepository;
+private final CartRepository cartRepository;
 
     @GetMapping("/list")
     public ResponseEntity<?> getOrdersByUserAndFilter(
@@ -56,16 +64,7 @@ public class UserOrderController {
     }
 
 
-    @PostMapping("/create")
-    public ResponseEntity<String> createOrder(@RequestParam Long userId, @RequestParam String shipAddress, @RequestParam PaymentMethod paymentMethod) {
-        try {
-            // Gọi service để tạo đơn hàng
-            orderService.createOrdersForCart(userId, shipAddress, paymentMethod);
-            return ResponseEntity.ok("Đơn hàng đã được tạo thành công!");
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("Có lỗi xảy ra: " + e.getMessage());
-        }
-    }
+
 
     // Lấy đơn hàng theo ID
     @GetMapping("/{orderId}")
@@ -95,21 +94,18 @@ public class UserOrderController {
             @RequestParam PaymentMethod paymentMethod) {
 
         try {
-            // Tạo đơn hàng và thanh toán
-            orderService.createOrdersForCart(userId, shipAddress, paymentMethod);
-
-            // Trả về thông tin đơn hàng mới tạo
-            NewOrderMessageResponseDTO responseDTO = new NewOrderMessageResponseDTO();
-            responseDTO.setMessage("Đơn hàng đã được tạo và thanh toán thành công!");
-
+            // Gọi Service để tạo đơn hàng và thanh toán
+            NewOrderMessageResponseDTO responseDTO = orderService.createOrdersForCart(userId, shipAddress, paymentMethod);
             return ResponseEntity.ok(responseDTO);
 
         } catch (Exception e) {
-            return ResponseEntity.status(400).body(new NewOrderMessageResponseDTO("Đã xảy ra lỗi: " + e.getMessage()));
+            return ResponseEntity.status(400).body(new NewOrderMessageResponseDTO("Đã xảy ra lỗi: " + e.getMessage(),null,null));
         }
     }
 
-    // API nhận thông tin thanh toán sau khi người dùng hoàn tất thanh toán
+
+
+
     @PostMapping("/payment-success")
     public ResponseEntity<String> handlePaymentSuccess(@RequestParam Long orderId) {
         try {
@@ -124,28 +120,7 @@ public class UserOrderController {
         }
     }
 
-    @PostMapping("/payment-webhook")
-    public ResponseEntity<String> handlePaymentWebhook(@RequestBody WebhookData webhookData) {
-        try {
-            // Kiểm tra webhook data và cập nhật trạng thái thanh toán nếu thanh toán thành công
-            if (webhookData.getCode().equals("00") && webhookData.getDesc().equals("success")) {
-                // Kiểm tra trạng thái thành công (webhookData.getCode() == "00" hoặc điều kiện theo tài liệu)
-                Long orderId = webhookData.getOrderCode(); // Sử dụng orderCode từ webhookData
 
-                // Gọi phương thức service để cập nhật trạng thái thanh toán
-                orderService.changeStatusOrderToPaid(orderId);
-
-                // Trả về phản hồi thành công
-                return ResponseEntity.ok("Thanh toán thành công và trạng thái đã được cập nhật!");
-            }
-
-            // Nếu thanh toán không thành công, trả về lỗi
-            return ResponseEntity.status(400).body("Thanh toán không thành công.");
-        } catch (Exception e) {
-            // Xử lý lỗi và trả về phản hồi lỗi
-            return ResponseEntity.status(400).body("Lỗi khi xử lý webhook: " + e.getMessage());
-        }
-    }
 
 
 }
