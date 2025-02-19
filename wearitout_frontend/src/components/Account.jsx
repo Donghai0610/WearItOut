@@ -1,24 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import Account_Service, { login, register } from '../services/account.js';
+import Account_Service, { loginHandle, register } from '../services/account.js';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
-
+import { useDispatch } from 'react-redux';
+import { login } from '../store/authSlice.js';
 const Account = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     useEffect(() => {
         const savedUsername = localStorage.getItem('username');
-        const savedPassword = localStorage.getItem('password');
         const savedRememberMe = localStorage.getItem('rememberMe') === 'true';
 
         if (savedRememberMe) {
             setUsername(savedUsername || '');
-            setPassword(savedPassword || '');
             setRememberMe(savedRememberMe);
         }
     }, []);
@@ -27,34 +27,32 @@ const Account = () => {
         e.preventDefault();
         if (rememberMe) {
             localStorage.setItem('username', username);
-            localStorage.setItem('password', password);
             localStorage.setItem('rememberMe', rememberMe);
         } else {
             localStorage.removeItem('username');
-            localStorage.removeItem('password');
             localStorage.removeItem('rememberMe');
         }
     
         try {
-            const data = await Account_Service.login(username, password); // Gọi API đăng nhập
+            const data = await Account_Service.loginHandle(username, password); // Gọi API đăng nhập
             if (data.code === 200) { // Kiểm tra trạng thái trả về
                 // Lưu thông tin token và vai trò vào localStorage
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('role', data.role);
-    
+                localStorage.setItem('username', username);
+                dispatch(login({ username, token: data.token, role: data.role }));
                 Swal.fire({
-                    title: 'Success!',
-                    text: 'Login successful',
+                    title: 'Đăng nhập thành công!',
+                    text: 'Chào mừng bạn quay trở lại',
                     icon: 'success',
                     confirmButtonText: 'OK',
                 });
     
-                console.log('Login successful', data);
                 navigate('/'); // Điều hướng về trang chủ sau khi đăng nhập
             } else {
                 Swal.fire({
                     title: 'Error!',
-                    text: data.message || 'Login failed',
+                    text: data.message || 'Đăng nhập thất bại',
                     icon: 'error',
                     confirmButtonText: 'OK',
                 });
@@ -62,7 +60,7 @@ const Account = () => {
         } catch (error) {
             Swal.fire({
                 title: 'Error!',
-                text: error.message || 'Something went wrong',
+                text: error.message || 'Có lỗi xảy ra,Đại vương ơi!',
                 icon: 'error',
                 confirmButtonText: 'OK',
             });
@@ -122,6 +120,25 @@ const Account = () => {
         // Chuyển hướng người dùng đến URL OAuth2
         window.location.href = 'http://localhost:8080/oauth2/authorization/google';
     };
+ const handleForgotPassword = (e) => {
+        e.preventDefault();
+        Swal.fire({
+            title: 'Thông báo',
+            text: 'Tính năng này đang được phát triển',
+            icon: 'info',
+            confirmButtonText: 'Đóng',
+        });
+    };
+
+    const handlePrivacyPolicy = (e) => {
+         Swal.fire({
+            title: 'Thông báo',
+            text: 'Tính năng này đang được phát triển',
+            icon: 'info',
+            confirmButtonText: 'Đóng',
+        });
+    };
+
 
     return (
         <section className="account py-80">
@@ -130,10 +147,10 @@ const Account = () => {
                 {/* Login Card Start */}
                 <div className="col-xl-6 pe-xl-5">
                     <form onSubmit={handleLogin} className="border border-gray-100 hover-border-main-600 transition-1 rounded-16 px-24 py-40 h-100">
-                        <h6 className="text-xl mb-32">Login</h6>
+                        <h6 className="text-xl mb-32">Đăng Nhập</h6>
                         <div className="mb-24">
                             <label htmlFor="username-login" className="text-neutral-900 text-lg mb-8 fw-medium">
-                                Username or email address <span className="text-danger">*</span>
+                               Tên Tài Khoản <span className="text-danger">*</span>
                             </label>
                             <input
                                 type="text"
@@ -146,7 +163,7 @@ const Account = () => {
                         </div>
                         <div className="mb-24">
                             <label htmlFor="password-login" className="text-neutral-900 text-lg mb-8 fw-medium">
-                                Password
+                                Mật Khẩu
                             </label>
                             <div className="position-relative">
                                 <input
@@ -166,7 +183,7 @@ const Account = () => {
                         <div className="mb-24 mt-48">
                             <div className="flex-align gap-48 flex-wrap">
                                 <button type="submit" className="btn btn-main py-18 px-40">
-                                    Log in
+                                    Đăng Nhập
                                 </button>
                                 <div className="form-check common-check">
                                     <input
@@ -177,14 +194,15 @@ const Account = () => {
                                         id="remember"
                                     />
                                     <label className="form-check-label flex-grow-1" htmlFor="remember">
-                                        Remember me
+                                        Ghi nhớ tôi
                                     </label>
                                 </div>
                             </div>
                         </div>
                         <div className="mt-48">
-                            <Link to="#" className="text-danger-600 text-sm fw-semibold hover-text-decoration-underline">
-                                Forgot your password?
+                            <Link to="#" className="text-danger-600 text-sm fw-semibold hover-text-decoration-underline"
+                            onClick={handleForgotPassword}>
+                                Quên mật khẩu?
                             </Link>
                         </div>
                         <div className="mt-48">
@@ -193,7 +211,7 @@ const Account = () => {
                                 className="btn btn-secondary py-18 px-40"
                                 onClick={handleGoogleLogin}
                             >
-                                Login with Google
+                                Đăng Nhập Bằng Google
                             </button>
                         </div>
                     </form>
@@ -203,10 +221,10 @@ const Account = () => {
                 {/* Register Card Start */}
                 <div className="col-xl-6">
                     <form onSubmit={formik.handleSubmit} className="border border-gray-100 hover-border-main-600 transition-1 rounded-16 px-24 py-40">
-                        <h6 className="text-xl mb-32">Register</h6>
+                        <h6 className="text-xl mb-32">Đăng ký</h6>
                         <div className="mb-24">
                             <label htmlFor="username-register" className="text-neutral-900 text-lg mb-8 fw-medium">
-                                Username <span className="text-danger">*</span>
+                                Tên đăng nhập<span className="text-danger">*</span>
                             </label>
                             <input
                                 type="text"
@@ -222,7 +240,7 @@ const Account = () => {
     
                         <div className="mb-24">
                             <label htmlFor="email-register" className="text-neutral-900 text-lg mb-8 fw-medium">
-                                Email address <span className="text-danger">*</span>
+                                Tài Khoản Email <span className="text-danger">*</span>
                             </label>
                             <input
                                 type="email"
@@ -238,7 +256,7 @@ const Account = () => {
     
                         <div className="mb-24">
                             <label htmlFor="phone-register" className="text-neutral-900 text-lg mb-8 fw-medium">
-                                Phone Number <span className="text-danger">*</span>
+                               Số điện thoại <span className="text-danger">*</span>
                             </label>
                             <input
                                 type="text"
@@ -254,7 +272,7 @@ const Account = () => {
     
                         <div className="mb-24">
                             <label htmlFor="password-register" className="text-neutral-900 text-lg mb-8 fw-medium">
-                                Password <span className="text-danger">*</span>
+                                Mật Khẩu <span className="text-danger">*</span>
                             </label>
                             <div className="position-relative">
                                 <input
@@ -276,9 +294,10 @@ const Account = () => {
     
                         <div className="my-48">
                             <p className="text-gray-500">
-                                Your personal data will be used to process your order, support your experience throughout this website, and for other purposes described in our
-                                <Link to="#" className="text-main-600 text-decoration-underline">
-                                    privacy policy
+                                Dữ liệu của bạn sẽ được bảo mật và không bao giờ được chia sẻ với bất kỳ ai. Bằng cách nhấp vào nút đăng ký, bạn đồng ý với
+                                <Link to="#" className="text-main-600 text-decoration-underline"
+                                onClick={handlePrivacyPolicy}>
+                                    Điều khoản dịch vụ
                                 </Link>
                                 .
                             </p>

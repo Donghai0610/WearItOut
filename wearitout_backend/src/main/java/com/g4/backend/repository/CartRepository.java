@@ -32,5 +32,9 @@ Optional<Cart> findCartByUser(User user);
     @Transactional
     @Query("delete from Cart c where c.cartId = :cartId")
     void deleteCartByCartId(@Param("cartId") Long cartId);
+
+
+    @Query("SELECT c FROM Cart c WHERE c.user.userId = :userId")
+    Optional<Cart> findCartByUserId2(@Param("userId") Long userId);
 }
 

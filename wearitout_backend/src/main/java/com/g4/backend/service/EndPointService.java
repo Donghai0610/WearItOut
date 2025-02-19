@@ -39,16 +39,11 @@ public class EndPointService {
             "/api/v1/product/same-product/{productId}"
     };
     public static final String[] adminShopGetEndPoint = {
-            "/api/v1/product/productofshop/**",
-            "/api/v1/product/shop/*/detail/*",
 
-            "/api/v1/admin/settings/{typeId}",
-            "/api/v1/shop/search/{userId}",
 
 
     };
     public static final String[] adminShopPostEndPoint = {
-            "/api/v1/product/add",
     };
 
     public static final  String[]  userPostEndPoint ={
@@ -61,6 +56,7 @@ public class EndPointService {
             "/api/v1/user/order/create-payment",
             "/api/v1/user/order/payment-success",
             "/api/v1/admin/shop/create",
+            "/api/v1/product/add",
 
 
     };
@@ -71,6 +67,11 @@ public class EndPointService {
             "/api/v1/user/{userId}",
             "/api/v1/user/order/**",
             "/api/v1/user/order/{userId}/purchased-products",
+            "/api/v1/product/productofshop/**",
+            "/api/v1/product/shop/*/detail/*",
+
+            "/api/v1/admin/settings/{typeId}",
+            "/api/v1/shop/search/{userId}",
 
     };
 }

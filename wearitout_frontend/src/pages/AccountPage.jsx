@@ -9,6 +9,7 @@ import ShippingOne from "../components/ShippingOne";
 import Account from "../components/Account";
 import ScrollToTop from "react-scroll-to-top";
 import ColorInit from "../helper/ColorInit";
+import ShippingTwo from "../components/ShippingTwo";
 
 
 const AccountPage = () => {
@@ -36,7 +37,7 @@ const AccountPage = () => {
       <Account />
 
       {/* ShippingOne */}
-      <ShippingOne />
+      <ShippingTwo />
 
       {/* FooterTwo */}
       <FooterTwo />

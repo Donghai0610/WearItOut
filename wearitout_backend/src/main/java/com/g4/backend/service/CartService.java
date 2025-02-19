@@ -143,7 +143,9 @@ public class CartService {
      * Đếm tổng số sản phẩm trong giỏ hàng
      */
     public CartProductCountResponseDTO countTotalProductsInCart(Long cartId) {
-        Cart cart = cartRepository.findById(cartId)
+        Optional<Cart>  cart_First = cartRepository.findCartByUserId2(cartId);
+        System.out.println(cart_First.get().getCartId());
+        Cart cart = cartRepository.findById(cart_First.get().getCartId())
                 .orElseThrow(() -> new RuntimeException("Giỏ hàng không tồn tại"));
 
         int totalProducts = cart.getCartItems().stream()

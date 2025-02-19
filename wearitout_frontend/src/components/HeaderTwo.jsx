@@ -6,40 +6,44 @@ import { jwtDecode } from 'jwt-decode';
 import Cart_Items_Services from '../services/cart_item';
 import Account_Service from '../services/account';
 import Swal from 'sweetalert2';
+import { login, logout } from '../store/authSlice';
+import { useDispatch, useSelector } from 'react-redux';
 
 const Header = ({ category }) => {
     const [categories, setCategories] = useState([]);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [username, setUsername] = useState('');
     const [totalItems, setTotalItems] = useState(0); // Store total items in the cart
     const [loading, setLoading] = useState(true); // To show loading state
     const [error, setError] = useState(null); // To store any error messages
     const userId = Account_Service.getUserIdFromToken();
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const { isAuthenticated, username } = useSelector(state => state.auth  ); 
+
+
     useEffect(() => {
         // Kiểm tra trạng thái đăng nhập
         const token = localStorage.getItem('token');
         if (token) {
             try {
-                // Giải mã token để lấy thông tin username
                 const decodedToken = jwtDecode(token);
                 if (decodedToken.sub) {
-                    setIsLoggedIn(true);
-                    setUsername(decodedToken.sub); // Lấy username từ token
+                    dispatch(login({ username: decodedToken.sub, token })); // Lưu thông tin đăng nhập vào Redux
                 }
             } catch (error) {
                 console.error('Invalid token:', error);
-                localStorage.removeItem('token'); // Xóa token nếu không hợp lệ
+                localStorage.removeItem('token');
             }
         }
-    }, []);
+    }, [dispatch]);
 
     useEffect(() => {
-        if (userId) {
+        if (userId && isAuthenticated) {
             const fetchTotalItems = async () => {
                 setLoading(true);
                 try {
-                    const items = await Cart_Items_Services.getTotalItemsInCart(userId); // Pass user ID to get the total items in the cart
+                    const items = await Cart_Items_Services.getTotalItemsInCart(userId);
                     setTotalItems(items);
                 } catch (err) {
                     setError('Could not fetch total items.');
@@ -48,39 +52,71 @@ const Header = ({ category }) => {
                 }
             };
 
-            // Fetch initially when component mounts
             fetchTotalItems();
 
-            // Set up interval to fetch the total items every 10 seconds
+            // Fetch total items every 10 seconds
             const intervalId = setInterval(() => {
                 fetchTotalItems();
-            }, 10000); // 10 seconds
+            }, 100000000);
 
-            // Clean up the interval when the component unmounts
             return () => clearInterval(intervalId);
         }
-    }, [userId]); // Dependency on userId to refetch when userId changes
+    }, [userId]);
 
     const handleLogout = () => {
-        localStorage.removeItem('token');
-        setIsLoggedIn(false);
-        setUsername('');
-        window.location.reload();
-        navigate('/account');
-        Swal.fire({
-            icon: 'success',
-            title: 'Đăng Xuất Thành Công',
-            showConfirmButton: false,
-            timer: 1500,
-        });
-
+        const token = localStorage.getItem('token');
+        if (token) {
+            try {
+                const decodedToken = jwtDecode(token); // Giải mã token
+                const currentTime = Date.now() / 1000; // Thời gian hiện tại (tính bằng giây)
+    
+                // Nếu token còn hạn nhưng người dùng muốn đăng xuất
+                Swal.fire({
+                    title: 'Bạn chắc chắn muốn đăng xuất?',
+                    showCancelButton: true,
+                    confirmButtonText: `Đăng Xuất`,
+                    cancelButtonText: `Hủy`,
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Xóa token khỏi localStorage
+                        localStorage.removeItem('token');
+                        localStorage.removeItem('role');
+                        
+                        // Lưu cờ để ngăn không cho sử dụng lại token
+                        localStorage.setItem('loggedOut', 'true'); // Cờ đánh dấu đã logout
+    
+                        dispatch(logout()); // Dispatch logout action để clear Redux state
+                        navigate('/account'); // Chuyển hướng đến trang đăng nhập
+                    }
+                });
+            } catch (error) {
+                console.error('Error decoding token:', error);
+                // Xóa token và cờ nếu có lỗi
+                localStorage.removeItem('token');
+                localStorage.removeItem('role');
+                localStorage.setItem('loggedOut', 'true'); // Cờ đánh dấu đã logout
+    
+                dispatch(logout());
+                navigate('/account');
+            }
+        } else {
+            // Nếu không có token, coi như chưa đăng nhập và thực hiện đăng xuất
+            localStorage.removeItem('token');
+            localStorage.removeItem('role');
+            localStorage.setItem('loggedOut', 'true'); // Cờ đánh dấu đã logout
+    
+            dispatch(logout());
+            navigate('/account');
+        }
     };
+    
+
 
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const data = await Product_Services.Product_Category(6); // Gọi API để lấy danh sách danh mục
-                setCategories(data); // Lưu danh sách vào state
+                const data = await Product_Services.Product_Category(6);
+                setCategories(data);
             } catch (error) {
                 console.error('Error fetching categories:', error);
             }
@@ -158,7 +194,7 @@ const Header = ({ category }) => {
                         {/* User Menu */}
                         <div className="header-right flex-align d-lg-block d-none">
                             <div className="header-two-activities flex-align flex-wrap gap-32">
-                                {isLoggedIn ? (
+                                {isAuthenticated  ? (
                                     <>
                                         <Link
                                             to="/"
@@ -217,7 +253,7 @@ const Header = ({ category }) => {
                                             {loading ? (
                                                 <span className="loader"></span> // You can add a loader here
                                             ) : error ? (
-                                                <span>{error}</span>
+                                                <span>{0}</span>
                                             ) : (
                                                 totalItems // Show the total number of items in the cart
                                             )}
@@ -239,6 +275,8 @@ const Header = ({ category }) => {
                                         Cửa Hàng
                                     </span>
                                 </Link>
+
+                                
                             </div>
                         </div>
                     </nav>

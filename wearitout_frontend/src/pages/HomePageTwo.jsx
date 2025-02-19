@@ -21,20 +21,27 @@ import FooterTwo from "../components/FooterTwo";
 import BottomFooter from "../components/BottomFooter";
 import ColorInit from "../helper/ColorInit";
 import ScrollToTop from "react-scroll-to-top";
+import Swal from "sweetalert2";
 
 const HomePageTwo = () => {
-
   const [showWelcome, setShowWelcome] = useState(true);
 
   useEffect(() => {
-    // Ẩn thông báo sau 5 giây (5000ms)
+    // Hiển thị dialog giới thiệu về dự án sau 1 giây (1000ms)
     const timer = setTimeout(() => {
-      setShowWelcome(false);
-    }, 5000);
+      Swal.fire({
+        title: "🫡 Xin chào mọi người",
+        text: "Hiện tại chúng mình đang thực hiện dự án 'Wear It Out', đây là dự án nhằm cung cấp cho mọi người một nơi có thể trao đổi buôn bán quần áo cũ. Chúng mình mong muốn thông qua dự án này có thể giúp giảm thải tác động của quần áo tới môi trường và giúp đỡ mọi người trong việc tìm mua những trang phục phù hợp với giá cả và đảm bảo về chất lượng cũng như bán những bộ quần áo không còn sử dụng nữa.",
+        icon: "info",
+        showCancelButton: false,
+        confirmButtonText: "Cảm ơn bạn đã quan tâm!",
+        footer: "<b>Thông tin liên hệ:</b><br>Trưởng dự án: Nguyễn Quang Minh<br>SĐT: 0972456177<br>Địa chỉ: Đại học FPT Hà Nội."
+      });
+      setShowWelcome(false);  // Ẩn thông báo sau khi đã hiển thị dialog
+    }, 1000); // Hiển thị dialog sau 1 giây
 
-    // Clean up khi component bị unmount hoặc hết thời gian
-    return () => clearTimeout(timer);
-  }, []); // Chạy once khi component được mount
+    return () => clearTimeout(timer);  // Dọn dẹp khi component unmount
+  }, []);  // Chạy once khi component được mount
 
   return (
 
@@ -81,40 +88,9 @@ const HomePageTwo = () => {
       {/* BottomFooter */}
       <BottomFooter />
 
-      {/* Hiển thị thông báo chào mừng nếu showWelcome là true */}
-      {showWelcome && (
-        <div style={styles.welcomeMessage}>
-          <h2>Chào mừng đến với website của chúng tôi!</h2>
-        </div>
-      )}
+      
     </>
   );
 };
-const styles = {
-  welcomeMessage: {
-    position: "fixed",
-    top: "10px",
-    left: "50%",
-    transform: "translateX(-50%)",
-    backgroundColor: "#28a745",
-    color: "#fff",
-    padding: "10px 20px",
-    borderRadius: "5px",
-    zIndex: 1000,
-    fontSize: "18px",
-    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-    animation: "moveMessage 5s linear infinite" // Áp dụng animation
-  },
-  "@keyframes moveMessage": {
-    "0%": {
-      transform: "translateX(-100%)" // Bắt đầu từ bên trái ngoài màn hình
-    },
-    "50%": {
-      transform: "translateX(0)" // Đi vào giữa màn hình
-    },
-    "100%": {
-      transform: "translateX(100%)" // Đi ra ngoài bên phải màn hình
-    }
-  }
-};
+
 export default HomePageTwo;

@@ -36,6 +36,7 @@
     "react-slick": "^0.30.2",
     "react-slider": "^2.0.6",
     "reactstrap": "^9.2.3",
+    "recharts": "^2.15.1",
     "select2": "^4.1.0-rc.0",
     "simplebar-react": "^3.3.0",
     "slick-carousel": "^1.8.1",

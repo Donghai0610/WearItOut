@@ -4,11 +4,10 @@ import QuantityControl from '../helper/QuantityControl';
 import Cart_Services from '../services/cart';
 import Swal from 'sweetalert2';
 import Account_Service from '../services/account';
-
 const CartSection = () => {
     const [cart, setCart] = useState(null); // State lưu trữ giỏ hàng
     const [error, setError] = useState('');
-
+    const [loading, setLoading] = useState(false); 
 
     const fetchCart = async () => {
         try {
@@ -108,8 +107,17 @@ const CartSection = () => {
         return <p>{error}</p>;
     }
 
+    if (loading) {
+        return (
+            <div className="loading-container">
+                <img src='public\assets\images\icon\reload_1306401.png' alt="Loading..." /> {/* Hiển thị icon loading */}
+                <p>Đang tải giỏ hàng...</p>
+            </div>
+        );
+    }
+
     if (!cart) {
-        return <p>Loading cart...</p>;
+        return <p>Giỏ hàng không tồn tại</p>;
     }
 
     const formatVND = (price) => {
