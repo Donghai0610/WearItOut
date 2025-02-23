@@ -19,7 +19,11 @@ import AddProductPage from "./pages/AddProductPage";
 import { AuthProvider } from "./helper/AuthContext";
 import OrderManagementUserPage from "./pages/OrderManagementUserPage ";
 import PrivateRoute from "./helper/PrivateRoute";
-import PaymentPage from "./components/Payment";
+import PaymentPage from "./pages/PaymentPage";
+import ChatBoxPage from "./pages/ChatBoxPage";
+import WearFitsViewerPage from "./pages/WearFitsViewerPage";
+import TryOnPage from "./pages/TryOnPage";
+import SearchImagePage from "./pages/SearchImagePage";
 
 function App() {
   return (
@@ -49,10 +53,32 @@ function App() {
             path="/checkout"
             element={<PrivateRoute element={<CheckoutPage />} />}
           />
+          {/*Thinh add*/}
+
           <Route
             exact
             path="/payment"
             element={<PrivateRoute element={<PaymentPage />} />}
+          />
+          <Route
+            exact
+            path="/chatbox"
+            element= {<ChatBoxPage />}
+          />
+          <Route
+            exact
+            path="/tryon"
+            element= {<TryOnPage />}
+          />
+          <Route
+            exact
+            path="/searchimage"
+            element= {<SearchImagePage />}
+          />
+          <Route
+            exact
+            path="/wearfitview"
+            element= {<WearFitsViewerPage />}
           />
           <Route
             exact

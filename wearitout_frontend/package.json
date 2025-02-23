@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@chatscope/chat-ui-kit-react": "^2.0.3",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^6.4.1",
@@ -10,6 +11,7 @@
     "@phosphor-icons/react": "^2.1.7",
     "@ramonak/react-progress-bar": "^5.2.0",
     "@reduxjs/toolkit": "^2.5.1",
+    "@stomp/stompjs": "^7.0.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -17,6 +19,7 @@
     "axios": "^1.7.9",
     "bootstrap": "^5.3.3",
     "formik": "^2.4.6",
+    "framer-motion": "^12.4.7",
     "isotope-layout": "^3.0.6",
     "jquery": "^3.7.1",
     "jwt-decode": "^4.0.0",
@@ -37,6 +40,8 @@
     "select2": "^4.1.0-rc.0",
     "simplebar-react": "^3.3.0",
     "slick-carousel": "^1.8.1",
+    "sockjs-client": "^1.6.1",
+    "styled-components": "^6.1.15",
     "sweetalert2": "^11.15.10",
     "web-vitals": "^2.1.4",
     "yup": "^1.6.1"
