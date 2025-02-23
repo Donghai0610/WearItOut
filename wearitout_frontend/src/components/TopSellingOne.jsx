@@ -94,16 +94,7 @@ const TopSellingOne = () => {
                         <div className="col-md-4">
                             {topProduct && (
                                 <div className="position-relative rounded-16 overflow-hidden p-28 z-1 text-center">
-                                    <img
-                                        src={topProduct.imageUrls[0]}
-                                        alt={topProduct.productName}
-                                        className="position-absolute inset-block-start-0 inset-inline-start-0 z-n1 w-100 h-100"
-                                        style={{
-                                            objectFit: 'cover', // Đảm bảo ảnh bao phủ toàn bộ khung
-                                            width: '100%',       // Đảm bảo ảnh chiếm hết chiều rộng của thẻ
-                                            height: '100%'       // Đảm bảo ảnh chiếm hết chiều cao của thẻ
-                                        }}
-                                    />
+                                 
                                     <div className="py-xl-4">
                                         <h6 className="mb-4 fw-semibold">{topProduct.productName}</h6>
                                         <h5 className="mb-40 fw-semibold">{topProduct.settingName}</h5>
