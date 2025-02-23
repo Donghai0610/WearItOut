@@ -24,7 +24,7 @@ const Logo = styled.img`
 `;
 
 const ChatBox = () => {
-    const API_KEY = "sk-svcacct-Jdw98zREwmqpD2UizGHR98WcuTS-dgrvR6onyLLRSFDMa4cxP2bpl5LHUjowIUE7T3BlbkFJh5BQ3JNXrB_6Kx3fkj3VBE8lkZvYQTIMmnD0hqeYCZOGsOwWoIBymRIRlaKWn7kA";
+    const API_KEY = "";
     const systemMessage = {
         "role": "system", "content": "Explain things like you're talking to a software professional with 2 years of experience."
     };
