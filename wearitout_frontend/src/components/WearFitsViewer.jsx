@@ -1,29 +1,22 @@
 import { useEffect } from "react";
+import {motion} from "framer-motion";
 
 const WearFitsViewer = () => {
-    useEffect(() => {
-        const script = document.createElement("script");
-        script.src = "https://dev.wearfits.com/static/js/wearfits.fr.bundle.min.js";
-        script.async = true;
-        script.onload = () => {
-            if (window.wearfits) {
-                window.wearfits.current_garment_name = "Rozowa";
-                window.wearfits.loadDefaultOrCreateIt();
-                window.wearfits.showMaterialPresets = true;
-                window.wearfits.showSizeSelectionUI = true;
-                window.wearfits.showAvatarSelectionUI = true;
-                window.wearfits.showComfortMapButton = true;
-            }
-        };
-        document.body.appendChild(script);
-        return () => {
-            document.body.removeChild(script);
-        };
-    }, []);
+
 
     return (
-        <div className="flex justify-center items-center h-screen">
-            <div id="wearfits_viewer" className="w-1/2 h-3/5 m-10"></div>
+        <div className="my-5 text-center">
+            <motion.a
+                href="https://dev.wearfits.com/demo"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-xxxxxl btn-warning px-10 py-8 shadow-lg fw-bold text-uppercase fs-1 rounded-pill border border-dark"
+                whileHover={{scale: 1.8, backgroundColor: "#ffcc00", color: "#000"}}
+                whileTap={{scale: 0.9}}
+                transition={{duration: 0.2}}
+            >
+                🚀 Check Outfit!
+            </motion.a>
         </div>
     );
 };
