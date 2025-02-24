@@ -19,7 +19,6 @@ import OrderManagementPage from "./pages/OrderManagementPage";
 import DashBoardPage from "./pages/DashBoardPage";
 import AddProductPage from "./pages/AddProductPage";
 import OrderManagementUserPage from "./pages/OrderManagementUserPage ";
-import PrivateRoute from "./helper/PrivateRoute";
 import PaymentPage from "./pages/PaymentPage";
 import ChatBoxPage from "./pages/ChatBoxPage";
 import WearFitsViewerPage from "./pages/WearFitsViewerPage";
@@ -55,11 +54,11 @@ function App() {
 
           {/*Thinh add*/}
 
-          <Route
+          {/* <Route
             exact
             path="/payment"
             element={<PrivateRoute element={<PaymentPage />} />}
-          />
+          /> */}
           <Route
             exact
             path="/chatbox"
