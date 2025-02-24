@@ -1,7 +1,7 @@
 import { jwtDecode } from "jwt-decode";
 import axiosInstance from "./axios";
 
- const login = async (username, password) => {
+ const loginHandle = async (username, password) => {
     const response = await fetch('http://localhost:8080/api/v1/auth/login', {
         method: 'POST',
         headers: {
@@ -75,7 +75,7 @@ const register = async (username, password, email, phone) => {
     
    
  const  Account_Service ={
-    login,
+    loginHandle,
     register,
     getUserIdFromToken,
     getUserDetail,

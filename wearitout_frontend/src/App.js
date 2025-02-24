@@ -1,5 +1,7 @@
-import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import React, { useEffect } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { checkAuth, login, logout } from "./store/authSlice";
 import RouteScrollToTop from "./helper/RouteScrollToTop";
 import PhosphorIconInit from "./helper/PhosphorIconInit";
 import HomePageTwo from "./pages/HomePageTwo";
@@ -16,7 +18,6 @@ import ShopManagementPage from "./pages/ShopManagementPage";
 import OrderManagementPage from "./pages/OrderManagementPage";
 import DashBoardPage from "./pages/DashBoardPage";
 import AddProductPage from "./pages/AddProductPage";
-import { AuthProvider } from "./helper/AuthContext";
 import OrderManagementUserPage from "./pages/OrderManagementUserPage ";
 import PrivateRoute from "./helper/PrivateRoute";
 import PaymentPage from "./pages/PaymentPage";
@@ -24,35 +25,34 @@ import ChatBoxPage from "./pages/ChatBoxPage";
 import WearFitsViewerPage from "./pages/WearFitsViewerPage";
 import TryOnPage from "./pages/TryOnPage";
 import SearchImagePage from "./pages/SearchImagePage";
+import ProtectedRoute from "./context/ProtectedRoute";
 
 function App() {
+  const { isAuthenticated } = useSelector((state) => state.auth);
+
+  if (isAuthenticated === undefined) {
+    return null;
+  }
+
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <RouteScrollToTop />
-        <PhosphorIconInit />
+    <BrowserRouter>
+      <RouteScrollToTop />
+      <PhosphorIconInit />
+      <Routes>
+        <Route path="/" element={<HomePageTwo />} />
+        <Route path="/home" element={<HomePageTwo />} />
+        <Route path="/shop" element={<ShopPage />} />
+        <Route path="/blog" element={<BlogPage />} />
+        <Route path="/blog-details" element={<BlogDetailsPage />} />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/oauth-callback" element={<OAuthCallback />} />
 
-        <Routes>
-          <Route exact path="/" element={<HomePageTwo />} />
-          <Route exact path="/home" element={<HomePageTwo />} />
-          <Route exact path="/shop" element={<ShopPage />} />
-          <Route exact path="/product-details/:id" element={<ProductDetailsPageTwo />} />
-          <Route exact path="/blog" element={<BlogPage />} />
-          <Route exact path="/blog-details" element={<BlogDetailsPage />} />
-          <Route exact path="/contact" element={<ContactPage />} />
-          <Route exact path="/oauth-callback" element={<OAuthCallback />} />
+        {/* Public Route */}
+        <Route
+          path="/account"
+          element={!isAuthenticated ? <AccountPage /> : <Navigate to="/" />}
+        />
 
-          {/* Protected Routes */}
-          <Route
-            exact
-            path="/cart"
-            element={<PrivateRoute element={<CartPage />} />}
-          />
-          <Route
-            exact
-            path="/checkout"
-            element={<PrivateRoute element={<CheckoutPage />} />}
-          />
           {/*Thinh add*/}
 
           <Route
@@ -80,39 +80,79 @@ function App() {
             path="/wearfitview"
             element= {<WearFitsViewerPage />}
           />
-          <Route
-            exact
-            path="/account"
-            element={<AccountPage />}
-          />
-          <Route
-            exact
-            path="/shop-management"
-            element={<PrivateRoute element={<ShopManagementPage />} />}
-          />
-          <Route
-            exact
-            path="/order-management"
-            element={<PrivateRoute element={<OrderManagementPage />} />}
-          />
-          <Route
-            exact
-            path="/order-user"
-            element={<PrivateRoute element={<OrderManagementUserPage />} />}
-          />
-          <Route
-            exact
-            path="/dashboard"
-            element={<PrivateRoute element={<DashBoardPage />} />}
-          />
-          <Route
-            exact
-            path="/add-product"
-            element={<PrivateRoute element={<AddProductPage />} />}
-          />
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+        {/* Protected Routes */}
+        <Route
+          path="/cart"
+          element={isAuthenticated ? <CartPage /> : <Navigate to="/account" />}
+        />
+        <Route
+          path="/product-details/:id"
+          element={
+            isAuthenticated ? (
+              <ProductDetailsPageTwo />
+            ) : (
+              <Navigate to="/account" />
+            )
+          }
+        />
+        <Route
+          path="/checkout"
+          element={
+            isAuthenticated ? <CheckoutPage /> : <Navigate to="/account" />
+          }
+        />
+        <Route
+          path="/shop-management"
+          element={
+            isAuthenticated ? (
+              <ShopManagementPage />
+            ) : (
+              <Navigate to="/account" />
+            )
+          }
+        />
+        <Route
+          path="/order-management"
+          element={
+            isAuthenticated ? (
+              <OrderManagementPage />
+            ) : (
+              <Navigate to="/account" />
+            )
+          }
+        />
+        <Route
+          path="/order-user"
+          element={
+            isAuthenticated ? (
+              <OrderManagementUserPage />
+            ) : (
+              <Navigate to="/account" />
+            )
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            isAuthenticated ? <DashBoardPage /> : <Navigate to="/account" />
+          }
+        />
+        <Route
+          path="/add-product"
+          element={
+            isAuthenticated ? <AddProductPage /> : <Navigate to="/account" />
+          }
+        />
+
+        {/* Redirect to login if not authenticated */}
+        <Route
+          path="*"
+          element={
+            isAuthenticated ? <Navigate to="/" /> : <Navigate to="/account" />
+          }
+        />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

@@ -25,7 +25,7 @@ const TopSellingOne = () => {
     }, []);
 
 
-   
+
 
     function SampleNextArrow(props) {
         const { className, onClick } = props;
@@ -84,7 +84,7 @@ const TopSellingOne = () => {
                                     to="/shop"
                                     className="text-sm fw-medium text-gray-700 hover-text-main-600 hover-text-decoration-underline"
                                 >
-                                    View All Deals
+                                    Xem các sản phẩm khác
                                 </Link>
                             </div>
                         </div>
@@ -94,11 +94,7 @@ const TopSellingOne = () => {
                         <div className="col-md-4">
                             {topProduct && (
                                 <div className="position-relative rounded-16 overflow-hidden p-28 z-1 text-center">
-                                    <img
-                                        src={topProduct.imageUrls[0]}
-                                        alt={topProduct.productName}
-                                        className="position-absolute inset-block-start-0 inset-inline-start-0 z-n1 w-100 h-100"
-                                    />
+                                 
                                     <div className="py-xl-4">
                                         <h6 className="mb-4 fw-semibold">{topProduct.productName}</h6>
                                         <h5 className="mb-40 fw-semibold">{topProduct.settingName}</h5>
@@ -111,11 +107,21 @@ const TopSellingOne = () => {
                                         </Link>
                                     </div>
                                     <div className="d-md-block d-none mt-36">
-                                        <img src={topProduct.imageUrls[1] || topProduct.imageUrls[0]} alt="" />
+                                        <img
+                                            src={topProduct.imageUrls[1] || topProduct.imageUrls[0]}
+                                            alt=""
+                                            style={{
+                                                objectFit: 'cover', // Đảm bảo ảnh bao phủ toàn bộ khung
+                                                width: '100%',       // Đảm bảo ảnh chiếm hết chiều rộng của thẻ
+                                                height: '100%'       // Đảm bảo ảnh chiếm hết chiều cao của thẻ
+                                            }}
+                                        />
                                     </div>
                                 </div>
                             )}
                         </div>
+
+
 
                         {/* Hiển thị slider các sản phẩm còn lại */}
                         <div className="col-md-8">
@@ -135,8 +141,15 @@ const TopSellingOne = () => {
                                                         src={product.imageUrls[0]}
                                                         alt={product.productName}
                                                         className="w-auto max-w-unset"
+                                                        style={{
+                                                            objectFit: 'cover', // Đảm bảo ảnh bao phủ toàn bộ khung
+                                                            width: '100%',       // Đảm bảo ảnh chiếm hết chiều rộng của thẻ
+                                                            height: '100%'       // Đảm bảo ảnh chiếm hết chiều cao của thẻ
+                                                        }}
                                                     />
                                                 </Link>
+
+
                                                 <div className="product-card__content mt-16">
                                                     <div className="flex-align gap-6">
                                                         <span className="text-xs fw-medium text-gray-500">

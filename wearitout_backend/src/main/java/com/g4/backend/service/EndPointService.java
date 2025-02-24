@@ -5,6 +5,7 @@ public class EndPointService {
             "/api/v1/auth/login",
             "/api/v1/auth/logout",
             "/api/v1/user/register",
+            "/confirm-webhook",
 
     };
 
@@ -17,7 +18,7 @@ public class EndPointService {
             "/api/v1/admin/users/setting-type/{settingId}",
     };
     public static final String[] adminPostEndPoint = {
-            "/api/v1/admin/shop/create",
+
             "/api/v1/admin/update/**",
             "/api/v1/admin/update-active/**",
             "/api/v1/admin/updateshop/{shopId}"
@@ -38,16 +39,11 @@ public class EndPointService {
             "/api/v1/product/same-product/{productId}"
     };
     public static final String[] adminShopGetEndPoint = {
-            "/api/v1/product/productofshop/**",
-            "/api/v1/product/shop/*/detail/*",
 
-            "/api/v1/admin/settings/{typeId}",
-            "/api/v1/shop/search/{userId}",
 
 
     };
     public static final String[] adminShopPostEndPoint = {
-            "/api/v1/product/add",
     };
 
     public static final  String[]  userPostEndPoint ={
@@ -57,7 +53,12 @@ public class EndPointService {
             "/api/v1/product/products-by-user-id",
             "/api/v1/product/update/**",
             "/api/v1/product/delete/**",
-            "/api/v1/user/order/create",
+            "/api/v1/user/order/create-payment",
+            "/api/v1/user/order/payment-success",
+            "/api/v1/admin/shop/create",
+            "/api/v1/product/add",
+
+
     };
     public static final  String[] userGetEndPoint ={
             "/api/v1/cart/{userId}",
@@ -65,6 +66,12 @@ public class EndPointService {
             "/api/v1/cart_item/total-items/{cartId}",
             "/api/v1/user/{userId}",
             "/api/v1/user/order/**",
+            "/api/v1/user/order/{userId}/purchased-products",
+            "/api/v1/product/productofshop/**",
+            "/api/v1/product/shop/*/detail/*",
+
+            "/api/v1/admin/settings/{typeId}",
+            "/api/v1/shop/search/{userId}",
 
     };
 }

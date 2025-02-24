@@ -16,7 +16,7 @@ public class CartItem {
     @Column(name = "cart_item_id")
     private Long cartItemId;
 
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "cart_id", nullable = false)
     private Cart cart; // Tham chiếu đến giỏ hàng
 

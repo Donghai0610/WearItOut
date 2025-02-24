@@ -104,7 +104,7 @@ const ShopSection = () => {
             priceMin: 1,
             priceMax: 50000000,
             ratingMin: 0,
-            ratingMax: 0,
+            ratingMax: 5,
             setting: '',
             shop: '',
             page: 0,
@@ -288,6 +288,23 @@ const ShopSection = () => {
                     <div className="col-lg-9">
                         <div className="flex-between gap-16 flex-wrap mb-40 ">
                             <span className="text-gray-900">Showing {currentPage * 9 + 1}-{Math.min((currentPage + 1) * 9, products.length)} of {products.length} result</span>
+                            <div className="position-relative flex-align gap-16 flex-wrap">
+                                <div className="list-grid-btns flex-align gap-16">
+                                    <button onClick={() => setGrid(true)}
+                                        type="button"
+                                        className={`w-44 h-44 flex-center border rounded-6 text-2xl list-btn border-gray-100 ${grid === true && "border-main-600 text-white bg-main-600"}`}
+                                    >
+                                        <i className="ph-bold ph-list-dashes" />
+                                    </button>
+                                    <button onClick={() => setGrid(false)}
+                                        type="button"
+                                        className={`w-44 h-44 flex-center border rounded-6 text-2xl grid-btn border-gray-100 ${grid === false && "border-main-600 text-white bg-main-600"}`}
+                                    >
+                                        <i className="ph ph-squares-four" />
+                                    </button>
+                                </div>
+                                </div>
+
                         </div>
 
                         {/* Product Listing */}
@@ -330,13 +347,16 @@ const ShopSection = () => {
                                                 {formatVND(product.price)} <span className="text-gray-500 fw-normal">/Qty</span>
                                             </span>
                                         </div>
-                                        <button
-                                            onClick={() => handleAddToCart(product)} // Thêm vào giỏ hàng
-                                            className="product-card__cart btn bg-gray-50 text-heading hover-bg-main-600 hover-text-white py-11 px-24 rounded-8 flex-center gap-8 fw-medium"
-                                            tabIndex={0}
-                                        >
-                                            Thêm vào giỏ hàng <i className="ph ph-shopping-cart" />
-                                        </button>
+
+                                        {product.stockQuantity > 0 && (
+                                            <button
+                                                onClick={() => handleAddToCart(product)}
+                                                className="product-card__cart btn bg-gray-50 text-heading hover-bg-main-600 hover-text-white py-11 px-24 rounded-8 flex-center gap-8 fw-medium"
+                                                tabIndex={0}
+                                            >
+                                                Thêm vào giỏ hàng <i className="ph ph-shopping-cart" />
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
                             ))}

@@ -22,8 +22,7 @@ public class ProductCartResponseDTO {
 
     // DTO có thể chứa URL của hình ảnh sản phẩm thay vì object phức tạp
     private List<String> imageUrls;
-    private Double totalPrice; // Giá của sản phẩm trong giỏ hàng
-    // Tên của setting và shop thay vì object đầy đủ để tránh truy xuất thông tin quá nhiều
+    private Double totalPrice;
     private String settingName;
     private String shopName;
 }

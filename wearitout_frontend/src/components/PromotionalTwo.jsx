@@ -15,8 +15,9 @@ const PromotionalTwo = () => {
                             />
                             <div className="flex-between flex-wrap gap-16">
                                 <div className="">
-                                    <span className="text-heading text-sm mb-8">Mới Nhất</span>
-                                    <h6 className="mb-0">Áo Khoác Nữ Thời Trang</h6>
+                                    <span className="text-heading text-sm mb-8">Bảo Vệ Môi Trường</span>
+                                    <h6 className="mb-0">Quần Áo Thời Trang Secondhand</h6>
+                                    <p className="mb-8">Mua sắm sản phẩm secondhand là cách tuyệt vời để bảo vệ hành tinh, giảm thiểu rác thải và bảo tồn tài nguyên!</p>
                                     <Link
                                         to="/shop"
                                         className="d-inline-flex align-items-center gap-8 mt-16 text-heading text-md fw-medium border border-top-0 border-end-0 border-start-0 border-gray-900 hover-text-main-two-600 hover-border-main-two-600"
@@ -28,7 +29,7 @@ const PromotionalTwo = () => {
                                     </Link>
                                 </div>
                                 <div className="pe-xxl-4">
-                                    <img src="assets/images/thumbs/promo-img1.png" alt="" />
+                                    {/* <img src="assets/images/thumbs/promo-img1.png" alt="" /> */}
                                 </div>
                             </div>
                         </div>
@@ -42,8 +43,9 @@ const PromotionalTwo = () => {
                             />
                             <div className="flex-between flex-wrap gap-16">
                                 <div className="">
-                                    <span className="text-heading text-sm mb-8">Giảm 50%</span>
-                                    <h6 className="mb-0">Váy Maxi Xinh Xắn</h6>
+                                    <span className="text-heading text-sm mb-8">Giảm Thiểu Lãng Phí</span>
+                                    <h6 className="mb-0">Quần Áo Cũ Thời Thượng</h6>
+                                    <p className="mb-8">Mua quần áo secondhand giúp giảm sự tiêu thụ tài nguyên và tiết kiệm chi phí cho người tiêu dùng!</p>
                                     <Link
                                         to="/shop"
                                         className="d-inline-flex align-items-center gap-8 mt-16 text-heading text-md fw-medium border border-top-0 border-end-0 border-start-0 border-gray-900 hover-text-main-two-600 hover-border-main-two-600"
@@ -55,7 +57,7 @@ const PromotionalTwo = () => {
                                     </Link>
                                 </div>
                                 <div className="pe-xxl-4">
-                                    <img src="assets/images/thumbs/promo-img2.png" alt="" />
+                                    {/* <img src="assets/images/thumbs/promo-img2.png" alt="" /> */}
                                 </div>
                             </div>
                         </div>
@@ -69,8 +71,9 @@ const PromotionalTwo = () => {
                             />
                             <div className="flex-between flex-wrap gap-16">
                                 <div className="">
-                                    <span className="text-heading text-sm mb-8">Chỉ Từ $30</span>
-                                    <h6 className="mb-0">Áo Phông Basic</h6>
+                                    <span className="text-heading text-sm mb-8">Chỉ Từ 10,000 VND</span>
+                                    <h6 className="mb-0">Quần Áo Thân Thiện Với Môi Trường</h6>
+                                    <p className="mb-8">Mua sắm quần áo đã qua sử dụng không chỉ tốt cho túi tiền mà còn giúp bảo vệ hành tinh của chúng ta!</p>
                                     <Link
                                         to="/shop"
                                         className="d-inline-flex align-items-center gap-8 mt-16 text-heading text-md fw-medium border border-top-0 border-end-0 border-start-0 border-gray-900 hover-text-main-two-600 hover-border-main-two-600"
@@ -82,7 +85,7 @@ const PromotionalTwo = () => {
                                     </Link>
                                 </div>
                                 <div className="pe-xxl-4">
-                                    <img src="assets/images/thumbs/promo-img3.png" alt="" />
+                                    {/* <img src="assets/images/thumbs/promo-img3.png" alt="" /> */}
                                 </div>
                             </div>
                         </div>

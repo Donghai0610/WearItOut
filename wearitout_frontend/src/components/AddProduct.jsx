@@ -5,6 +5,7 @@ import Swal from "sweetalert2";
 import Product_Services from "../services/product";
 import Shop_Services from "../services/shop";
 import Account_Services from "../services/account";
+import CreateShopModal from "./CreateShopModal";
 
 const AddProduct = () => {
   const navigate = useNavigate();
@@ -20,6 +21,7 @@ const AddProduct = () => {
   const [shopName, setShopName] = useState("");
   const [imageFiles, setImageFiles] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [openShopModal, setOpenShopModal] = useState(false); // State để mở modal đăng ký shop
 
   // Lấy danh mục sản phẩm
   useEffect(() => {
@@ -47,7 +49,15 @@ const AddProduct = () => {
         if (data.content.length > 0) {
           setShopName(data.content[0].shopName);
         } else {
-          Swal.fire("Thông báo", "Bạn chưa có shop nào. Vui lòng tạo shop trước khi thêm sản phẩm!", "warning");
+
+          Swal.fire({
+            title: "Bạn chưa có Shop!",
+            text: "Vui lòng đăng ký shop trước khi thêm sản phẩm.",
+            icon: "warning",
+            confirmButtonText: "Đăng ký ngay",
+          }).then(() => {
+            setOpenShopModal(true);
+          });
         }
       } catch (error) {
         console.error("Lỗi khi lấy shopName:", error);
@@ -114,7 +124,14 @@ const AddProduct = () => {
       Swal.fire("Lỗi", "Không thể thêm sản phẩm. Vui lòng thử lại!", "error");
     }
   };
-
+  const handleShopCreated = async () => {
+    setOpenShopModal(false);
+    const userId = await Account_Services.getUserIdFromToken();
+    const data = await Shop_Services.Get_Shops_By_User(userId);
+    if (data.content.length > 0) {
+      setShopName(data.content[0].shopName);
+    }
+  };
   return (
     <Box sx={{ padding: 3, maxWidth: 600, margin: "auto", backgroundColor: "#fff", borderRadius: 2 }}>
       {/* Nút Quay lại */}
@@ -123,6 +140,8 @@ const AddProduct = () => {
           Quay lại quản lý sản phẩm
         </Button>
       </Box>
+      {/* Hiển thị Modal đăng ký shop khi cần */}
+      <CreateShopModal open={openShopModal} handleClose={() => setOpenShopModal(false)} onShopCreated={handleShopCreated} />
 
       <h2 style={{ textAlign: "center", color: "#673AB7" }}>Thêm Sản Phẩm</h2>
 
