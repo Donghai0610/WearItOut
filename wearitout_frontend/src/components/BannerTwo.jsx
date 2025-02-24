@@ -26,7 +26,7 @@ const BannerTwo = () => {
                             <Slider {...settings}>
                                 <div className="banner-item-two">
                                     <div className="banner-item-two__content">
-                                        <span className="text-white mb-8 h6">Chào mừng bạn đến với cửa hàng thời trang trực tuyến</span>
+                                        <span className="text-white mb-8 h6">Chào mừng bạn đến với cửa hàng trung gian thời trang trực tuyến</span>
                                         <h2 className="banner-item-two__title bounce text-white">
                                             Wear It Out - Thời Trang Đẳng Cấp
                                         </h2>
@@ -41,7 +41,7 @@ const BannerTwo = () => {
                                         </Link>
                                     </div>
                                     <div className="banner-item-two__thumb position-absolute bottom-0">
-                                        <img src="assets/images/logo/Logo-4.png" alt="" />
+                                        <img src="assets/images/logo/logo-4.png" alt="" />
                                     </div>
                                 </div>
                                 <div className="banner-item-two">

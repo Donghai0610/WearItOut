@@ -72,7 +72,7 @@ const PromotionalTwo = () => {
                             <div className="flex-between flex-wrap gap-16">
                                 <div className="">
                                     <span className="text-heading text-sm mb-8">Chỉ Từ 10,000 VND</span>
-                                    <h6 className="mb-0">Sản Phẩm Quần Áo Thân Thiện Với Môi Trường</h6>
+                                    <h6 className="mb-0">Quần Áo Thân Thiện Với Môi Trường</h6>
                                     <p className="mb-8">Mua sắm quần áo đã qua sử dụng không chỉ tốt cho túi tiền mà còn giúp bảo vệ hành tinh của chúng ta!</p>
                                     <Link
                                         to="/shop"

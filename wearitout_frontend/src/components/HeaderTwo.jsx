@@ -153,7 +153,7 @@ const Header = ({ category }) => {
                         {/* Logo */}
                         <div className="logo">
                             <Link to="/" className="link">
-                                <img src="assets/images/logo/logo.png" alt="Logo" />
+                                <img src="assets/images/logo/logo_wit.png" alt="Logo" />
                             </Link>
                         </div>
                         {/* Category Search */}
