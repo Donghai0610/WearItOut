@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Cart_Services from '../services/cart';
 import Account_Service from '../services/account';
 import formatVND from '../helper/formatVND';
 import axios from 'axios'; // Đảm bảo đã cài axios
 import Select from 'react-select'; // Đảm bảo đã cài react-select
-
+import Order_Service from '../services/orderService';
+import Swal from 'sweetalert2';
+import { Dialog, DialogTitle, DialogContent, Button } from "@mui/material";
 const Checkout = () => {
-    const [selectedPayment, setSelectedPayment] = useState("payment1");
+    const [selectedPayment, setSelectedPayment] = useState("COD"); // Default payment method is COD
     const [cart, setCart] = useState(null); // State để lưu thông tin giỏ hàng
     const [userId, setUserId] = useState(null);
     const [userDetails, setUserDetails] = useState(null);
@@ -20,12 +21,16 @@ const Checkout = () => {
     const [selectedProvince, setSelectedProvince] = useState(null);
     const [selectedDistrict, setSelectedDistrict] = useState(null);
     const [selectedWard, setSelectedWard] = useState(null);
+    const [address, setAddress] = useState(''); // Địa chỉ nhà nhập tay
+
+    const [showQRModal, setShowQRModal] = useState(false);
+
 
     const navigate = useNavigate(); // Khai báo navigate
 
     // Hàm xử lý thay đổi phương thức thanh toán
     const handlePaymentChange = (event) => {
-        setSelectedPayment(event.target.id);
+        setSelectedPayment(event.target.value);  // Chỉ cần dùng value thay vì id
     };
 
     // Chuyển hướng sau khi đặt hàng
@@ -62,9 +67,8 @@ const Checkout = () => {
     const fetchWards = async (districtId) => {
         try {
             const response = await axios.get(`https://open.oapi.vn/location/wards/${districtId}?page=0&size=30&query=`);
-            setWards(response.data.data); // Cập nhật phường/xã vào state\
+            setWards(response.data.data); // Cập nhật phường/xã vào state
             setSelectedWard(null); // Reset phường/xã khi thay đổi quận
-        
         } catch (error) {
             console.error('Error fetching wards:', error);
         }
@@ -102,7 +106,6 @@ const Checkout = () => {
 
     // Cập nhật state khi chọn tỉnh
     const handleProvinceChange = (selectedOption) => {
-        console.log('Selected Province:', selectedOption);
         if (selectedOption && selectedOption.value) {
             setSelectedProvince(selectedOption);
             fetchDistricts(selectedOption.value); // Gọi API khi thay đổi tỉnh
@@ -117,6 +120,11 @@ const Checkout = () => {
         if (selectedOption && selectedOption.value) {
             fetchWards(selectedOption.value); // Gọi API khi thay đổi quận
         }
+    };
+
+    // Cập nhật địa chỉ nhập tay
+    const handleAddressChange = (e) => {
+        setAddress(e.target.value); // Cập nhật địa chỉ nhà nhập tay
     };
 
     // Chuyển đổi dữ liệu tỉnh thành dạng phù hợp cho react-select
@@ -140,16 +148,57 @@ const Checkout = () => {
         return <div>Đang tải...</div>;
     }
 
-    // Xử lý khi người dùng điền thông tin và submit
-    const handleSubmit = () => {
-        const fullAddress = `${selectedWard ? selectedWard.label : ''}, ${selectedDistrict ? selectedDistrict.label : ''}, ${selectedProvince ? selectedProvince.label : ''}`;
+    const qrCodeUrl = `https://api.vietqr.io/image/970422-0867811672-H340B2G.jpg?accountName=LE%20CONG%20TRUONG%20THINH&amount=${cart.totalPrice}&addInfo=WearItOut Thanh toan don hang`;
+    const handleSubmit = async () => {
+        const fullAddress = `${address ? address : ''}, ${selectedWard ? selectedWard.label : ''}, ${selectedDistrict ? selectedDistrict.label : ''}, ${selectedProvince ? selectedProvince.label : ''}`;
         console.log('Địa chỉ đầy đủ:', fullAddress);
-        // Tiến hành xử lý gửi dữ liệu
+    
+        try {
+            // Gửi request tạo đơn hàng
+            const response = await Order_Service.createOrderAndPayment(userId, fullAddress, selectedPayment);
+            console.log("Order Created Successfully:", response);
+    
+            if (selectedPayment === "TRANSFER_TO_SHOP_AUTOMATIC") {
+                // Nếu chọn thanh toán tự động, chuyển hướng đến PayOS
+                if (response.paymentUrl) {
+                    window.location.href = response.paymentUrl;
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi thanh toán',
+                        text: 'Không có URL thanh toán.',
+                    });
+                }
+            } else if (selectedPayment === "TRANSFER_TO_Web") {
+                // Nếu chọn chuyển khoản thủ công, hiển thị mã QR
+                setShowQRModal(true);
+            } else {
+                // Nếu chọn COD, hiển thị thông báo đặt hàng thành công
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Đặt hàng thành công!',
+                    text: 'Đơn hàng của bạn đã được tạo thành công. Cảm ơn bạn!',
+                }).then(() => {
+                    window.location.href = "/order-user"; // Chuyển hướng về trang quản lý đơn hàng
+                });
+            }
+        } catch (error) {
+            console.error("Lỗi khi tạo đơn hàng:", error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Có lỗi xảy ra khi tạo đơn hàng.',
+                text: error.message || 'Vui lòng thử lại!',
+            });
+        }
     };
+    
+
+
 
     return (
         <section className="checkout py-80">
             <div className="container container-lg">
+
                 <div className="border border-gray-100 rounded-8 px-30 py-20 mb-40">
                     <span className="">
                         Sử dụng mã ưu đãi?{" "}
@@ -176,7 +225,6 @@ const Checkout = () => {
                                                 defaultValue={userDetails.username || ''}
                                             />
                                         </div>
-                                     
 
                                         {/* Chọn tỉnh/thành phố */}
                                         <div className="col-12">
@@ -216,8 +264,11 @@ const Checkout = () => {
                                                 type="text"
                                                 className="common-input border-gray-100"
                                                 placeholder="Địa chỉ nhà"
+                                                value={address}
+                                                onChange={handleAddressChange}
                                             />
                                         </div>
+
 
                                         <div className="col-12">
                                             <input
@@ -229,7 +280,6 @@ const Checkout = () => {
                                         </div>
                                         <div className="col-12">
                                             <input
-                                             
                                                 type="email"
                                                 className="common-input border-gray-100"
                                                 placeholder="Địa chỉ Email"
@@ -265,8 +315,6 @@ const Checkout = () => {
                                         />
                                     </div>
                                 </div>
-
-                               
                             </div>
                         </form>
                     </div>
@@ -330,31 +378,69 @@ const Checkout = () => {
                                 </div>
                             </div>
                             <div className="mt-32">
-                                {/* Payment options */}
                                 <div className="payment-item">
                                     <div className="form-check common-check common-radio py-16 mb-0">
                                         <input
                                             className="form-check-input"
                                             type="radio"
                                             name="payment"
-                                            id="payment1"
-                                            checked={selectedPayment === 'payment1'}
+                                            value="COD"  // Sử dụng value thay vì id
+                                            checked={selectedPayment === "COD"}
                                             onChange={handlePaymentChange}
                                         />
-                                        <label
-                                            className="form-check-label fw-semibold text-neutral-600"
-                                            htmlFor="payment1"
-                                        >
-                                            Chuyển khoản ngân hàng trực tiếp
+                                        <label className="form-check-label fw-semibold text-neutral-600" htmlFor="payment1">
+                                            Thanh toán khi nhận hàng (COD)
                                         </label>
                                     </div>
-                                    {selectedPayment === 'payment1' && (
-                                        <div
-                                            className="payment-item__content px-16 py-24 rounded-8 bg-main-50 position-relative d-block">
+
+                                    <div className="form-check common-check common-radio py-16 mb-0">
+                                        <input
+                                            className="form-check-input"
+                                            type="radio"
+                                            name="payment"
+                                            value="TRANSFER_TO_Web"  // Sử dụng value thay vì id
+                                            checked={selectedPayment === "TRANSFER_TO_Web"}
+                                            onChange={handlePaymentChange}
+                                        />
+                                        <label className="form-check-label fw-semibold text-neutral-600" htmlFor="payment2">
+                                            Chuyển khoản thủ công
+                                        </label>
+                                    </div>
+
+                                    <div className="form-check common-check common-radio py-16 mb-0">
+                                        <input
+                                            className="form-check-input"
+                                            type="radio"
+                                            name="payment"
+                                            value="TRANSFER_TO_SHOP_AUTOMATIC"  // Sử dụng value thay vì id
+                                            checked={selectedPayment === "TRANSFER_TO_SHOP_AUTOMATIC"}
+                                            onChange={handlePaymentChange}
+                                        />
+                                        <label className="form-check-label fw-semibold text-neutral-600" htmlFor="payment3">
+                                            Chuyển khoản tự động
+                                        </label>
+                                    </div>
+
+                                    {selectedPayment === "COD" && (
+                                        <div className="payment-item__content px-16 py-24 rounded-8 bg-main-50 position-relative d-block">
                                             <p className="text-gray-800">
-                                                Thanh toán trực tiếp vào tài khoản ngân hàng của chúng tôi. Vui lòng sử
-                                                dụng Mã đơn hàng của bạn làm tham chiếu thanh toán. Đơn hàng của bạn sẽ
-                                                không được vận chuyển cho đến khi tiền được xác nhận vào tài khoản.
+                                                Thanh toán trực tiếp cho nhân viên giao hàng khi nhận hàng.
+                                            </p>
+                                        </div>
+                                    )}
+
+                                    {selectedPayment === "TRANSFER_TO_Web" && (
+                                        <div className="payment-item__content px-16 py-24 rounded-8 bg-main-50 position-relative d-block">
+                                            <p className="text-gray-800">
+                                                Thanh toán bằng cách chuyển khoản vào tài khoản ngân hàng của chúng tôi. Vui lòng sử dụng Mã đơn hàng của bạn làm tham chiếu thanh toán. Đơn hàng của bạn sẽ không được vận chuyển cho đến khi tiền được xác nhận vào tài khoản.
+                                            </p>
+                                        </div>
+                                    )}
+
+                                    {selectedPayment === "TRANSFER_TO_SHOP_AUTOMATIC" && (
+                                        <div className="payment-item__content px-16 py-24 rounded-8 bg-main-50 position-relative d-block">
+                                            <p className="text-gray-800">
+                                                Sau khi thanh toán xong, hệ thống sẽ tự động xác nhận và gửi hàng cho bạn.
                                             </p>
                                         </div>
                                     )}
@@ -371,24 +457,25 @@ const Checkout = () => {
                                     .
                                 </p>
                             </div>
-                            {/*<Link*/}
-                            {/*    to="/checkout"*/}
-                            {/*    className="btn btn-main mt-40 py-18 w-100 rounded-8 mt-56"*/}
-                            {/*>*/}
-                            {/*    Đặt hàng*/}
-                            {/*</Link>*/}
-                            <div className="mt-32">
-                                <button
-                                    onClick={handlePlaceOrder} // Gọi hàm handlePlaceOrder khi bấm nút
-                                    className="btn btn-main mt-40 py-18 w-100 rounded-8 mt-56"
-                                >
-                                    Đặt hàng
-                                </button>
-                            </div>
+                            <button
+                                onClick={handleSubmit}
+                                className="btn btn-main mt-40 py-18 w-100 rounded-8 mt-56"
+                            >
+                                Đặt hàng
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
+            {/* Pop-up QR Code */}
+            <Dialog open={showQRModal} onClose={() => setShowQRModal(false)}>
+                <DialogTitle>Quét mã QR để thanh toán</DialogTitle>
+                <DialogContent>
+                    <img src={qrCodeUrl} alt="QR Code Thanh Toán" style={{ width: "100%", height: "auto" }} />
+                    <p>Số tiền cần thanh toán: <strong>{formatVND(cart.totalPrice)}</strong></p>
+                </DialogContent>
+                <Button onClick={() => setShowQRModal(false)} color="primary">Đóng</Button>
+            </Dialog>
         </section>
     );
 };

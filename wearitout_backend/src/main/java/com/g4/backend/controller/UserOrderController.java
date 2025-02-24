@@ -2,15 +2,23 @@ package com.g4.backend.controller;
 
 import com.g4.backend.dto.request.OrderRequestDTO;
 import com.g4.backend.dto.response.*;
+import com.g4.backend.model.Cart;
 import com.g4.backend.model.Order;
+import com.g4.backend.model.User;
+import com.g4.backend.repository.CartRepository;
+import com.g4.backend.repository.OrderRepository;
+import com.g4.backend.repository.UserRepository;
 import com.g4.backend.service.OrderDetailService;
 import com.g4.backend.service.OrderService;
+import com.g4.backend.utils.PaymentMethod;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import vn.payos.type.WebhookData;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,6 +29,9 @@ import java.util.stream.Collectors;
 public class UserOrderController {
     private final OrderService orderService;
     private final OrderDetailService orderDetailService;
+    private final OrderRepository orderRepository;
+    private final UserRepository userRepository;
+private final CartRepository cartRepository;
 
     @GetMapping("/list")
     public ResponseEntity<?> getOrdersByUserAndFilter(
@@ -53,22 +64,7 @@ public class UserOrderController {
     }
 
 
-    @PostMapping("/create")
-    public NewOrderResponseDTO  createOrder(@Valid @RequestBody OrderRequestDTO orderRequestDTO, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            List<String> errorMessages = bindingResult.getAllErrors().stream()
-                    .map(error -> error.getDefaultMessage())
-                    .collect(Collectors.toList());
 
-            throw new IllegalArgumentException("Invalid input data: " + String.join(", ", errorMessages));
-        }
-
-        try {
-            return orderService.createOrder(orderRequestDTO, orderRequestDTO.getUserId());
-        } catch (RuntimeException e) {
-            throw new IllegalArgumentException("Error creating order: " + e.getMessage());
-        }
-    }
 
     // Lấy đơn hàng theo ID
     @GetMapping("/{orderId}")
@@ -80,4 +76,51 @@ public class UserOrderController {
             throw new RuntimeException("Order not found for id: " + orderId);
         }
     }
+
+    @GetMapping("/{userId}/purchased-products")
+    public ResponseEntity<List<OrderDetailResponseDTO>> getUserPurchasedProducts(@PathVariable("userId") Long userId) {
+        List<OrderDetailResponseDTO> orderDetails = orderService.getPurchasedProductsByUser(userId);
+
+        if (orderDetails.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        return ResponseEntity.ok(orderDetails);
+    }
+
+    @PostMapping("/create-payment")
+    public ResponseEntity<NewOrderMessageResponseDTO> createOrderAndPayment(
+            @RequestParam Long userId,
+            @RequestParam String shipAddress,
+            @RequestParam PaymentMethod paymentMethod) {
+
+        try {
+            // Gọi Service để tạo đơn hàng và thanh toán
+            NewOrderMessageResponseDTO responseDTO = orderService.createOrdersForCart(userId, shipAddress, paymentMethod);
+            return ResponseEntity.ok(responseDTO);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body(new NewOrderMessageResponseDTO("Đã xảy ra lỗi: " + e.getMessage(),null,null));
+        }
+    }
+
+
+
+
+    @PostMapping("/payment-success")
+    public ResponseEntity<String> handlePaymentSuccess(@RequestParam Long orderId) {
+        try {
+            // Cập nhật trạng thái thanh toán của đơn hàng thành "PAID"
+            orderService.changeStatusOrderToPaid(orderId);
+
+            // Trả về phản hồi thành công
+            return ResponseEntity.ok("Trạng thái thanh toán đã được cập nhật thành công!");
+
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body("Lỗi khi cập nhật trạng thái thanh toán: " + e.getMessage());
+        }
+    }
+
+
+
+
 }

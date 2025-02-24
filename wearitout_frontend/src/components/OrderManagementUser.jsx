@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button,
-    TextField, IconButton, Paper, Pagination, Dialog, DialogTitle, DialogContent, DialogActions,
-    Select, MenuItem, FormControl, InputLabel, Box
+    TextField, IconButton, Paper, Pagination, Select, MenuItem, FormControl, InputLabel, Box
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import DownloadIcon from "@mui/icons-material/Download";
 import axiosInstance from '../services/axios';
 import Shop_Services from '../services/shop';
+import Account_Service from '../services/account';
+import Order_Service from '../services/orderService';
 
 const OrderManagementUser = () => {
     const [orders, setOrders] = useState([]);
@@ -19,70 +19,51 @@ const OrderManagementUser = () => {
     const [shippingStatusFilter, setShippingStatusFilter] = useState('');
     const [page, setPage] = useState(0);
     const [size] = useState(10);
-    const [shopId, setShopId] = useState(null);
-    const [openEditModal, setOpenEditModal] = useState(false);
-    const [currentOrder, setCurrentOrder] = useState(null);
 
-    useEffect(() => {
-        const fetchShopId = async () => {
-            try {
-                const shopData = await Shop_Services.Get_Shops_By_User();
-                if (shopData && shopData.content && shopData.content.length > 0) {
-                    setShopId(shopData.content[0].shopId);
-                } else {
-                    setError('Không tìm thấy cửa hàng nào.');
-                }
-            } catch (error) {
-                setError('Lỗi khi lấy danh sách cửa hàng: ' + error.message);
-            }
-        };
-        fetchShopId();
-    }, []);
-
-    useEffect(() => {
-        if (shopId) {
-            getOrdersByShop();
-        }
-    }, [shopId, page, search, paymentStatus, shippingStatusFilter]);
-
+    // Gọi API lấy đơn hàng
     const getOrdersByShop = async () => {
-        if (!shopId) return;
-        try {
-            const params = {
-                shopId,
-                ...(search && { search }),
-                ...(paymentStatus && { paymentStatus }),
-                ...(shippingStatusFilter && { shippingStatus: shippingStatusFilter }),
-                page,
-                size,
-            };
-            const queryParams = new URLSearchParams(Object.entries(params).filter(([v]) => v !== ''));
-            const { data } = await axiosInstance.get(`api/v1/shop_staff/order/list?${queryParams.toString()}`);
+        const userId = Account_Service.getUserIdFromToken(); // Lấy userId từ token
+        if (!userId) {
+            setError('Không tìm thấy userId');
+            return;
+        }
 
-            if (Array.isArray(data.orders)) {
-                setOrders(data.orders);
-                setTotalPages(data.totalPage || 1);
+        try {
+            // Gọi hàm từ Order_Service để lấy danh sách sản phẩm đã mua của người dùng
+            const data = await Order_Service.getPurchasedProductsByUser(userId);
+
+            if (Array.isArray(data)) {
+                // Giả sử bạn đã nhận được một mảng các đơn hàng trong `data`
+                setOrders(data);
+                setTotalPages(Math.ceil(data.length / size)); // Tính toán tổng số trang
             } else {
-                setError('Orders data is not in correct format');
+                setError('Dữ liệu đơn hàng không hợp lệ');
             }
         } catch (error) {
             setError(error.message);
-            console.log(error);
+            console.error('Lỗi khi lấy đơn hàng:', error);
         }
     };
 
+    // Xử lý sự kiện phân trang
     const handlePageChange = (event, newPage) => {
         setPage(newPage - 1);
     };
 
+    // Xử lý khi nhấn nút "Sửa"
     const handleEditOrder = (order) => {
-        setCurrentOrder(order);
-        setOpenEditModal(true);
+        // Logic chỉnh sửa đơn hàng (hiện tại chưa có)
+        console.log("Editing order:", order);
     };
 
+    // Xử lý khi nhấn nút "Xóa"
     const handleDeleteOrder = (orderId) => {
         setOrders(orders.filter((order) => order.orderId !== orderId));
     };
+useEffect(() => {
+        getOrdersByShop();
+    }
+    , []);
 
     return (
         <div style={{ padding: 20 }}>

@@ -9,6 +9,7 @@ import ScrollToTop from "react-scroll-to-top";
 import ShippingTwo from "../components/ShippingTwo";
 import Sidebar from "../components/SideBar";
 import Dashboard from "../components/DashBoard";
+import Layout from "../components/Layout";
 
 const DashBoardPage = () =>{
     return (
@@ -31,15 +32,9 @@ const DashBoardPage = () =>{
 
             {/* ProductDetailsTwo */}
             {/* ProductDetailsTwo */}
-            <div className="flex">
-                {/* Sidebar Inside Page */}
-                <Sidebar />
-
-                {/* ShopManagement Component */}
-                <div className="flex-1">
-                    <Dashboard />
-                </div>
-            </div>
+            <Layout>
+                <Dashboard />
+            </Layout>
 
             {/* NewArrivalTwo */}
 

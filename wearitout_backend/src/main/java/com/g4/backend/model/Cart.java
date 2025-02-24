@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @Entity
@@ -29,4 +30,17 @@ public class Cart {
     @JoinColumn(name = "user_id", nullable = false,
             foreignKey = @ForeignKey(name = "FK_Cart_User"))
     private User user;
+
+    @Override
+    public int hashCode() {
+        // Tránh gọi trực tiếp hashCode() của User để tránh vòng lặp
+        return Objects.hash(cartId);
+    }
+
+    @Override
+    public String toString() {
+        return "Cart{" +
+                "cartId=" + cartId +
+                '}';
+    }
 }

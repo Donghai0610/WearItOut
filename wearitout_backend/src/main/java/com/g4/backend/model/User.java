@@ -13,6 +13,7 @@ import org.hibernate.annotations.Nationalized;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @Entity
@@ -91,6 +92,17 @@ public class User {
     @JsonBackReference
     private List<Shop> shops;
 
+    @Override
+    public int hashCode() {
+        // Tránh gọi hashCode() của Cart để tránh vòng lặp
+        return Objects.hash(userId);
+    }
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId=" + userId +
+                '}';
+    }
 
 }

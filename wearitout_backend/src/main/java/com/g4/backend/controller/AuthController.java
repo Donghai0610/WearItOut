@@ -44,7 +44,7 @@ public class AuthController {
             if (authentication.isAuthenticated()) {
                 final String jwt = jwtService.generateToken(loginRequest.getUsername());
 
-                return ResponseEntity.ok(new LoginResponeDTO(200, "Success", jwt,  "2Hours", user.getSetting().getName()));
+                return ResponseEntity.ok(new LoginResponeDTO(200, "Success", jwt,  "60Hours", user.getSetting().getName()));
             }
         } catch (AuthenticationException e) {
             // Xác thực không thành công, trả về lỗi hoặc thông báo

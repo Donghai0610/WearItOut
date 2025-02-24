@@ -63,12 +63,23 @@ const Get_Product_By_Shop_Id_User_Id = async ({
     }
 };
 
+const createShop = async(shopData)=>{
+    try {
+        const response = await axiosInstance.post('/api/v1/admin/shop/create', shopData);
+        return response.data;
+    } catch (error) {
+        console.error('Error creating shop:', error);
+        throw error;
+    }
+}
+
 
 const Shop_Services = {
    
         Get_All_Shop,
         Get_Product_By_Shop_Id_User_Id ,
-        Get_Shops_By_User
+        Get_Shops_By_User,
+        createShop
     
 }
 export default Shop_Services;

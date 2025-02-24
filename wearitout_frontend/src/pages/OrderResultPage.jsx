@@ -1,18 +1,17 @@
 import React from "react";
 import Preloader from "../helper/Preloader";
-
+import ColorInit from "../helper/ColorInit";
 import HeaderTwo from "../components/HeaderTwo";
 import Breadcrumb from "../components/Breadcrumb";
 import FooterTwo from "../components/FooterTwo";
 import BottomFooter from "../components/BottomFooter";
 import ShippingOne from "../components/ShippingOne";
-import Account from "../components/Account";
+import Checkout from "../components/Checkout";
 import ScrollToTop from "react-scroll-to-top";
-import ColorInit from "../helper/ColorInit";
 import ShippingTwo from "../components/ShippingTwo";
 
 
-const AccountPage = () => {
+const CheckoutPage = () => {
 
 
 
@@ -31,10 +30,10 @@ const AccountPage = () => {
       <HeaderTwo category={true} />
 
       {/* Breadcrumb */}
-      <Breadcrumb title={"Đăng Nhập"} />
+      <Breadcrumb title={"Kiểm tra đơn hàng"} />
 
-      {/* Account */}
-      <Account />
+      {/* Checkout */}
+      <Checkout />
 
       {/* ShippingOne */}
       <ShippingTwo />
@@ -50,4 +49,4 @@ const AccountPage = () => {
   );
 };
 
-export default AccountPage;
+export default CheckoutPage;
