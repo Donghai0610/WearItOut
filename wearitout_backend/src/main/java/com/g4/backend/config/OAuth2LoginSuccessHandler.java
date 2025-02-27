@@ -80,7 +80,8 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
             LoginResponeDTO loginResponse = new LoginResponeDTO(200, "Success", jwt, "2Hours", roleName);
 
             // Thiết lập phản hồi JSON
-            String redirectUrl = "http://localhost:3000/oauth-callback?token=" + jwt + "&role=" + roleName;
+            String redirectUrl = frontendUrl+"/oauth-callback?token=" + jwt + "&role=" + roleName;
+            System.out.println(redirectUrl);
             response.sendRedirect(redirectUrl);
         }
     }

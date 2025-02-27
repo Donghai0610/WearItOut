@@ -53,12 +53,23 @@ const handlePaymentSuccess = async (orderId) => {
         throw error;  // Ném lỗi để xử lý ở nơi gọi
     }
 };
+const handlePaymentCancel = async (orderId) => {
+    try {
+        const response = await axiosInstance.post(`/api/v1/user/order/cancel-payment/${orderId}`);
 
+        console.log("Trạng thái thanh toán đã được cập nhật:", response.data);
+        return response.data;  // Trả về thông tin thành công
+    } catch (error) {
+        console.error("Lỗi khi cập nhật trạng thái thanh toán:", error);
+        throw error;  // Ném lỗi để xử lý ở nơi gọi
+    }
+};
 
 const Order_Service = {
     getPurchasedProductsByUser,
     createOrderAndPayment,
     handlePaymentSuccess,
+    handlePaymentCancel
 
 };
 

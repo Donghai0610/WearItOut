@@ -275,8 +275,6 @@ const Header = ({ category }) => {
                                         Cửa Hàng
                                     </span>
                                 </Link>
-
-                                
                             </div>
                         </div>
                     </nav>

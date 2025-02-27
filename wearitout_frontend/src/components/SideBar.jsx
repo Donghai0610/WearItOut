@@ -70,9 +70,9 @@ const Sidebar = ({ open, toggleDrawer }) => {
         <ListItem disablePadding>
           <ListItemButton>
             <ListItemIcon>
-              <ExitToApp />
+              {/* <ExitToApp /> */}
             </ListItemIcon>
-            {open && <ListItemText primary="Logout" />}
+            {open}
           </ListItemButton>
         </ListItem>
       </List>

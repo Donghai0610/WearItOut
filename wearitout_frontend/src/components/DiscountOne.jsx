@@ -30,7 +30,7 @@ const DiscountOne = () => {
                                 </Link>
                             </div>
                             <img
-                                src="assets/images/thumbs/discount-img1.png"
+                                src="assets/images/logo/logo_wit.png"
                                 alt="Áo khoác jean"
                                 className="d-sm-block d-none"
                             />
@@ -61,7 +61,7 @@ const DiscountOne = () => {
                                 </Link>
                             </div>
                             <img
-                                src="assets/images/thumbs/discount-img2.png"
+                                src="assets/images/logo/logo_wit.png"
                                 alt="Váy vintage"
                                 className="d-sm-block d-none"
                             />

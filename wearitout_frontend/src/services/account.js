@@ -1,20 +1,21 @@
 import { jwtDecode } from "jwt-decode";
 import axiosInstance from "./axios";
 
- const loginHandle = async (username, password) => {
-    const response = await fetch('http://localhost:8080/api/v1/auth/login', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
-    });
+const loginHandle = async (username, password) => {
+    try {
+        const response = await axiosInstance.post(
+            '/api/v1/auth/login', 
+            { username, password }
+        );
 
-    const data = await response.json();
-    if (response.ok) {
-        return data;
-    } else {
-        throw new Error(data.message || 'Login failed');
+        if (response.status === 200) {
+            return response.data; // Trả về dữ liệu login nếu thành công
+        } else {
+            throw new Error(response.data.message || 'Login failed');
+        }
+    } catch (error) {
+        console.error('Error during login:', error.response?.data || error.message);
+        throw error;  // Đảm bảo lỗi được ném ra để có thể xử lý ở nơi gọi hàm
     }
 };
 

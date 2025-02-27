@@ -7,6 +7,7 @@ import Cart_Services from '../services/cart';
 import Account_Service from '../services/account';
 import Swal from 'sweetalert2';
 import formatVND from '../helper/formatVND';
+import { Skeleton } from '@mui/material';
 
 const ShopSection = () => {
     const [shops, setShops] = useState([]);
@@ -28,10 +29,10 @@ const ShopSection = () => {
         size: 16,
         sortDirection: 'asc',
     });
-
+    const [debounceTimeout, setDebounceTimeout] = useState(null); 
     const [quantity, setQuantity] = useState(1);  // Quantity for the cart
     const [error, setError] = useState(null);
-
+    const [loading, setLoading] = useState(true); // Add loading state
     const sidebarController = () => {
         setActive(!active);
     };
@@ -64,12 +65,15 @@ const ShopSection = () => {
 
     // Fetch products based on filters
     const fetchProducts = async (filters) => {
+        setLoading(true); // Set loading true when fetching products
         try {
             const response = await Product_Services.Product_Search(filters);
             setProducts(response.content);
             setTotalPages(response.totalPages);
         } catch (error) {
             console.error('Error fetching products:', error);
+        } finally {
+            setLoading(false); // Set loading false when finished fetching
         }
     };
 
@@ -86,23 +90,32 @@ const ShopSection = () => {
 
     // Update filter values
     const handleFilterChange = (keyMin, valueMin, keyMax, valueMax) => {
-        setFilters((prevFilters) => {
-            const updatedFilters = {
-                ...prevFilters,
-                [keyMin]: valueMin,
-                [keyMax]: valueMax,
-                page: 0,
-            };
-            return updatedFilters;
-        });
-    };
+        // Clear previous debounce timeout if any
+        if (debounceTimeout) {
+            clearTimeout(debounceTimeout);
+        }
 
+        // Set a new timeout to call API after 2 seconds
+        const timeout = setTimeout(() => {
+            setFilters((prevFilters) => {
+                const updatedFilters = {
+                    ...prevFilters,
+                    [keyMin]: valueMin,
+                    [keyMax]: valueMax,
+                    page: 0, // Reset page number
+                };
+                return updatedFilters;
+            });
+        }, 2000); // Delay API call by 2 seconds after user stops typing
+
+        setDebounceTimeout(timeout); // Store timeout ID
+    };
     // Reset filters
     const resetFilters = () => {
         setFilters({
             productName: '',
             priceMin: 1,
-            priceMax: 50000000,
+            priceMax: 5000000,
             ratingMin: 0,
             ratingMax: 5,
             setting: '',
@@ -146,7 +159,18 @@ const ShopSection = () => {
             });
         }
     };
-
+ // Skeleton loader
+ const SkeletonLoader = () => (
+    <div className="product-card skeleton-loader">
+        <div className="product-card__thumb skeleton"></div>
+        <div className="product-card__content">
+            <div className="skeleton skeleton-title"></div>
+            <div className="skeleton skeleton-rating"></div>
+            <div className="skeleton skeleton-price"></div>
+            <div className="skeleton skeleton-button"></div>
+        </div>
+    </div>
+);
     return (
         <section className="shop py-80">
             <div className={`side-overlay ${active && 'show'}`}></div>
@@ -174,7 +198,7 @@ const ShopSection = () => {
                                                 className="text-gray-900 hover-text-main-600"
                                                 onClick={() => handleFilterChange('setting', category.settingName)}
                                             >
-                                                {category.settingName} ({category.count})
+                                                {category.settingName} 
                                             </button>
                                         </li>
                                     ))}
@@ -189,12 +213,12 @@ const ShopSection = () => {
                                         className="horizontal-slider"
                                         thumbClassName="example-thumb"
                                         trackClassName="example-track"
-                                        value={[filters.priceMin || 100000, filters.priceMax || 50000000]}
+                                        value={[filters.priceMin || 1, filters.priceMax || 5000000]}
                                         onChange={(value) => handleFilterChange('priceMin', value[0], 'priceMax', value[1])}
                                         ariaLabel={['Lower thumb', 'Upper thumb']}
                                         pearling
                                         min={1}
-                                        max={50000000}
+                                        max={5000000}
                                     />
                                     <br />
                                     <br />
@@ -277,7 +301,7 @@ const ShopSection = () => {
                                     className="btn btn-secondary h-40 flex-align"
                                     onClick={resetFilters}
                                 >
-                                    Reset Filter
+                                    Làm Mới
                                 </button>
                             </div>
                         </div>
@@ -309,7 +333,20 @@ const ShopSection = () => {
 
                         {/* Product Listing */}
                         <div className={`list-grid-wrapper ${grid && 'list-view'}`}>
-                            {products.map((product) => (
+                            {loading
+                            ? Array.from({ length: 12 }).map((_, index) => (
+                                <div key={index} className="product-card h-100 p-16 border border-gray-100 hover-border-main-600 rounded-16 position-relative transition-2">
+                                    {/* Skeleton loader for product card */}
+                                    <Skeleton variant="rectangular" width="100%" height={200} />
+                                    <div className="product-card__content mt-16">
+                                        <Skeleton variant="text" width="60%" height={20} />
+                                        <Skeleton variant="text" width="40%" height={15} />
+                                        <Skeleton variant="text" width="50%" height={15} />
+                                        <Skeleton variant="rectangular" width="100%" height={40} />
+                                    </div>
+                                </div>
+                            )) // Show skeleton loader while loading
+                            :products.map((product) => (
                                 <div key={product.id} className="product-card h-100 p-16 border border-gray-100 hover-border-main-600 rounded-16 position-relative transition-2">
                                     <Link to={`/product-details/${product.id}`} className="product-card__thumb flex-center rounded-8 bg-gray-50 position-relative">
                                         <img

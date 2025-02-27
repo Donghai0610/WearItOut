@@ -121,7 +121,7 @@ useEffect(() => {
                             <TableCell align="center">Trạng thái thanh toán</TableCell>
                             <TableCell align="center">Trạng thái vận chuyển</TableCell>
                             <TableCell align="center">Tổng tiền</TableCell>
-                            <TableCell align="center">Hành động</TableCell>
+                            {/* <TableCell align="center">Hành động</TableCell> */}
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -140,12 +140,12 @@ useEffect(() => {
                                 <TableCell align="center">{order.shippingStatus}</TableCell>
                                 <TableCell align="center">{order.totalPrice} VND</TableCell>
                                 <TableCell align="center">
-                                    <IconButton onClick={() => handleEditOrder(order)} color="primary">
+                                    {/* <IconButton onClick={() => handleEditOrder(order)} color="primary">
                                         <EditIcon />
                                     </IconButton>
                                     <IconButton onClick={() => handleDeleteOrder(order.orderId)} color="secondary">
                                         <DeleteIcon />
-                                    </IconButton>
+                                    </IconButton> */}
                                 </TableCell>
                             </TableRow>
                         ))}

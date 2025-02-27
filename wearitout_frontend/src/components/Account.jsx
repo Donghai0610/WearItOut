@@ -108,17 +108,20 @@ const Account = () => {
                 .min(6, 'Password must be at least 6 characters')
                 .required('Password is required'),
             phone: Yup.string()
-                .matches(/^\+84\d{9,10}$/, 'Phone number must start with +84 and contain 11 digits')
+                .matches(/^\d{10}$/, 'Phone number must be 10 digits')
                 .required('Phone number is required'),
         }),
         onSubmit: (values) => {
             handleRegister(values);
         },
     });
+    
 
     const handleGoogleLogin = () => {
         // Chuyển hướng người dùng đến URL OAuth2
-        window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+         window.location.href = 'https://store.wearitout.me/login/oauth2/authorization/google';
+        //window.location.href = 'http://localhost:8080/login/oauth2/authorization/google';
+        window.location.href = 'https://www.wearitout.me/login/oauth2/code/google';
     };
  const handleForgotPassword = (e) => {
         e.preventDefault();
@@ -305,7 +308,7 @@ const Account = () => {
     
                         <div className="mt-48">
                             <button type="submit" className="btn btn-main py-18 px-40">
-                                Register
+                                Đăng ký
                             </button>
                         </div>
                     </form>

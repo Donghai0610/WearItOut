@@ -42,6 +42,9 @@ public class OrderService {
     @Value("${PAYOS_CHECKSUM_KEY}")
     private String checksumKey;
 
+    @Value("${frontend.url}")
+    private String frontEndUrl;
+
 
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
@@ -126,6 +129,12 @@ public class OrderService {
                 sendOrderPaidEmail(order.getUser().getUsername(), order.getUser().getEmail());
             });
             thread.start();
+            Thread thread2 = new Thread(() -> {
+                sendOrderNotificationToOwner(order.getUser().getUsername(), "hainthdhe172428@fpt.edu.vn");
+
+            });
+            thread2.start();
+
 
         } else {
             throw new RuntimeException("Không tìm thấy đơn hàng với ID: " + orderId);
@@ -298,8 +307,8 @@ public class OrderService {
         String buyerEmail = order.getUser().getEmail();
         String buyerPhone = order.getUser().getPhone();
         String buyerAddress = order.getShipAddress();
-        String cancelUrl = "http://localhost:3000/checkout";  // URL khi hủy thanh toán
-        String returnUrl = "http://localhost:3000/order-user";  // URL khi thanh toán thành công
+        String cancelUrl = frontEndUrl+"/checkout";  // URL khi hủy thanh toán
+        String returnUrl = frontEndUrl+"/order-user";  // URL khi thanh toán thành công
         long expireAt = System.currentTimeMillis() / 1000 + (30 * 60);  // Thời gian hết hạn thanh toán (30 phút tính bằng Unix timestamp
 
         // Tạo chuỗi cần thiết cho signature (theo yêu cầu của API)
@@ -479,6 +488,50 @@ public class OrderService {
 
         // Gửi email
         emailServices.sendEmail("interviewmanagement.fa.fpt@gmail.com", emailSend, subject, htmlContent);
+    }
+    public void sendOrderNotificationToOwner(String username, String emailOwner) {
+        String subject = "Thông báo đơn hàng đã được thanh toán thành công";
+
+        // HTML content for the email to the website owner
+        String htmlContent = "<html><body>" +
+                "<h2>Đơn hàng mới đã được thanh toán thành công!</h2>" +
+                "<p><strong>Khách hàng:</strong> " + username + "</p>" +
+                "<p><strong>Thông tin:</strong> Đơn hàng của khách hàng đã được thanh toán thành công.</p>" +
+                "<p><strong>Lưu ý:</strong> Vui lòng kiểm tra hệ thống để xử lý đơn hàng và chuẩn bị giao hàng cho khách.</p>" +
+                "<p>Thanks & Regards!<br>" +
+                "E-Retail Team</p>" +
+                "</body></html>";
+
+        // Gửi email cho chủ website
+        emailServices.sendEmail("interviewmanagement.fa.fpt@gmail.com", emailOwner, subject, htmlContent);
+    }
+    @Transactional
+    public void cancelPaymentAndUpdateStock(long orderId) {
+        Optional<Order> orderOptional = orderRepository.findById(orderId);
+
+        if (orderOptional.isPresent()) {
+            Order order = orderOptional.get();
+
+            // Cập nhật trạng thái thanh toán của đơn hàng thành "CANCELLED"
+            order.setPaymentStatus("CANCELLED");
+            orderRepository.save(order);
+
+            // Cập nhật lại số lượng sản phẩm trong kho
+            List<OrderDetail> orderDetails = order.getOrderDetails();
+            for (OrderDetail orderDetail : orderDetails) {
+                Product product = orderDetail.getProduct();
+                int quantityOrdered = orderDetail.getQuantity();
+
+                // Tăng số lượng sản phẩm lại trong kho
+                product.setStockQuantity(product.getStockQuantity() + quantityOrdered);
+                productRepository.save(product);
+            }
+
+            // Bạn có thể thực hiện các hành động khác nếu cần (ví dụ: gửi thông báo cho người dùng hoặc chủ shop)
+
+        } else {
+            throw new EntityNotFoundException("Không tìm thấy đơn hàng với ID: " + orderId);
+        }
     }
 
 

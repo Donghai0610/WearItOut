@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { object } from 'yup'
 
 const FooterTwo = () => {
     return (
@@ -10,7 +11,14 @@ const FooterTwo = () => {
                         <div className="footer-item__logo">
                             <Link to="/">
                                 {" "}
-                                <img src="assets/images/logo/logo-two-black.png" alt="" />
+                                <img
+                                style={{
+                                    objectFit: 'cover', // Đảm bảo ảnh bao phủ toàn bộ khung
+                                    width: '100%',       // Đảm bảo ảnh chiếm hết chiều rộng của thẻ
+                                    height: '100%'       // Đảm bảo ảnh chiếm hết chiều cao của thẻ
+                                }}
+
+                                src="assets/images/logo/bg_WIO.png" alt="" />
                             </Link>
                         </div>
                         <p className="mb-24">
@@ -24,7 +32,7 @@ const FooterTwo = () => {
                                 to="/tel:+00123456789"
                                 className="text-md text-gray-900 hover-text-main-600"
                             >
-                                +00 123 456 789
+                               0972456177
                             </Link>
                         </div>
                         <div className="flex-align gap-16 mb-16">
@@ -32,7 +40,7 @@ const FooterTwo = () => {
                                 <i className="ph-fill ph-envelope" />
                             </span>
                             <Link
-                                to="/mailto:support24@marketpro.com"
+                                to="/mailto:wearitout2nd@gmail.com"
                                 className="text-md text-gray-900 hover-text-main-600"
                             >
                                 wearitout2nd@gmail.com
@@ -82,7 +90,7 @@ const FooterTwo = () => {
                             </li>
                             <li className="mb-16">
                                 <Link to="/shop" className="text-gray-600 hover-text-main-600">
-                                    Nhóm Huawei
+                                    Cửa hàng
                                 </Link>
                             </li>
                             <li className="mb-16">

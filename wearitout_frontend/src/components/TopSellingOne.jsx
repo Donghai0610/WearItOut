@@ -135,16 +135,16 @@ const TopSellingOne = () => {
                                                     className="product-card__thumb flex-center rounded-8 bg-gray-50 position-relative"
                                                 >
                                                     <span className="product-card__badge bg-main-600 px-8 py-4 text-sm text-white position-absolute inset-inline-start-0 inset-block-start-0">
-                                                        Sold
+                                                        Bán Chạy
                                                     </span>
                                                     <img
                                                         src={product.imageUrls[0]}
                                                         alt={product.productName}
                                                         className="w-auto max-w-unset"
                                                         style={{
-                                                            objectFit: 'cover', // Đảm bảo ảnh bao phủ toàn bộ khung
-                                                            width: '100%',       // Đảm bảo ảnh chiếm hết chiều rộng của thẻ
-                                                            height: '100%'       // Đảm bảo ảnh chiếm hết chiều cao của thẻ
+                                                            objectFit: 'cover', 
+                                                            width: '100%',       
+                                                            height: '100%'       
                                                         }}
                                                     />
                                                 </Link>

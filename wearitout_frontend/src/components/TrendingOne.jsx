@@ -98,7 +98,7 @@ const TrendingOne = () => {
                                             <div className="product-card h-100 p-16 border border-gray-100 hover-border-main-600 rounded-16 position-relative transition-2">
                                                 <Link to={`/product-details/${product.id}`} className="product-card__thumb flex-center rounded-8 bg-gray-50 position-relative">
                                                     <span className="product-card__badge bg-tertiary-600 px-8 py-4 text-sm text-white position-absolute inset-inline-start-0 inset-block-start-0">
-                                                        {product.rating >= 4.5 ? 'Best Seller' : 'Trending'}
+                                                        {product.rating >= 2.5 ? 'Bán Chạy' : 'Xu Hướng'}
                                                     </span>
                                                     <img
                                                         src={product.imageUrls.length > 0 ? product.imageUrls[0] : "https://via.placeholder.com/150"}

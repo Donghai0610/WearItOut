@@ -11,17 +11,15 @@ import com.g4.backend.repository.UserRepository;
 import com.g4.backend.service.OrderDetailService;
 import com.g4.backend.service.OrderService;
 import com.g4.backend.utils.PaymentMethod;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import vn.payos.type.WebhookData;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @AllArgsConstructor
@@ -120,7 +118,18 @@ private final CartRepository cartRepository;
         }
     }
 
-
+    @PostMapping("/cancel-payment/{orderId}")
+    public ResponseEntity<String> cancelPayment(@PathVariable long orderId) {
+        try {
+            // Gọi service để hủy thanh toán và cập nhật số lượng sản phẩm
+            orderService.cancelPaymentAndUpdateStock(orderId);
+            return ResponseEntity.ok("Đơn hàng đã bị hủy thanh toán và số lượng sản phẩm đã được cập nhật.");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy đơn hàng với ID: " + orderId);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Có lỗi xảy ra trong quá trình hủy thanh toán.");
+        }
+    }
 
 
 }

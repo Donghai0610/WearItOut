@@ -3,17 +3,10 @@ import Preloader from "../helper/Preloader";
 import HeaderTwo from "../components/HeaderTwo";
 import BannerTwo from "../components/BannerTwo";
 import PromotionalTwo from "../components/PromotionalTwo";
-import DealsOne from "../components/DealsOne";
 import TopSellingOne from "../components/TopSellingOne";
 import TrendingOne from "../components/TrendingOne";
 import DiscountOne from "../components/DiscountOne";
-import FeaturedOne from "../components/FeaturedOne";
-import BigDealOne from "../components/BigDealOne";
-import TopSellingTwo from "../components/TopSellingTwo";
-import PopularProductsOne from "../components/PopularProductsOne";
-import TopVendorsTwo from "../components/TopVendorsTwo";
-import DaySaleOne from "../components/DaySaleOne";
-import RecentlyViewedOne from "../components/RecentlyViewedOne";
+
 import BrandTwo from "../components/BrandTwo";
 import ShippingTwo from "../components/ShippingTwo";
 import NewsletterTwo from "../components/NewsletterTwo";
@@ -87,7 +80,7 @@ const HomePageTwo = () => {
 
       {/* BottomFooter */}
       <BottomFooter />
-
+   
       
     </>
   );

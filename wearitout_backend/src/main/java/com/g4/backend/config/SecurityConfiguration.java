@@ -31,7 +31,7 @@ import java.util.List;
 public class SecurityConfiguration {
     private AuthService authService;
 
-    @Value("${frontend.url")
+    @Value("${frontend.url}")
     private String frontendUrl;
 
     private OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
@@ -91,7 +91,7 @@ public class SecurityConfiguration {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+        configuration.setAllowedOrigins(List.of(frontendUrl));
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.setAllowCredentials(true);

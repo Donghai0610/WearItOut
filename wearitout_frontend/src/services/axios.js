@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-    baseURL: "http://localhost:8080", // URL cơ bản của API
+    // baseURL: "https://store.wearitout.me", // URL cơ bản của API
+    baseURL:"http://localhost:8080",
     headers: {
         'Content-Type': 'application/json',
     },
