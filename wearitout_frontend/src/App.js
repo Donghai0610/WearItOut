@@ -21,7 +21,7 @@ import ChatBoxPage from "./pages/ChatBoxPage";
 import WearFitsViewerPage from "./pages/WearFitsViewerPage";
 import TryOnPage from "./pages/TryOnPage";
 import SearchImagePage from "./pages/SearchImagePage";
-import { FaFacebookMessenger, FaRobot, FaTshirt , FaViber, } from "react-icons/fa"; // Thêm thư viện icon cho các biểu tượng
+import {FaFacebookMessenger, FaRobot, FaRuler, FaTape, FaTshirt, FaViber,} from "react-icons/fa"; // Thêm thư viện icon cho các biểu tượng
 import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
 function App() {
@@ -204,6 +204,12 @@ const ChatButton = styled.div`
           <a href="/tryon">
             <FaTshirt   size={40} color="#FF4B4B" />
             <span>Phòng Thay Đồ Ảo</span>
+          </a>
+        </ChatButton>
+        <ChatButton>
+          <a href="/wearfitview">
+            <FaTape   size={40} color="#FF4B4B" />
+            <span>Phòng Custom Size</span>
           </a>
         </ChatButton>
       </ChatButtonContainer>
