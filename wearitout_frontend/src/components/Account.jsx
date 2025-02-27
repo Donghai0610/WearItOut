@@ -121,7 +121,7 @@ const Account = () => {
         // Chuyển hướng người dùng đến URL OAuth2
          window.location.href = 'https://store.wearitout.me/login/oauth2/authorization/google';
         //window.location.href = 'http://localhost:8080/login/oauth2/authorization/google';
-        window.location.href = 'https://www.wearitout.me/login/oauth2/code/google';
+        // window.location.href = 'https://www.wearitout.me/login/oauth2/code/google';
     };
  const handleForgotPassword = (e) => {
         e.preventDefault();

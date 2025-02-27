@@ -37,6 +37,7 @@ public class SecurityConfiguration {
     private OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private JwtFilter jwtFilter;
 
+
     @Autowired
     public SecurityConfiguration(AuthService authService, OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler, JwtFilter jwtFilter) {
 

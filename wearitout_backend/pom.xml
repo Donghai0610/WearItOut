@@ -147,7 +147,7 @@
 
 	<build>
 		<finalName>
-			WearItOut-Application-v2
+			WearItOut-Application-v3
 		</finalName>
 		<plugins>
 			<plugin>
