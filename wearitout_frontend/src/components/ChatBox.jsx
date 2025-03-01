@@ -19,7 +19,7 @@ const ChatBoxContainer = styled.div`
 `;
 
 const ChatBox = () => {
-  const API_KEY = `AIzaSyCK6pvyzB7mWJDMyA_zubf8Ap-rixg4m8U`;
+  const API_KEY = `${process.env.REACT_APP_OPENAI_API_KEY}`;
   const [messages, setMessages] = useState([
     {
       message: "Xin chào! Tôi có thể giúp gì cho bạn?",
