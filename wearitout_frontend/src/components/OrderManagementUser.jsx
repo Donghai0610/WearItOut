@@ -9,6 +9,8 @@ import axiosInstance from '../services/axios';
 import Shop_Services from '../services/shop';
 import Account_Service from '../services/account';
 import Order_Service from '../services/orderService';
+import { useLocation, useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 const OrderManagementUser = () => {
     const [orders, setOrders] = useState([]);
@@ -19,7 +21,8 @@ const OrderManagementUser = () => {
     const [shippingStatusFilter, setShippingStatusFilter] = useState('');
     const [page, setPage] = useState(0);
     const [size] = useState(10);
-
+   const navigate = useNavigate(); // Khai báo navigate
+    const location = useLocation();
     // Gọi API lấy đơn hàng
     const getOrdersByShop = async () => {
         const userId = Account_Service.getUserIdFromToken(); // Lấy userId từ token
@@ -64,7 +67,83 @@ useEffect(() => {
         getOrdersByShop();
     }
     , []);
-
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const status = params.get('status');
+        const orderId = params.get('orderCode');
+    
+        if (status === 'CANCELLED') {
+            // Hiển thị SweetAlert thông báo thanh toán bị hủy
+            Swal.fire({
+                icon: 'info',
+                title: 'Thanh toán bị hủy',
+                text: 'Quý khách đã hủy thanh toán. Bạn sẽ được chuyển về trang chủ.',
+                confirmButtonText: 'OK',
+            }).then(async () => {
+                try {
+                    // Gọi phương thức xử lý hủy thanh toán
+                    const result = await Order_Service.handlePaymentCancel(orderId);
+    
+                    // Kiểm tra kết quả trả về từ API
+                    if (result && result.success) {
+                        // Nếu thành công, chuyển hướng về trang chủ
+                        navigate('/');
+                    } else {
+                        // Nếu có lỗi, hiển thị thông báo lỗi
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Có lỗi xảy ra',
+                            text: 'Không thể hủy thanh toán. Vui lòng thử lại.',
+                        });
+                    }
+                } catch (error) {
+                    // Nếu có lỗi khi gọi API hủy thanh toán
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Có lỗi xảy ra',
+                        text: 'Không thể xử lý việc hủy thanh toán. Vui lòng thử lại sau!',
+                    });
+                    console.error('Error while canceling payment:', error);
+                }
+            });
+        }
+    
+        if (status === 'PAID') {
+            // Hiển thị SweetAlert thông báo thanh toán thành công
+            Swal.fire({
+                icon: 'success',
+                title: 'Thanh toán thành công',
+                text: 'Quý khách hãy chờ xác nhận từ website. Bạn sẽ được chuyển về trang quản lý đơn hàng.',
+                confirmButtonText: 'OK',
+            }).then(async () => {
+                try {
+                    // Gọi phương thức để cập nhật trạng thái thanh toán
+                    const result = await Order_Service.handlePaymentSuccess(orderId);
+    
+                    if (result && result.success) {
+                        // Chuyển hướng về trang quản lý đơn hàng nếu cập nhật thành công
+                        navigate('/order-user');
+                    } else {
+                        // Nếu có lỗi, hiển thị thông báo lỗi
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Có lỗi xảy ra',
+                            text: 'Không thể cập nhật trạng thái thanh toán. Vui lòng thử lại.',
+                        });
+                    }
+                } catch (error) {
+                    // Nếu có lỗi khi cập nhật trạng thái thanh toán
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Có lỗi xảy ra',
+                        text: 'Không thể xử lý thanh toán thành công. Vui lòng thử lại sau!',
+                    });
+                    console.error('Error while updating payment status:', error);
+                }
+            });
+        }
+    
+    }, [location, navigate]);
     return (
         <div style={{ padding: 20 }}>
             {/* Bộ lọc tìm kiếm */}

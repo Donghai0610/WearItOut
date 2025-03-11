@@ -130,7 +130,7 @@ public class OrderService {
             });
             thread.start();
             Thread thread2 = new Thread(() -> {
-                sendOrderNotificationToOwner(order.getUser().getUsername(), "hainthdhe172428@fpt.edu.vn");
+                sendOrderNotificationToOwner(order.getUser().getUsername(), "nguyentuanhongdonghai@gmail.com");
 
             });
             thread2.start();
@@ -299,7 +299,8 @@ public class OrderService {
 
     private PaymentData createPaymentDataForOrder(Order order, double totalPaymentForWebsite, List<CartItem> cartItems) {
         // Tạo PaymentData với các thông tin thanh toán của đơn hàng
-        String orderCode = String.valueOf(order.getOrderId() + 100);  // Mã đơn hàng
+        String orderCode = String.valueOf(order.getOrderId());
+        // Mã đơn hàng
         int amount = (int) totalPaymentForWebsite;  // Số tiền thanh toán (chuyển sang kiểu int)
         String description = "WIO-Thanh toán mã " + order.getOrderId();  // Mô tả thanh toán
 
@@ -314,12 +315,9 @@ public class OrderService {
         // Tạo chuỗi cần thiết cho signature (theo yêu cầu của API)
         String signatureString = String.format("amount=%d&cancelUrl=%s&description=%s&orderCode=%s&returnUrl=%s",
                 amount, cancelUrl, description, orderCode, returnUrl);
-        System.out.println("Signature String: " + signatureString);
-        System.out.println("Checksum Key: " + checksumKey);
         // Tạo signature bằng HMAC_SHA256
         String signature = new HmacUtils("HmacSHA256", checksumKey).hmacHex(signatureString);
 
-        System.out.println("Signature: " + signature);
 
         // Tạo PaymentData với tất cả thông tin
         PaymentData paymentData = PaymentData.builder()

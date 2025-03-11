@@ -19,7 +19,8 @@ const ChatBoxContainer = styled.div`
 `;
 
 const ChatBox = () => {
-  const API_KEY = `${process.env.REACT_APP_OPENAI_API_KEY}`;
+  const API_KEY = process.env.REACT_APP_GEMINI_API_KEY;
+
   const [messages, setMessages] = useState([
     {
       message: "Xin chào! Tôi có thể giúp gì cho bạn?",
@@ -57,13 +58,16 @@ const ChatBox = () => {
 
   async function processMessageToGemini(chatMessages) {
     const userMessage = chatMessages[chatMessages.length - 1].message;
-
+  
+    // Cập nhật yêu cầu với thông điệp giới hạn ngành thời trang
     const apiRequestBody = {
       contents: [{
-        parts: [{ text: userMessage }]
+        parts: [{
+          text: `Bạn chỉ được trả lời các câu hỏi liên quan đến ngành hàng thời trang. Câu hỏi: ${userMessage}`
+        }]
       }]
     };
-
+  
     try {
       const response = await fetch(
           `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`,
@@ -73,15 +77,15 @@ const ChatBox = () => {
             body: JSON.stringify(apiRequestBody),
           }
       );
-
+  
       if (!response.ok) {
         const error = await response.text();
         console.error("HTTP error:", response.status, error);
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-
+  
       const data = await response.json();
-
+  
       if (data.candidates && data.candidates[0].content.parts.length > 0) {
         return [
           ...chatMessages,
@@ -99,6 +103,7 @@ const ChatBox = () => {
       return chatMessages;
     }
   }
+  
 
   return (
       <Root>

@@ -158,7 +158,7 @@ const TopSellingOne = () => {
                                                         <span className="text-15 fw-medium text-warning-600 d-flex">
                                                             <i className="ph-fill ph-star" />
                                                         </span>
-                                                        <span className="text-xs fw-medium text-gray-500">(17k)</span>
+                                                        <span className="text-xs fw-medium text-gray-500">-30%</span>
                                                     </div>
                                                     <h6 className="title text-lg fw-semibold mt-12 mb-8">
                                                         <Link
@@ -179,7 +179,7 @@ const TopSellingOne = () => {
                                                     </div>
                                                     <div className="product-card__price my-20">
                                                         <span className="text-gray-400 text-md fw-semibold text-decoration-line-through">
-                                                            {formatVND(product.price * 1.2)}
+                                                            {formatVND(product.price * 1.3)}
                                                         </span>
                                                         <span className="text-heading text-md fw-semibold">
                                                             {formatVND(product.price)}{" "}

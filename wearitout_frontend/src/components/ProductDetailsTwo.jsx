@@ -206,7 +206,7 @@ const ProductDetailsTwo = () => {
                                             <span className="text-sm fw-medium text-neutral-600">
                                                 Đánh giá {product.rating} sao
                                             </span>
-                                            <span className="text-sm fw-medium text-gray-500">(21,671)</span>
+                                            <span className="text-sm fw-medium text-gray-500">(100)</span>
                                         </div>
                                     </div>
 
@@ -218,7 +218,7 @@ const ProductDetailsTwo = () => {
                                         <div className="flex-align gap-8">
                                             <div className="flex-align gap-8 text-main-two-600">
                                                 <i className="ph-fill ph-seal-percent text-xl" />
-                                                -15%
+                                                -30%
                                             </div>
                                             <h6 className="mb-0">{formatVND(product.price)}</h6>
                                         </div>
