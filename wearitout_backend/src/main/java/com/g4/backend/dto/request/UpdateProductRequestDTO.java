@@ -21,6 +21,6 @@ public class UpdateProductRequestDTO {
     private Double rating;
     private String settingName;
     private String shopName;
-    private List<MultipartFile> imageFiles; // Danh sách các file ảnh mới
+    private List<MultipartFile> imageFiles;
 }
 

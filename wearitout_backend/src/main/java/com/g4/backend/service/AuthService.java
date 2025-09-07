@@ -65,45 +65,7 @@ public class AuthService implements UserDetailsService {
         return userRepository.save(user);
     }
 
-//    public LoginResponeDTO handleGoogleLogin(OAuth2AuthenticationToken oAuth2AuthenticationToken) {
-//        // Lấy thông tin từ OAuth2AuthenticationToken
-//        DefaultOAuth2User principal = (DefaultOAuth2User) oAuth2AuthenticationToken.getPrincipal();
-//        Map<String, Object> attributes = principal.getAttributes();
-//
-//        // Lấy email và tên từ attributes
-//        String email = attributes.getOrDefault("email", "").toString();
-//        String username = attributes.getOrDefault("name", "").toString();
-//
-//        // Kiểm tra xem người dùng đã tồn tại hay chưa
-//        User user = findUserByEmail(email).orElse(null);
-//
-//        // Nếu người dùng không tồn tại, tạo mới
-//        if (user == null) {
-//            user = new User();
-//            user.setEmail(email);
-//            user.setUsername(username);
-//            user.setSource(RegistrationSource.GOOGLE);
-//            String encodedPassword = new BCryptPasswordEncoder().encode(PasswordGenerator.generateRandomPassword());
-//            user.setPassword(encodedPassword);
-//            user.setSetting(userService.getDefaultSetting());  // Lấy vai trò mặc định
-//            saveUser(user);
-//
-//            // Gửi thông tin tài khoản qua email trong một thread riêng
-//            Thread thread = new Thread(() -> {
-//                userService.sendAccount(username, email, encodedPassword);
-//            });
-//            thread.start();
-//        }
-//
-//        // Lấy role từ đối tượng Setting của người dùng
-//        String role = user.getSetting().getName();
-//
-//        // Tạo token JWT và bao gồm cả vai trò
-//        final String jwt = jwtServices.generateToken(user.getUsername());
-//
-//        // Trả về phản hồi với JWT và role
-//        return new LoginResponeDTO(200, "Success", jwt, "2Hours", role);
-//    }
+
 
 
 
