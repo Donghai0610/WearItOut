@@ -5,6 +5,8 @@ import com.g4.backend.dto.request.UpdateProductInCartRequestDTO;
 import com.g4.backend.dto.response.CartProductCountResponseDTO;
 import com.g4.backend.dto.response.CartResponseDTO;
 import com.g4.backend.dto.response.ProductCartResponseDTO;
+import com.g4.backend.exception.AppException;
+import com.g4.backend.exception.ErrorCode;
 import com.g4.backend.model.Cart;
 import com.g4.backend.model.CartItem;
 import com.g4.backend.model.Product;
@@ -60,7 +62,7 @@ public class CartService {
 
         // Kiểm tra tồn kho trước khi thêm sản phẩm
         if (!isStockAvailable(product.getId(), request.getQuantity())) {
-            throw new RuntimeException("Số lượng sản phẩm vượt quá tồn kho: " + product.getStockQuantity());
+            throw new AppException(ErrorCode.USER_NOT_FOUND);
         }
 
         Optional<CartItem> existingItem = cart.getCartItems().stream()
@@ -93,18 +95,19 @@ public class CartService {
     public CartResponseDTO updateProductInCart(Long userId, UpdateProductInCartRequestDTO request) {
         Cart cart = cartRepository.findCartByUserId(userId);
         if (cart == null) {
-            throw new RuntimeException("Giỏ hàng không tồn tại");
+            throw new AppException(ErrorCode.CART_ITEM_NOT_FOUND);
         }
 
         CartItem cartItem = cart.getCartItems().stream()
                 .filter(item -> item.getProduct().getId().equals(request.getProductId()))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("Sản phẩm không tồn tại trong giỏ hàng"));
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTS_IN_CART));
+
 
         Product product = cartItem.getProduct();
 
         if (request.getQuantity() > product.getStockQuantity()) {
-            throw new RuntimeException("Số lượng sản phẩm vượt quá tồn kho: " + product.getStockQuantity());
+            throw new AppException(ErrorCode.STOCK_NOT_ENOUGH);
         }
 
         cartItem.setQuantity(request.getQuantity());

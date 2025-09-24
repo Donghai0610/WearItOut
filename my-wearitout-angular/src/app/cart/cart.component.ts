@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 import { CartService, CartItem, Cart } from '../services/cart.service';
 import { AuthService } from '../services/auth.service';
 import { ApiResponse } from '../services/api.service';
@@ -10,7 +11,7 @@ import { Header } from '../header/header';
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [CommonModule, FormsModule, Header, Footer],
+  imports: [CommonModule, FormsModule],
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.css']
 })
@@ -18,12 +19,12 @@ export class CartComponent implements OnInit {
   cartItems: CartItem[] = [];
   isLoading = false;
   error: string | null = null;
-  successMessage: string | null = null;
   totalPrice = 0;
 
   constructor(
     private cartService: CartService,
-    private authService: AuthService
+    private authService: AuthService,
+    private toastr: ToastrService
   ) {}
 
   ngOnInit(): void {
@@ -59,7 +60,12 @@ export class CartComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading cart:', error);
-        this.error = error.userMessage || 'Không thể tải giỏ hàng';
+        const errorMessage = error.userMessage || 'Không thể tải giỏ hàng';
+        this.error = errorMessage;
+        this.toastr.error(errorMessage, '❌ Lỗi tải giỏ hàng', {
+          timeOut: 4000,
+          progressBar: true
+        });
         this.isLoading = false;
       }
     });
@@ -71,12 +77,15 @@ export class CartComponent implements OnInit {
       return;
     }
 
-    // Check stock availability
+    // Business rule validation with user education
     const item = this.cartItems.find(item => item.productId === productId);
     if (item && item.stockQuantity !== undefined && newQuantity > item.stockQuantity) {
-      this.error = `Chỉ còn ${item.stockQuantity} sản phẩm trong kho!`;
-      this.successMessage = null;
-      return;
+      this.toastr.info(
+        `Bạn đang chọn ${newQuantity} sản phẩm nhưng kho chỉ còn ${item.stockQuantity}. Đơn hàng vẫn có thể đặt và sẽ được xử lý theo thứ tự.`, 
+        'ℹ️ Thông tin tồn kho',
+        { timeOut: 5000, progressBar: true }
+      );
+      // Continue with the update - business allows this
     }
 
     const currentUser = this.authService.getCurrentUser();
@@ -94,12 +103,20 @@ export class CartComponent implements OnInit {
           }
           // Clear error and show success if successful
           this.error = null;
-          this.showSuccessMessage('Đã cập nhật số lượng thành công!');
+          this.toastr.success('Số lượng đã được cập nhật!', '✅ Thành công', {
+            timeOut: 2000,
+            progressBar: true
+          });
         }
       },
       error: (error) => {
         console.error('Error updating cart item:', error);
-        this.error = error.userMessage || 'Không thể cập nhật số lượng';
+        const errorMessage = error.userMessage || 'Không thể cập nhật số lượng';
+        this.error = errorMessage;
+        this.toastr.error(errorMessage, '❌ Lỗi cập nhật', {
+          timeOut: 4000,
+          progressBar: true
+        });
       }
     });
   }
@@ -114,12 +131,19 @@ export class CartComponent implements OnInit {
           // Update local cart
           this.cartItems = this.cartItems.filter(item => item.productId !== productId);
           this.cartService.updateLocalCart(this.cartItems);
-          this.showSuccessMessage('Đã xóa sản phẩm khỏi giỏ hàng!');
+          this.toastr.success('Sản phẩm đã được xóa khỏi giỏ hàng!', '🗑️ Đã xóa', {
+            timeOut: 2000,
+            progressBar: true
+          });
         }
       },
       error: (error) => {
-        console.error('Error removing cart item:', error);
-        this.error = error.userMessage || 'Không thể xóa sản phẩm';
+        const errorMessage = error.userMessage || 'Không thể xóa sản phẩm';
+        this.error = errorMessage;
+        this.toastr.error(errorMessage, '❌ Lỗi xóa', {
+          timeOut: 4000,
+          progressBar: true
+        });
       }
     });
   }
@@ -135,11 +159,20 @@ export class CartComponent implements OnInit {
         if (response.code === 200) {
           this.cartItems = [];
           this.cartService.updateLocalCart(this.cartItems);
+          this.toastr.success('Tất cả sản phẩm đã được xóa khỏi giỏ hàng!', '🗑️ Đã xóa hết', {
+            timeOut: 3000,
+            progressBar: true
+          });
         }
       },
       error: (error) => {
         console.error('Error clearing cart:', error);
-        this.error = error.userMessage || 'Không thể xóa giỏ hàng';
+        const errorMessage = error.userMessage || 'Không thể xóa giỏ hàng';
+        this.error = errorMessage;
+        this.toastr.error(errorMessage, '❌ Lỗi xóa giỏ hàng', {
+          timeOut: 4000,
+          progressBar: true
+        });
       }
     });
   }
@@ -158,11 +191,14 @@ export class CartComponent implements OnInit {
   increaseQuantity(productId: number): void {
     const item = this.cartItems.find(item => item.productId === productId);
     if (item) {
-      // Check if we can increase quantity
+      // Business rule: Allow adding more than stock, but warn user
       if (item.stockQuantity !== undefined && item.quantity >= item.stockQuantity) {
-        this.error = `Không thể thêm! Chỉ còn ${item.stockQuantity} sản phẩm trong kho.`;
-        this.successMessage = null;
-        return;
+        this.toastr.warning(
+          `Bạn đã chọn ${item.quantity}/${item.stockQuantity} sản phẩm. Khi đặt hàng, đơn hàng sẽ được xử lý theo thứ tự có hàng.`, 
+          '⚠️ Vượt quá tồn kho',
+          { timeOut: 5000, progressBar: true }
+        );
+        // Don't return - allow adding more for business logic
       }
       this.updateQuantity(productId, item.quantity + 1);
     }
@@ -202,22 +238,22 @@ export class CartComponent implements OnInit {
   getStockStatus(item: CartItem): string {
     if (!item.stockQuantity) return '';
     
-    const remaining = item.stockQuantity - item.quantity;
-    if (remaining <= 0) {
+    // Show actual stock from DB with context
+    if (item.stockQuantity <= 0) {
       return 'Hết hàng';
-    } else if (remaining <= 5) {
-      return `Còn ${remaining} sản phẩm`;
+    } else if (item.stockQuantity <= 5) {
+      return `Kho: ${item.stockQuantity} sản phẩm`;
     }
-    return `Còn ${remaining} sản phẩm`;
+    return `Kho: ${item.stockQuantity} sản phẩm`;
   }
 
   getStockStatusClass(item: CartItem): string {
     if (!item.stockQuantity) return '';
     
-    const remaining = item.stockQuantity - item.quantity;
-    if (remaining <= 0) {
+    // Use actual stock quantity from DB, not remaining after cart
+    if (item.stockQuantity <= 0) {
       return 'stock-out';
-    } else if (remaining <= 5) {
+    } else if (item.stockQuantity <= 5) {
       return 'stock-low';
     }
     return 'stock-normal';
@@ -225,11 +261,47 @@ export class CartComponent implements OnInit {
 
   isStockAvailable(item: CartItem): boolean {
     if (!item.stockQuantity) return true;
-    return item.quantity < item.stockQuantity;
+    // For business logic: Always allow adding (no hard limit)
+    // But we'll show warnings when exceeding actual stock
+    return true;
+  }
+
+  hasStockWarning(item: CartItem): boolean {
+    if (!item.stockQuantity) return false;
+    return item.quantity > item.stockQuantity;
   }
 
   getMaxQuantity(item: CartItem): number {
     return item.stockQuantity || 999;
+  }
+
+  // Get remaining quantity that can be added to cart (for validation)
+  getRemainingAddable(item: CartItem): number {
+    if (!item.stockQuantity) return 999;
+    return Math.max(0, item.stockQuantity - item.quantity);
+  }
+
+  // Detailed stock info with business logic explanation
+  getDetailedStockInfo(item: CartItem): string {
+    if (!item.stockQuantity) return 'Không giới hạn';
+    const remaining = this.getRemainingAddable(item);
+    return `Tồn kho: ${item.stockQuantity} | Trong giỏ hiện tại: ${item.quantity} | Có thể thêm: ${remaining}`;
+  }
+
+  // Business logic display for user understanding
+  getStockBusinessInfo(item: CartItem): string {
+    if (!item.stockQuantity) return '';
+    
+    if (item.quantity >= item.stockQuantity) {
+      return '⚠️ Bạn đã chọn hết số lượng có sẵn. Khi đặt hàng, đơn hàng sẽ được xử lý theo thứ tự.';
+    }
+    
+    const remaining = this.getRemainingAddable(item);
+    if (remaining <= 2) {
+      return `⚠️ Chỉ có thể thêm ${remaining} sản phẩm nữa vào giỏ hàng.`;
+    }
+    
+    return `✅ Có thể thêm tối đa ${remaining} sản phẩm nữa.`;
   }
 
   private getLocalStockQuantity(productId: number): number | undefined {
@@ -249,12 +321,4 @@ export class CartComponent implements OnInit {
     });
   }
 
-  private showSuccessMessage(message: string): void {
-    this.successMessage = message;
-    this.error = null;
-    // Clear success message after 3 seconds
-    setTimeout(() => {
-      this.successMessage = null;
-    }, 3000);
-  }
 }

@@ -333,7 +333,7 @@ public class ProductService {
         Pageable pageable = PageRequest.of(0, limit); // Lấy trang đầu tiên với số lượng sản phẩm là 'limit'
         List<Product> products = productRepository.findTopRatedProducts(pageable);
 
-        // Map từ Product sang ProductsResponseDTO
+
         return products.stream()
                 .map(this::toProductsResponseDTO)
                 .collect(Collectors.toList());

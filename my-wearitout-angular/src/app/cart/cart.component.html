@@ -1,4 +1,3 @@
-<app-header></app-header>
 <div class="cart-container">
   <div class="cart-header">
     <h2>🛒 Giỏ hàng của bạn</h2>
@@ -17,17 +16,23 @@
     <button (click)="loadCart()" class="btn-retry">🔄 Thử lại</button>
   </div>
 
-  <!-- Success Message -->
-  <div *ngIf="successMessage" class="success-message">
-    ✅ {{ successMessage }}
-  </div>
-
   <!-- Empty Cart -->
   <div *ngIf="!isLoading && !error && cartItems.length === 0" class="empty-cart">
     <div class="empty-icon">🛒</div>
     <h3>Giỏ hàng trống</h3>
     <p>Hãy thêm một số sản phẩm vào giỏ hàng để bắt đầu mua sắm!</p>
     <a href="/products" class="btn-shop-now">🛍️ Mua sắm ngay</a>
+  </div>
+
+  <!-- Business Logic Info -->
+  <div *ngIf="!isLoading && !error && cartItems.length > 0" class="business-logic-info">
+    <div class="info-card">
+      <h4>ℹ️ Lưu ý về tồn kho</h4>
+      <p>• <strong>Kho:</strong> Số lượng thực tế có sẵn</p>
+      <p>• <strong>Trong giỏ:</strong> Số lượng bạn đã chọn</p>
+      <p>• Sản phẩm chỉ được trừ kho khi <strong>đặt hàng thành công</strong></p>
+      <p>• Nếu hết hàng, đơn hàng sẽ được xử lý theo thứ tự</p>
+    </div>
   </div>
 
   <!-- Cart Items -->
@@ -49,8 +54,11 @@
             <p class="item-stock" [ngClass]="getStockStatusClass(item)">
               📦 {{ getStockStatus(item) }}
             </p>
-            <p *ngIf="!isStockAvailable(item)" class="stock-warning">
-              ⚠️ Không thể thêm! Đã đạt giới hạn kho.
+            <p class="stock-detail" title="{{ getDetailedStockInfo(item) }}">
+              🛒 Trong giỏ: {{ item.quantity }} / {{ item.stockQuantity }}
+            </p>
+            <p class="business-info" [ngClass]="{'warning': !isStockAvailable(item), 'success': getRemainingAddable(item) > 2}">
+              {{ getStockBusinessInfo(item) }}
             </p>
           </div>
         </div>
@@ -72,9 +80,9 @@
           >
           <button 
             (click)="increaseQuantity(item.productId)"
-            [disabled]="!isStockAvailable(item)"
             class="btn-quantity"
-            [title]="!isStockAvailable(item) ? 'Đã đạt giới hạn kho' : 'Tăng số lượng'"
+            [ngClass]="{'warning-btn': hasStockWarning(item)}"
+            [title]="hasStockWarning(item) ? 'Vượt quá tồn kho - đơn hàng sẽ xử lý theo thứ tự' : 'Tăng số lượng'"
           >+</button>
         </div>
         
@@ -130,4 +138,3 @@
     </div>
   </div>
 </div>
-<app-footer></app-footer>

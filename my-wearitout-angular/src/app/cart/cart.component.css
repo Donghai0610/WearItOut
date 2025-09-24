@@ -228,6 +228,63 @@
   font-style: italic;
 }
 
+.stock-detail {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin: 2px 0;
+  cursor: help;
+  font-weight: 500;
+}
+
+.business-info {
+  font-size: 0.75rem;
+  margin: 4px 0;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.business-info.success {
+  background: #f0fff4;
+  color: #059669;
+  border-left: 3px solid #10b981;
+}
+
+.business-info.warning {
+  background: #fef3c7;
+  color: #d97706;
+  border-left: 3px solid #f59e0b;
+}
+
+/* Business Logic Info */
+.business-logic-info {
+  margin-bottom: 20px;
+}
+
+.info-card {
+  background: linear-gradient(135deg, #e0f2fe, #b3e5fc);
+  border: 1px solid #81d4fa;
+  border-radius: 12px;
+  padding: 16px;
+  color: #0277bd;
+}
+
+.info-card h4 {
+  margin: 0 0 12px 0;
+  font-size: 1rem;
+  color: #01579b;
+}
+
+.info-card p {
+  margin: 4px 0;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.info-card strong {
+  color: #01579b;
+}
+
 .item-quantity {
   display: flex;
   align-items: center;
@@ -260,6 +317,17 @@
 .btn-quantity:disabled:hover {
   border-color: #e2e8f0;
   background: #f7fafc;
+}
+
+.btn-quantity.warning-btn {
+  border-color: #f59e0b;
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.btn-quantity.warning-btn:hover {
+  border-color: #d97706;
+  background: #fde047;
 }
 
 .quantity-input {

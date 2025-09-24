@@ -19,8 +19,6 @@ public class CartController {
 
     @GetMapping("/{userId}")
     public ResponseEntity<ApiResponse<CartResponseDTO>> getCartByUserId(@PathVariable Long userId) {
-
-        try{
             var result = cartService.getCart(userId);
             return ResponseEntity.ok(
                     ApiResponse.<CartResponseDTO>builder()
@@ -31,9 +29,7 @@ public class CartController {
             );
 
 
-        }catch (Exception e){
-            return ResponseEntity.ok(new ApiResponse(500, "Server error", null));
-        }
+
     }
 
     // Thêm sản phẩm vào giỏ hàng
@@ -44,8 +40,27 @@ public class CartController {
 
     // Cập nhật số lượng sản phẩm trong giỏ hàng
     @PostMapping("/{userId}/update")
-    public CartResponseDTO updateProductInCart(@PathVariable Long userId, @RequestBody UpdateProductInCartRequestDTO request) {
-        return cartService.updateProductInCart(userId, request);
+    public ResponseEntity<ApiResponse<CartResponseDTO>> updateProductInCart(@PathVariable Long userId, @RequestBody UpdateProductInCartRequestDTO request) {
+        try {
+            var response = cartService.updateProductInCart(userId, request);
+            return ResponseEntity.ok(
+                    ApiResponse.<CartResponseDTO>builder()
+                            .code(200)
+                            .message("Cập nhật sản phẩm trong giỏ hàng thành công")
+                            .result(response)
+                            .build()
+            );
+
+        } catch (Exception e) {
+           return ResponseEntity.ok(
+                   ApiResponse.<CartResponseDTO>builder()
+                            .code(500)
+                            .message("Server error")
+                            .result(null)
+                            .build()
+           );
+
+        }
     }
 
     // Xóa sản phẩm khỏi giỏ hàng

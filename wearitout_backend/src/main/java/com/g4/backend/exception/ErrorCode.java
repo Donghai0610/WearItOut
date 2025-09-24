@@ -16,7 +16,11 @@ public enum ErrorCode {
     DUPLICATE_RESOURCE(409, "Duplicate resource"),
     SERVICE_UNAVAILABLE(503, "Service unavailable"),
     UNCATEGORIZED_EXCEPTION(500, "Uncategorized exception"),
-    UNAUTHORIZED(401, "Unauthorized")
+    UNAUTHORIZED(401, "Unauthorized"),
+    STOCK_NOT_ENOUGH(400, "Stock not enough"),
+    CART_ITEM_NOT_FOUND(404, "Cart item not found"),
+    PRODUCT_NOT_EXISTS_IN_CART(404, "Sản phẩm không tồn tại trong giỏ hàng"),
+    EXPORT_FAIL(500, "Failed to export Excel file"),
 
 
             ;

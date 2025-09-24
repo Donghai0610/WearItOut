@@ -1,16 +1,16 @@
 import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 import { ApiService, ApiResponse } from '../services/api.service';
 import { CartService } from '../services/cart.service';
 import { AuthService } from '../services/auth.service';
-import { Footer } from '../footer/footer';
-import { Header } from '../header/header';
+
 
 @Component({
   selector: 'app-product',
   standalone: true,
-  imports: [CommonModule, FormsModule,Header, Footer],
+  imports: [CommonModule, FormsModule],
   templateUrl: './product.component.html',
   styleUrls: ['./product.component.css']
 })
@@ -44,6 +44,7 @@ export class ProductComponent implements OnInit {
     private apiService: ApiService,
     private cartService: CartService,
     private authService: AuthService,
+    private toastr: ToastrService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId);
@@ -177,15 +178,23 @@ export class ProductComponent implements OnInit {
     
     
     if (!this.authService.isLoggedIn()) {
-      console.error('❌ User not logged in');
       this.error = 'Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng';
+      this.toastr.warning('Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng', '⚠️ Cần đăng nhập', {
+        timeOut: 4000,
+        progressBar: true
+      });
       return;
     }
 
     // Check stock quantity
     if (product.stockQuantity && quantity > product.stockQuantity) {
-      console.error('❌ Not enough stock:', product.stockQuantity);
-      this.error = `Chỉ còn ${product.stockQuantity} sản phẩm trong kho`;
+    
+      const errorMessage = `Chỉ còn ${product.stockQuantity} sản phẩm trong kho`;
+      this.error = errorMessage;
+      this.toastr.warning(errorMessage, '⚠️ Không đủ hàng', {
+        timeOut: 4000,
+        progressBar: true
+      });
       return;
     }
 
@@ -198,10 +207,8 @@ export class ProductComponent implements OnInit {
     if (!userId && this.isBrowser) {
       // Fallback: try to extract user info from localStorage
       const username = localStorage.getItem('username');
-      console.log('🔧 No userId found, trying username approach:', username);
       
       if (!username) {
-        console.error('❌ Cannot get user identification');
         this.error = 'Không thể xác định người dùng. Vui lòng đăng nhập lại.';
         return;
       }
@@ -212,17 +219,13 @@ export class ProductComponent implements OnInit {
     }
 
     if (!userId) {
-      console.error('❌ No user identification available');
       this.error = 'Không thể xác định người dùng. Vui lòng đăng nhập lại.';
       return;
     }
 
-    console.log('🛒 Adding to cart - UserId:', userId, 'ProductId:', product.id, 'Quantity:', quantity);
     
     // Check token exists
     const token = this.isBrowser ? localStorage.getItem('authToken') : null;
-    console.log('🔑 Token status:', token ? 'exists' : 'missing');
-    console.log('🔑 Token preview:', token ? token.substring(0, 20) + '...' : 'none');
     
     // Show loading state
     const addingToCartMessage = `Đang thêm ${product.name} vào giỏ hàng...`;
@@ -261,35 +264,28 @@ export class ProductComponent implements OnInit {
           this.cartService.updateLocalCart(currentItems);
           
           // Show success message
-          this.showSuccessMessage(`Đã thêm ${product.name} vào giỏ hàng!`);
+          this.toastr.success(
+            `Đã thêm "${product.name}" vào giỏ hàng!`, 
+            '🛒 Thành công',
+            {
+              timeOut: 3000,
+              progressBar: true,
+              closeButton: true
+            }
+          );
         }
       },
       error: (error) => {
-        console.error('❌ Error adding to cart:', error);
-        console.error('❌ Error details:', {
-          status: error.status,
-          statusText: error.statusText,
-          message: error.message,
-          url: error.url,
-          userMessage: error.userMessage
+       
+        const errorMessage = error.userMessage || `Lỗi ${error.status}: ${error.statusText}` || 'Không thể thêm sản phẩm vào giỏ hàng. Vui lòng thử lại!';
+        this.error = errorMessage;
+        this.toastr.error(errorMessage, '❌ Lỗi thêm vào giỏ hàng', {
+          timeOut: 5000,
+          progressBar: true,
+          closeButton: true
         });
-        this.error = error.userMessage || `Lỗi ${error.status}: ${error.statusText}` || 'Không thể thêm sản phẩm vào giỏ hàng. Vui lòng thử lại!';
       }
     });
-  }
-
-  private showSuccessMessage(message: string): void {
-    // You can implement a toast/snackbar service here
-    console.log('Success:', message);
-    // For now, just clear any existing error
-    this.error = null;
-    
-    // You could also show a temporary success message
-    const originalError = this.error;
-    this.error = `✅ ${message}`;
-    setTimeout(() => {
-      this.error = originalError;
-    }, 3000);
   }
 
   isProductInCart(productId: number): boolean {
