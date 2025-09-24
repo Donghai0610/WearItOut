@@ -1,9 +1,14 @@
 package com.g4.backend.service;
 
+import com.g4.backend.dto.request.LoginRequestDTO;
+import com.g4.backend.dto.response.LoginResponeDTO;
 import com.g4.backend.model.User;
 import com.g4.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class AuthService implements UserDetailsService {
@@ -36,7 +42,7 @@ public class AuthService implements UserDetailsService {
         return userRepository.findUserByEmail(email);
     }
 
-     @Override
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         // Fetch the user from the database
         User user = userRepository.findUserByUsername(username);
@@ -64,6 +70,7 @@ public class AuthService implements UserDetailsService {
     public User saveUser(User user) {
         return userRepository.save(user);
     }
+
 
 //    public LoginResponeDTO handleGoogleLogin(OAuth2AuthenticationToken oAuth2AuthenticationToken) {
 //        // Lấy thông tin từ OAuth2AuthenticationToken
@@ -104,7 +111,6 @@ public class AuthService implements UserDetailsService {
 //        // Trả về phản hồi với JWT và role
 //        return new LoginResponeDTO(200, "Success", jwt, "2Hours", role);
 //    }
-
 
 
 }

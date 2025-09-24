@@ -34,65 +34,65 @@ public class OrderController {
         return ResponseEntity.ok(new OrderResponse(orders, ordersPage.getTotalPages()));
     }
 
-    @GetMapping("/provinces/{provinceName}")
-    public int getProvinces(@PathVariable String provinceName) {
-        Optional<Integer> provinceId = addressAPIService.getProvinceId(provinceName);
-        if (provinceId.isPresent()) {
-            return provinceId.get();
-        }
-        return 0;
-    }
+//    @GetMapping("/provinces/{provinceName}")
+//    public int getProvinces(@PathVariable String provinceName) {
+//        Optional<Integer> provinceId = addressAPIService.getProvinceId(provinceName);
+//        if (provinceId.isPresent()) {
+//            return provinceId.get();
+//        }
+//        return 0;
+//    }
 
-    @GetMapping("/districts/{districtName}")
-    public int getDistrictID(@PathVariable String districtName) {
-        Optional<Integer> districtId = addressAPIService.getDistrictId(districtName, 201);
-        if (districtId.isPresent()) {
-            return districtId.get();
-        }
-        return 0;
-    }
-
-    @GetMapping("/wards/{wardName}")
-    public String getWardCode(@PathVariable String wardName) {
-        Optional<String> wardCode = addressAPIService.getWardId(wardName, 1805);
-        if (wardCode.isPresent()) {
-            return wardCode.get();
-        }
-        return "NOT FOUND!";
-    }
-
-    @GetMapping("/{orderId}/services")
-    public List<ServiceApiDTO> getServices(@PathVariable Long orderId) {
-        Order order = orderService.getOrderById(orderId);
-        String shopAddress = order.getShop().getAddress();
-        String shipAddress = order.getShipAddress();
-
-        AddressPart addressPart = new AddressPart();
-
-        String fromProvinceName = addressPart.getAddressPart(shopAddress, "province");
-        String toProvinceName = addressPart.getAddressPart(shipAddress, "province");
-
-        String fromDistrictName = addressPart.getAddressPart(shopAddress, "district");
-        String toDistrictName = addressPart.getAddressPart(shipAddress, "district");
-
-        Optional<Integer> fromProvinceId = addressAPIService.getProvinceId(fromProvinceName);
-        Optional<Integer> toProvinceId = addressAPIService.getProvinceId(toProvinceName);
-
-        Optional<Integer> fromDistrictId = addressAPIService.getDistrictId(fromDistrictName, fromProvinceId.get());
-        Optional<Integer> toDistrictId = addressAPIService.getDistrictId(toDistrictName, toProvinceId.get());
-
-        List<ServiceApiDTO> services = addressAPIService.getService(fromDistrictId.get(), toDistrictId.get());
-        return services;
-    }
-
-    @GetMapping("/{orderId}/create_order")
-    public ResponseEntity<String> sendShippingOrderToGHN(@PathVariable Long orderId,
-                                                         @RequestParam(value = "serviceId") int serviceId,
-                                                         @RequestParam(value = "serviceTypeId") int service_type_id,
-                                                         @RequestParam(value = "paymentTypeId") int payShippingFee,
-                                                         @RequestParam(value = "note") String note) {
-        ResponseEntity<String> response = addressAPIService.sendShippingRequestToGHN(orderId, serviceId, service_type_id, payShippingFee, note);
-        return response;
-    }
+//    @GetMapping("/districts/{districtName}")
+//    public int getDistrictID(@PathVariable String districtName) {
+//        Optional<Integer> districtId = addressAPIService.getDistrictId(districtName, 201);
+//        if (districtId.isPresent()) {
+//            return districtId.get();
+//        }
+//        return 0;
+//    }
+//
+//    @GetMapping("/wards/{wardName}")
+//    public String getWardCode(@PathVariable String wardName) {
+//        Optional<String> wardCode = addressAPIService.getWardId(wardName, 1805);
+//        if (wardCode.isPresent()) {
+//            return wardCode.get();
+//        }
+//        return "NOT FOUND!";
+//    }
+//
+//    @GetMapping("/{orderId}/services")
+//    public List<ServiceApiDTO> getServices(@PathVariable Long orderId) {
+//        Order order = orderService.getOrderById(orderId);
+//        String shopAddress = order.getShop().getAddress();
+//        String shipAddress = order.getShipAddress();
+//
+//        AddressPart addressPart = new AddressPart();
+//
+//        String fromProvinceName = addressPart.getAddressPart(shopAddress, "province");
+//        String toProvinceName = addressPart.getAddressPart(shipAddress, "province");
+//
+//        String fromDistrictName = addressPart.getAddressPart(shopAddress, "district");
+//        String toDistrictName = addressPart.getAddressPart(shipAddress, "district");
+//
+//        Optional<Integer> fromProvinceId = addressAPIService.getProvinceId(fromProvinceName);
+//        Optional<Integer> toProvinceId = addressAPIService.getProvinceId(toProvinceName);
+//
+//        Optional<Integer> fromDistrictId = addressAPIService.getDistrictId(fromDistrictName, fromProvinceId.get());
+//        Optional<Integer> toDistrictId = addressAPIService.getDistrictId(toDistrictName, toProvinceId.get());
+//
+//        List<ServiceApiDTO> services = addressAPIService.getService(fromDistrictId.get(), toDistrictId.get());
+//        return services;
+//    }
+//
+//    @GetMapping("/{orderId}/create_order")
+//    public ResponseEntity<String> sendShippingOrderToGHN(@PathVariable Long orderId,
+//                                                         @RequestParam(value = "serviceId") int serviceId,
+//                                                         @RequestParam(value = "serviceTypeId") int service_type_id,
+//                                                         @RequestParam(value = "paymentTypeId") int payShippingFee,
+//                                                         @RequestParam(value = "note") String note) {
+//        ResponseEntity<String> response = addressAPIService.sendShippingRequestToGHN(orderId, serviceId, service_type_id, payShippingFee, note);
+//        return response;
+//    }
 
 }

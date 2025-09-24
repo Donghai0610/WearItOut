@@ -34,15 +34,13 @@ public class SecurityConfiguration {
     @Value("${frontend.url}")
     private String frontendUrl;
 
-    private OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private JwtFilter jwtFilter;
 
 
     @Autowired
-    public SecurityConfiguration(AuthService authService, OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler, JwtFilter jwtFilter) {
+    public SecurityConfiguration(AuthService authService,  JwtFilter jwtFilter) {
 
         this.authService = authService;
-        this.oAuth2LoginSuccessHandler = oAuth2LoginSuccessHandler;
         this.jwtFilter = jwtFilter;
     }
 
@@ -82,10 +80,7 @@ public class SecurityConfiguration {
                     auth.requestMatchers(HttpMethod.POST,EndPointService.userPostEndPoint).hasAnyAuthority("ROLE_USER","ROLE_ADMIN","ROLE_SELLER","ROLE_SHOPSTAFF");
                     auth.requestMatchers(HttpMethod.GET,EndPointService.userGetEndPoint).hasAnyAuthority("ROLE_USER","ROLE_ADMIN","ROLE_SELLER","ROLE_SHOPSTAFF");
                 })
-                .oauth2Login(oath2 -> {
-                    oath2.loginPage("/oauth2/authorization/google").permitAll();
-                    oath2.successHandler(oAuth2LoginSuccessHandler);
-                })
+
                 .build();
     }
 

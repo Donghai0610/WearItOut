@@ -33,7 +33,7 @@ public class ProductController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<?> getAllProducts(
+    public ResponseEntity<ApiResponse<Page<?>>> getAllProducts(
             @RequestParam(required = false) String productName,
             @RequestParam(required = false) Double priceMin,
             @RequestParam(required = false) Double priceMax,
@@ -44,28 +44,37 @@ public class ProductController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "9") int size,
             @RequestParam(defaultValue = "asc") String sortDirection) {
+        try {
+            // Gọi service để lấy dữ liệu sản phẩm
+            Page<ProductsResponseDTO> productPage = productServices.getAllProducts(
+                    productName,
+                    priceMin,
+                    priceMax,
+                    ratingMin,
+                    ratingMax,
+                    setting,
+                    shop,
+                    page,
+                    size,
+                    sortDirection
+            );
 
-        // Gọi service để lấy dữ liệu sản phẩm
-        Page<ProductsResponseDTO> productPage = productServices.getAllProducts(
-                productName,
-                priceMin,
-                priceMax,
-                ratingMin,
-                ratingMax,
-                setting,
-                shop,
-                page,
-                size,
-                sortDirection
+       return ResponseEntity.ok(
+                ApiResponse.<Page<?>>builder()
+                        .code(HttpStatus.OK.value())
+                        .message("Products retrieved successfully")
+                        .result(productPage)
+                        .build()
         );
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.<Page<?>>builder()
+                            .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                            .message("An error occurred while retrieving products: " + e.getMessage())
+                            .result(null)
+                            .build());
+        }
 
-        // Trả về kết quả
-        return ResponseEntity.ok(
-                new SearchResponse(
-                        productPage.getContent(),
-                        productPage.getTotalPages()
-                )
-        );
     }
 
 

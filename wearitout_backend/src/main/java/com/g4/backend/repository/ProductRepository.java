@@ -12,19 +12,38 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ProductRepository extends JpaRepository<Product, Long>{
+public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    @Query("SELECT DISTINCT p FROM Product p " +
-            "LEFT JOIN p.setting st " +
-            "LEFT JOIN p.shop sh " +
-            "WHERE " +
-            "(:productName IS NULL OR LOWER(p.productName) LIKE LOWER(CONCAT('%', :productName, '%'))) " +
-            "AND (:priceMin IS NULL OR p.price >= :priceMin) " +
-            "AND (:priceMax IS NULL OR p.price <= :priceMax) " +
-            "AND (:ratingMin IS NULL OR p.rating >= :ratingMin) " +
-            "AND (:ratingMax IS NULL OR p.rating <= :ratingMax) " +
-            "AND (:setting IS NULL OR LOWER(st.name) LIKE LOWER(CONCAT('%', :setting, '%'))) " +
-            "AND (:shop IS NULL OR LOWER(sh.name) LIKE LOWER(CONCAT('%', :shop, '%')))")
+    @Query(
+            value = """
+                    SELECT DISTINCT p.*
+                    FROM product p
+                    LEFT JOIN setting st ON p.setting_id = st.setting_id
+                    LEFT JOIN shop sh ON p.shop_id = sh.shop_id
+                    WHERE
+                    p.product_name LIKE COALESCE(CONCAT('%', :productName, '%'), p.product_name)
+                    AND p.price >= COALESCE(:priceMin, p.price)
+                    AND p.price <= COALESCE(:priceMax, p.price)
+                    AND p.rating >= COALESCE(:ratingMin, p.rating)
+                    AND p.rating <= COALESCE(:ratingMax, p.rating)
+                    AND st.name LIKE COALESCE(CONCAT('%', :setting, '%'), st.name)
+                    AND sh.name LIKE COALESCE(CONCAT('%', :shop, '%'), sh.name)
+                    """,
+            countQuery = """
+                    SELECT COUNT(DISTINCT p.product_id)
+                    FROM product p
+                    LEFT JOIN setting st ON p.setting_id = st.setting_id
+                    LEFT JOIN shop sh ON p.shop_id = sh.shop_id
+                    WHERE
+                    p.product_name LIKE COALESCE(CONCAT('%', :productName, '%'), p.product_name)
+                    AND p.price >= COALESCE(:priceMin, p.price)
+                    AND p.price <= COALESCE(:priceMax, p.price)
+                    AND p.rating >= COALESCE(:ratingMin, p.rating)
+                    AND p.rating <= COALESCE(:ratingMax, p.rating)
+                    AND st.name LIKE COALESCE(CONCAT('%', :setting, '%'), st.name)
+                    AND sh.name LIKE COALESCE(CONCAT('%', :shop, '%'), sh.name)
+                    """,
+            nativeQuery = true)
     Page<Product> searchByProductFields(
             @Param("productName") String productName,
             @Param("priceMin") Double priceMin,
@@ -35,14 +54,14 @@ public interface ProductRepository extends JpaRepository<Product, Long>{
             @Param("shop") String shop,
             Pageable pageable);
 
-
-
-    @Query("SELECT p FROM Product p " +
-            "WHERE p.shop.shopId = :shopId " +
-            "AND (:productName IS NULL OR LOWER(p.productName) LIKE LOWER(CONCAT('%', :productName, '%'))) " +
+    @Query(value = "SELECT p.* FROM product p " +
+            "LEFT JOIN setting st ON p.setting_id = st.setting_id " +
+            "WHERE p.shop_id = :shopId " +
+            "AND (:productName IS NULL OR LOWER(p.product_name) LIKE LOWER(CONCAT('%', :productName, '%'))) "
+            +
             "AND (:price IS NULL OR p.price = :price) " +
-            "AND (:setting IS NULL OR LOWER(p.setting.name) LIKE LOWER(CONCAT('%', :setting, '%'))) " +
-            "ORDER BY p.price ASC")
+            "AND (:setting IS NULL OR LOWER(st.name) LIKE LOWER(CONCAT('%', :setting, '%'))) " +
+            "ORDER BY p.price ASC", nativeQuery = true)
     Page<Product> findProductsByShopId(
             @Param("shopId") Long shopId,
             @Param("productName") String productName,
@@ -50,26 +69,26 @@ public interface ProductRepository extends JpaRepository<Product, Long>{
             @Param("setting") String setting,
             Pageable pageable);
 
-    @Query("SELECT p FROM Product p " +
-            "WHERE p.shop.shopId = :shopId " +
-            "AND p.id = :productId")
+    @Query(value = "SELECT p.* FROM product p " +
+            "WHERE p.shop_id = :shopId " +
+            "AND p.product_id = :productId", nativeQuery = true)
     Optional<Product> findProductByShopIdAndProductId(
             @Param("shopId") Long shopId,
             @Param("productId") Long productId);
 
-    @Query("SELECT p FROM Product p " +
+    @Query(value = "SELECT p.* FROM product p " +
             "WHERE p.status = true " +
-            "ORDER BY p.rating DESC")
+            "ORDER BY p.rating DESC", nativeQuery = true)
     List<Product> findTopRatedProducts(Pageable pageable);
 
-    @Query("SELECT p FROM Product p " +
-            "WHERE p.status = true AND p.setting.settingId = :settingId " +
-            "ORDER BY p.rating DESC")
+    @Query(value = "SELECT p.* FROM product p " +
+            "WHERE p.status = true AND p.setting_id = :settingId " +
+            "ORDER BY p.rating DESC", nativeQuery = true)
     List<Product> findTrendingProducts(Long settingId, Pageable pageable);
 
-    @Query("SELECT p FROM Product p " +
-            "WHERE p.shop.shopId = (SELECT p2.shop.shopId FROM Product p2 WHERE p2.id = :productId) " +
-            "AND p.id != :productId")
+    @Query(value = "SELECT p.* FROM product p " +
+            "WHERE p.shop_id = (SELECT p2.shop_id FROM product p2 WHERE p2.product_id = :productId) " +
+            "AND p.product_id != :productId", nativeQuery = true)
     List<Product> findProductsFromSameShop(@Param("productId") Long productId);
 
 }

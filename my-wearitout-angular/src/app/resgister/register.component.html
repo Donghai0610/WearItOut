@@ -1,0 +1,154 @@
+<div class="register-container">
+  <div class="register-card">
+    <!-- Header -->
+    <div class="register-header">
+      <h1 class="register-title">Đăng Ký Tài Khoản</h1>
+      <p class="register-subtitle">Tạo tài khoản mới để bắt đầu mua sắm</p>
+    </div>
+
+    <!-- Form -->
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+      
+      <!-- Username Field -->
+      <div class="form-group">
+        <label for="username" class="form-label">
+          <i class="icon">👤</i>
+          Tên đăng nhập *
+        </label>
+        <input 
+          type="text" 
+          id="username"
+          formControlName="username"
+          class="form-input"
+          [class.error]="username?.invalid && username?.touched"
+          placeholder="Nhập tên đăng nhập"
+          autocomplete="username"
+        >
+        <div *ngIf="username?.invalid && username?.touched" class="error-message">
+          <div *ngIf="username?.errors?.['required']">Tên đăng nhập là bắt buộc</div>
+          <div *ngIf="username?.errors?.['minlength']">Tên đăng nhập phải có ít nhất 3 ký tự</div>
+          <div *ngIf="username?.errors?.['maxlength']">Tên đăng nhập không được quá 20 ký tự</div>
+        </div>
+      </div>
+
+      <!-- Email Field -->
+      <div class="form-group">
+        <label for="email" class="form-label">
+          <i class="icon">📧</i>
+          Email *
+        </label>
+        <input 
+          type="email" 
+          id="email"
+          formControlName="email"
+          class="form-input"
+          [class.error]="email?.invalid && email?.touched"
+          placeholder="Nhập địa chỉ email"
+          autocomplete="email"
+        >
+        <div *ngIf="email?.invalid && email?.touched" class="error-message">
+          <div *ngIf="email?.errors?.['required']">Email là bắt buộc</div>
+          <div *ngIf="email?.errors?.['email']">Email không hợp lệ</div>
+        </div>
+      </div>
+
+      <!-- Phone Field -->
+      <div class="form-group">
+        <label for="phone" class="form-label">
+          <i class="icon">📱</i>
+          Số điện thoại *
+        </label>
+        <input 
+          type="tel" 
+          id="phone"
+          formControlName="phone"
+          class="form-input"
+          [class.error]="phone?.invalid && phone?.touched"
+          placeholder="Nhập số điện thoại"
+          autocomplete="tel"
+        >
+        <div *ngIf="phone?.invalid && phone?.touched" class="error-message">
+          <div *ngIf="phone?.errors?.['required']">Số điện thoại là bắt buộc</div>
+          <div *ngIf="phone?.errors?.['pattern']">Số điện thoại phải có 10-11 chữ số</div>
+        </div>
+      </div>
+
+      <!-- Password Field -->
+      <div class="form-group">
+        <label for="password" class="form-label">
+          <i class="icon">🔒</i>
+          Mật khẩu *
+        </label>
+        <div class="password-input-container">
+          <input 
+            [type]="showPassword ? 'text' : 'password'"
+            id="password"
+            formControlName="password"
+            class="form-input"
+            [class.error]="password?.invalid && password?.touched"
+            placeholder="Nhập mật khẩu"
+            autocomplete="new-password"
+          >
+          <button 
+            type="button" 
+            class="password-toggle"
+            (click)="togglePasswordVisibility()"
+            [attr.aria-label]="showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'"
+          >
+            {{ showPassword ? '🙈' : '👁️' }}
+          </button>
+        </div>
+        <div *ngIf="password?.invalid && password?.touched" class="error-message">
+          <div *ngIf="password?.errors?.['required']">Mật khẩu là bắt buộc</div>
+          <div *ngIf="password?.errors?.['minlength']">Mật khẩu phải có ít nhất 6 ký tự</div>
+        </div>
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="errorMessage" class="alert alert-error">
+        <i class="alert-icon">⚠️</i>
+        {{ errorMessage }}
+      </div>
+
+      <!-- Success Message -->
+      <div *ngIf="successMessage" class="alert alert-success">
+        <i class="alert-icon">✅</i>
+        {{ successMessage }}
+      </div>
+
+      <!-- Submit Button -->
+      <button 
+        type="submit" 
+        class="submit-btn"
+        [disabled]="isLoading || registerForm.invalid"
+        [class.loading]="isLoading"
+      >
+        <span *ngIf="!isLoading">
+          <i class="btn-icon">🚀</i>
+          Đăng Ký
+        </span>
+        <span *ngIf="isLoading" class="loading-text">
+          <i class="spinner">⏳</i>
+          Đang xử lý...
+        </span>
+      </button>
+
+      <!-- Login Link -->
+      <div class="form-footer">
+        <p class="login-link-text">
+          Đã có tài khoản? 
+          <button type="button" class="link-btn" (click)="navigateToLogin()">
+            Đăng nhập ngay
+          </button>
+        </p>
+      </div>
+    </form>
+  </div>
+
+  <!-- Background Decoration -->
+  <div class="bg-decoration">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+  </div>
+</div>

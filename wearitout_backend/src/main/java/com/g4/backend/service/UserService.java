@@ -7,6 +7,8 @@ import com.g4.backend.dto.UserIdNameDTO;
 import com.g4.backend.dto.request.NewUserRequestDTO;
 import com.g4.backend.dto.request.UserRegisterRequestDTO;
 import com.g4.backend.dto.response.UsersResponseDTO;
+import com.g4.backend.exception.AppException;
+import com.g4.backend.exception.ErrorCode;
 import com.g4.backend.mapper.UserMapper;
 import com.g4.backend.model.Setting;
 import com.g4.backend.model.Shop;
@@ -54,7 +56,7 @@ public class UserService {
 
     public User saveUser(UserRegisterRequestDTO userRegisterRequestDTO) {
         if (userRepository.existsByUsername(userRegisterRequestDTO.getUsername())) {
-            throw new IllegalArgumentException("Username has already existed");
+            throw new AppException(ErrorCode.USER_NOT_FOUND);
         }
         userRegisterRequestDTO.setPassword(passwordEncoder.encode(userRegisterRequestDTO.getPassword()));
         User user = userMapper.userDTOToUser(userRegisterRequestDTO);

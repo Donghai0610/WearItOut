@@ -13,6 +13,7 @@ public class LoginResponeDTO {
     private int code;
     private String message;
     private String token;
+    private Long userId;
     private String expirationTime;
     private String role;
 

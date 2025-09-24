@@ -39,16 +39,16 @@ public class AuthController {
             User user = authService.findUserByUsername(loginRequest.getUsername());
             // Nếu xác thực thành công, tạo token JWT
             if (!user.isActive()) {
-                return ResponseEntity.badRequest().body(new LoginResponeDTO(401, "User is not active", "", "", null));
+                return ResponseEntity.badRequest().body(new LoginResponeDTO(401, "User is not active", "",null, "", null));
             }
             if (authentication.isAuthenticated()) {
                 final String jwt = jwtService.generateToken(loginRequest.getUsername());
 
-                return ResponseEntity.ok(new LoginResponeDTO(200, "Success", jwt,  "60Hours", user.getSetting().getName()));
+                return ResponseEntity.ok(new LoginResponeDTO(200, "Success", jwt,user.getUserId(),  "60Hours", user.getSetting().getName()));
             }
         } catch (AuthenticationException e) {
             // Xác thực không thành công, trả về lỗi hoặc thông báo
-            return ResponseEntity.badRequest().body(new LoginResponeDTO(400, "Invalid username/password. Please try again.", "", "", null));
+            return ResponseEntity.badRequest().body(new LoginResponeDTO(400, "Invalid username/password. Please try again.", null,null, "", null));
         }
         return ResponseEntity.badRequest().body("");
     }
@@ -59,9 +59,9 @@ public class AuthController {
         boolean isTokenInvalidated = jwtService.invalidateToken(jwt);
 
         if (isTokenInvalidated) {
-            return ResponseEntity.ok().body(new LoginResponeDTO(200, "Logout success", "", "", null ));
+            return ResponseEntity.ok().body(new LoginResponeDTO(200, "Logout success", "",null, "", null ));
         } else {
-            return ResponseEntity.badRequest().body(new LoginResponeDTO(400, "Logout fail", "", "", null));
+            return ResponseEntity.badRequest().body(new LoginResponeDTO(400, "Logout fail", "",null, "", null));
         }
     }
 

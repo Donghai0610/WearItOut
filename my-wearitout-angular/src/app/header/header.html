@@ -1,0 +1,57 @@
+<header class="main-header">
+  <div class="container">
+    <div class="header-content">
+      <!-- Logo -->
+      <div class="logo">
+        <a href="/">
+          <h1>WearItOut</h1>
+        </a>
+      </div>
+
+      <!-- Navigation Menu -->
+      <nav class="main-nav">
+        <ul>
+          <li><a href="/">Trang chủ</a></li>
+          <li><a href="/products">Sản phẩm</a></li>
+          <li><a href="/categories">Danh mục</a></li>
+          <li><a href="/about">Giới thiệu</a></li>
+          <li><a href="/contact">Liên hệ</a></li>
+        </ul>
+      </nav>
+
+      <!-- Search Bar -->
+      <div class="search-bar">
+        <input type="text" placeholder="Tìm kiếm sản phẩm...">
+        <button type="button">🔍</button>
+      </div>
+
+      <!-- User Actions -->
+      <div class="user-actions">
+        <a href="/cart" class="cart-link">
+          🛒 <span class="cart-count">0</span>
+        </a>
+        
+        <!-- Authenticated User -->
+        <div *ngIf="isAuthenticated && username" class="user-info">
+          <div class="user-dropdown">
+            <button class="user-button" (click)="navigateToProfile()">
+              👤 {{ username }}
+              <span *ngIf="userRole" class="user-role">({{ userRole }})</span>
+            </button>
+            <div class="dropdown-menu">
+              <a (click)="navigateToProfile()" class="dropdown-item">Thông tin cá nhân</a>
+              <a href="/orders" class="dropdown-item">Đơn hàng của tôi</a>
+              <a (click)="logout()" class="dropdown-item logout-btn">Đăng xuất</a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Not Authenticated -->
+        <div *ngIf="!isAuthenticated" class="auth-links">
+          <a routerLink="/login" class="login-link">Đăng nhập</a>
+          <a routerLink="/register" class="register-link">Đăng ký</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>

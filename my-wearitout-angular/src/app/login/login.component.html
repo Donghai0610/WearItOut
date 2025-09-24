@@ -1,0 +1,128 @@
+<div class="login-container">
+  <div class="login-card">
+    <!-- Header -->
+    <div class="login-header">
+      <div class="logo">
+        <h1>WearItOut</h1>
+      </div>
+      <h2>Đăng nhập</h2>
+      <p>Chào mừng bạn trở lại! Vui lòng đăng nhập vào tài khoản của bạn.</p>
+    </div>
+
+    <!-- Login Form -->
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+      
+      <!-- Error Message -->
+      <div *ngIf="errorMessage" class="error-message">
+        <i class="error-icon">⚠️</i>
+        {{ errorMessage }}
+      </div>
+
+      <!-- Username Field -->
+      <div class="form-group">
+        <label for="username">Tên đăng nhập</label>
+        <div class="input-wrapper">
+          <input
+            type="text"
+            id="username"
+            formControlName="username"
+            placeholder="Nhập tên đăng nhập"
+            [class.error]="username?.invalid && username?.touched"
+            autocomplete="username">
+          <i class="input-icon">👤</i>
+        </div>
+        <div *ngIf="username?.invalid && username?.touched" class="field-error">
+          <span *ngIf="username?.errors?.['required']">Tên đăng nhập là bắt buộc</span>
+          <span *ngIf="username?.errors?.['minlength']">Tên đăng nhập phải có ít nhất 3 ký tự</span>
+        </div>
+      </div>
+
+      <!-- Password Field -->
+      <div class="form-group">
+        <label for="password">Mật khẩu</label>
+        <div class="input-wrapper">
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            id="password"
+            formControlName="password"
+            placeholder="Nhập mật khẩu"
+            [class.error]="password?.invalid && password?.touched"
+            autocomplete="current-password">
+          <i class="input-icon">🔒</i>
+          <button
+            type="button"
+            class="password-toggle"
+            (click)="togglePasswordVisibility()"
+            [attr.aria-label]="showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'">
+            {{ showPassword ? '🙈' : '👁️' }}
+          </button>
+        </div>
+        <div *ngIf="password?.invalid && password?.touched" class="field-error">
+          <span *ngIf="password?.errors?.['required']">Mật khẩu là bắt buộc</span>
+          <span *ngIf="password?.errors?.['minlength']">Mật khẩu phải có ít nhất 6 ký tự</span>
+        </div>
+      </div>
+
+      <!-- Remember Me & Forgot Password -->
+      <div class="form-options">
+        <label class="checkbox-wrapper">
+          <input type="checkbox" formControlName="rememberMe">
+          <span class="checkmark"></span>
+          Ghi nhớ đăng nhập
+        </label>
+        <button type="button" class="forgot-password" (click)="navigateToForgotPassword()">
+          Quên mật khẩu?
+        </button>
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="login-button"
+        [disabled]="isLoading || loginForm.invalid"
+        [class.loading]="isLoading">
+        <span *ngIf="!isLoading">Đăng nhập</span>
+        <span *ngIf="isLoading" class="loading-text">
+          <i class="spinner"></i>
+          Đang đăng nhập...
+        </span>
+      </button>
+
+      <!-- Demo Login (for testing) -->
+      <button type="button" class="demo-button" (click)="loginAsDemo()">
+        🎯 Đăng nhập Demo
+      </button>
+    </form>
+
+    <!-- Social Login (Optional) -->
+    <div class="social-login">
+      <div class="divider">
+        <span>Hoặc đăng nhập bằng</span>
+      </div>
+      <div class="social-buttons">
+        <button type="button" class="social-btn google">
+          <i>🔴</i> Google
+        </button>
+        <button type="button" class="social-btn facebook">
+          <i>🔵</i> Facebook
+        </button>
+      </div>
+    </div>
+
+    <!-- Register Link -->
+    <div class="register-link">
+      <p>Chưa có tài khoản? 
+        <button type="button" class="link-button" (click)="navigateToRegister()">
+          Đăng ký ngay
+        </button>
+      </p>
+    </div>
+  </div>
+
+  <!-- Background Decoration -->
+  <div class="background-decoration">
+    <div class="decoration-circle circle-1"></div>
+    <div class="decoration-circle circle-2"></div>
+    <div class="decoration-circle circle-3"></div>
+  </div>
+</div>

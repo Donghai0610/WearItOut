@@ -1,0 +1,133 @@
+<app-header></app-header>
+<div class="cart-container">
+  <div class="cart-header">
+    <h2>🛒 Giỏ hàng của bạn</h2>
+    <p *ngIf="cartItems.length > 0">Bạn có {{ cartItems.length }} sản phẩm trong giỏ hàng</p>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Đang tải giỏ hàng...</p>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+    <button (click)="loadCart()" class="btn-retry">🔄 Thử lại</button>
+  </div>
+
+  <!-- Success Message -->
+  <div *ngIf="successMessage" class="success-message">
+    ✅ {{ successMessage }}
+  </div>
+
+  <!-- Empty Cart -->
+  <div *ngIf="!isLoading && !error && cartItems.length === 0" class="empty-cart">
+    <div class="empty-icon">🛒</div>
+    <h3>Giỏ hàng trống</h3>
+    <p>Hãy thêm một số sản phẩm vào giỏ hàng để bắt đầu mua sắm!</p>
+    <a href="/products" class="btn-shop-now">🛍️ Mua sắm ngay</a>
+  </div>
+
+  <!-- Cart Items -->
+  <div *ngIf="!isLoading && !error && cartItems.length > 0" class="cart-content">
+    <div class="cart-items">
+      <div *ngFor="let item of cartItems; trackBy: trackByProductId" class="cart-item">
+        <div class="item-image">
+          <img 
+            [src]="item.imageUrl" 
+            [alt]="item.productName"
+            onerror="this.src='https://via.placeholder.com/100x100?text=No+Image'"
+          >
+        </div>
+        
+        <div class="item-details">
+          <h4 class="item-name">{{ item.productName }}</h4>
+          <p class="item-price">{{ formatPrice(item.price) }}</p>
+          <div *ngIf="item.stockQuantity" class="stock-info">
+            <p class="item-stock" [ngClass]="getStockStatusClass(item)">
+              📦 {{ getStockStatus(item) }}
+            </p>
+            <p *ngIf="!isStockAvailable(item)" class="stock-warning">
+              ⚠️ Không thể thêm! Đã đạt giới hạn kho.
+            </p>
+          </div>
+        </div>
+        
+        <div class="item-quantity">
+          <button 
+            (click)="decreaseQuantity(item.productId)"
+            [disabled]="item.quantity <= 1"
+            class="btn-quantity"
+          >-</button>
+          <input 
+            type="number" 
+            [value]="item.quantity"
+            (input)="onQuantityChange(item.productId, $event)"
+            min="1"
+            [max]="getMaxQuantity(item)"
+            class="quantity-input"
+            [title]="'Tối đa: ' + getMaxQuantity(item)"
+          >
+          <button 
+            (click)="increaseQuantity(item.productId)"
+            [disabled]="!isStockAvailable(item)"
+            class="btn-quantity"
+            [title]="!isStockAvailable(item) ? 'Đã đạt giới hạn kho' : 'Tăng số lượng'"
+          >+</button>
+        </div>
+        
+        <div class="item-total">
+          <p class="total-price">{{ formatPrice(item.price * item.quantity) }}</p>
+        </div>
+        
+        <div class="item-actions">
+          <button 
+            (click)="removeItem(item.productId)"
+            class="btn-remove"
+            title="Xóa sản phẩm"
+          >🗑️</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cart Summary -->
+    <div class="cart-summary">
+      <div class="summary-section">
+        <h3>📋 Tóm tắt đơn hàng</h3>
+        
+        <div class="summary-row">
+          <span>Số lượng sản phẩm:</span>
+          <span>{{ cartItems.length }} sản phẩm</span>
+        </div>
+        
+        <div class="summary-row">
+          <span>Tổng số lượng:</span>
+          <span>{{ getTotalQuantity() }} món</span>
+        </div>
+        
+        <div class="summary-row subtotal">
+          <span>Tạm tính:</span>
+          <span>{{ formatPrice(totalPrice) }}</span>
+        </div>
+        
+        <div class="summary-row shipping">
+          <span>Phí vận chuyển:</span>
+          <span>Miễn phí</span>
+        </div>
+        
+        <div class="summary-row total">
+          <span>Tổng cộng:</span>
+          <span>{{ formatPrice(totalPrice) }}</span>
+        </div>
+        
+        <div class="cart-actions">
+          <button class="btn-checkout">💳 Tiến hành thanh toán</button>
+          <button (click)="clearCart()" class="btn-clear">🗑️ Xóa toàn bộ giỏ hàng</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>

@@ -1,0 +1,230 @@
+<app-header></app-header>
+<div class="product-container">
+  <!-- Search Filters -->
+  <div class="search-section">
+    <div class="search-header">
+      <h2>🛍️ Khám phá sản phẩm</h2>
+      <p>Tìm kiếm và lọc sản phẩm theo ý muốn</p>
+    </div>
+    
+    <div class="search-form">
+      <div class="search-row">
+        <div class="search-field">
+          <label>🔍 Tên sản phẩm</label>
+          <input 
+            type="text" 
+            [(ngModel)]="searchForm.productName"
+            placeholder="Nhập tên sản phẩm..."
+            class="search-input"
+          >
+        </div>
+        
+        <div class="search-field">
+          <label>🏪 Cửa hàng</label>
+          <input 
+            type="text" 
+            [(ngModel)]="searchForm.shop"
+            placeholder="Tên cửa hàng..."
+            class="search-input"
+          >
+        </div>
+        
+        <div class="search-field">
+          <label>📂 Danh mục</label>
+          <select [(ngModel)]="searchForm.setting" class="search-select">
+            <option value="">Tất cả danh mục</option>
+            <option value="Áo Thun">Áo Thun</option>
+            <option value="Quần Jeans">Quần Jeans</option>
+            <option value="Áo Khoác">Áo Khoác</option>
+            <option value="Váy">Váy</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="search-row">
+        <div class="search-field">
+          <label>💰 Giá từ</label>
+          <input 
+            type="number" 
+            [(ngModel)]="searchForm.priceMin"
+            placeholder="0"
+            class="search-input"
+            min="0"
+          >
+        </div>
+        
+        <div class="search-field">
+          <label>💰 Giá đến</label>
+          <input 
+            type="number" 
+            [(ngModel)]="searchForm.priceMax"
+            placeholder="1000000"
+            class="search-input"
+            min="0"
+          >
+        </div>
+        
+        <div class="search-field">
+          <label>⭐ Rating từ</label>
+          <select [(ngModel)]="searchForm.ratingMin" class="search-select">
+            <option value="">Tất cả</option>
+            <option value="1">1 sao</option>
+            <option value="2">2 sao</option>
+            <option value="3">3 sao</option>
+            <option value="4">4 sao</option>
+            <option value="5">5 sao</option>
+          </select>
+        </div>
+        
+        <div class="search-field">
+          <label>📊 Sắp xếp</label>
+          <select [(ngModel)]="searchForm.sortDirection" class="search-select">
+            <option value="asc">Giá tăng dần</option>
+            <option value="desc">Giá giảm dần</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="search-actions">
+        <button (click)="onSearch()" class="btn-search" [disabled]="isLoading">
+          <span *ngIf="!isLoading">🔍 Tìm kiếm</span>
+          <span *ngIf="isLoading">⏳ Đang tìm...</span>
+        </button>
+        <button (click)="clearFilters()" class="btn-clear" [disabled]="isLoading">
+          🗑️ Xóa bộ lọc
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Đang tải sản phẩm...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !isLoading" class="error-container">
+    <div class="error-icon">❌</div>
+    <p>{{ error }}</p>
+    <button (click)="loadProducts()" class="btn-retry">🔄 Thử lại</button>
+  </div>
+
+  <!-- Products Grid -->
+  <div *ngIf="!isLoading && !error" class="products-section">
+    <div class="products-header">
+      <h3>📦 {{ totalElements }} sản phẩm được tìm thấy</h3>
+      <div class="results-info">
+        Trang {{ currentPage + 1 }} / {{ totalPages }}
+      </div>
+    </div>
+
+    <div class="products-grid" *ngIf="products.length > 0">
+      <div *ngFor="let product of products; trackBy: trackByProductId" class="product-card">
+        <div class="product-image-container">
+          <img 
+            [src]="product.image" 
+            [alt]="product.name"
+            class="product-image"
+            loading="lazy"
+            onerror="this.src='https://via.placeholder.com/300x400?text=No+Image'"
+          >
+          <div class="product-status" [class]="product.status?.toLowerCase()">
+            {{ product.status }}
+          </div>
+        </div>
+        
+        <div class="product-info">
+          <h4 class="product-name" [title]="product.name">{{ product.name }}</h4>
+          
+          <div class="product-details">
+            <div class="product-category">📂 {{ product.category }}</div>
+            <div class="product-shop">🏪 {{ product.shop }}</div>
+          </div>
+          
+          <div class="product-rating">
+            <div class="stars">
+              <span 
+                *ngFor="let star of getStarArray(product.rating)" 
+                class="star"
+                [class.filled]="star === 1"
+              >⭐</span>
+            </div>
+            <span class="rating-text">({{ product.rating }}/5)</span>
+          </div>
+          
+          <div class="product-price">
+            <span class="current-price">{{ formatPrice(product.price) }}</span>
+            <span *ngIf="product.originalPrice" class="original-price">
+              {{ formatPrice(product.originalPrice) }}
+            </span>
+          </div>
+          
+          <div class="product-stock">
+            <span class="stock-info" [class.out-of-stock]="product.stockQuantity === 0">
+              📦 {{ product.stockQuantity === 0 ? 'Hết hàng' : 'Còn ' + product.stockQuantity + ' sản phẩm' }}
+            </span>
+          </div>
+          
+          <div class="product-actions">
+            <button 
+              class="btn-view"
+              [disabled]="product.stockQuantity === 0"
+            >
+              👁️ Xem chi tiết
+            </button>
+            <button 
+              class="btn-cart"
+              [disabled]="product.stockQuantity === 0 || isLoading"
+              (click)="addToCart(product, 1)"
+              [class.loading]="isLoading"
+              [class.in-cart]="isProductInCart(product.id)"
+            >
+              <span *ngIf="!isProductInCart(product.id)">🛒 Thêm vào giỏ</span>
+              <span *ngIf="isProductInCart(product.id)">✅ Đã thêm ({{ getCartItemQuantity(product.id) }})</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="products.length === 0" class="empty-container">
+      <div class="empty-icon">📭</div>
+      <h3>Không tìm thấy sản phẩm nào</h3>
+      <p>Thử thay đổi bộ lọc tìm kiếm hoặc từ khóa khác</p>
+      <button (click)="clearFilters()" class="btn-clear-all">🗑️ Xóa tất cả bộ lọc</button>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="products.length > 0 && totalPages > 1" class="pagination">
+      <button 
+        (click)="onPageChange(currentPage - 1)"
+        [disabled]="currentPage === 0"
+        class="btn-page"
+      >
+        « Trước
+      </button>
+      
+      <div class="page-numbers">
+        <button 
+          *ngFor="let page of [].constructor(totalPages); let i = index"
+          (click)="onPageChange(i)"
+          [class.active]="i === currentPage"
+          class="btn-page-number"
+        >
+          {{ i + 1 }}
+        </button>
+      </div>
+      
+      <button 
+        (click)="onPageChange(currentPage + 1)"
+        [disabled]="currentPage === totalPages - 1"
+        class="btn-page"
+      >
+        Tiếp »
+      </button>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>
